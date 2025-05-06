@@ -1,14 +1,17 @@
 import asyncio
 import os
+from pprint import pprint
 
 from aiogram import Bot, Dispatcher, F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import ErrorEvent, Message
+from aiogram.types import ErrorEvent, Message, ReplyKeyboardRemove
 from aiogram_dialog import setup_dialogs, DialogManager
 from aiogram_dialog.api.exceptions import UnknownIntent, OutdatedIntent
 from dotenv import load_dotenv, find_dotenv
 
+from boiler_telegram_bot.keyboards import repair_bot_keyboard
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_router import boiler_dialog_router
+from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from boiler_telegram_bot.main_menu.main_menu_router import main_menu_router
 
 load_dotenv(find_dotenv())
@@ -22,6 +25,18 @@ async def bot_start():
     dp = Dispatcher()
     setup_dialogs(dp)
 
+    @dp.message(F.text == '🏪 Перезапустить бота')
+    async def repair_bot(message: Message, state: FSMContext, dialog_manager: DialogManager):
+        await message.answer(
+            text='Перезапускаемся. . .',
+            reply_markup=ReplyKeyboardRemove()
+        )
+
+        await dialog_manager.start(
+            BoilerDialog.boiler_main_menu,
+            data={'user_id': message.from_user.id},
+        )
+
     async def error_unknown_intent_handler(
             event: ErrorEvent, dialog_manager: DialogManager
     ):
@@ -32,8 +47,13 @@ async def bot_start():
                 await bot.delete_message(
                     chat_id=event_chat_id, message_id=event_message_id
                 )
-            except AttributeError:
-                print(f'Отбилась в закрытый диалог.')
+                await bot.send_message(
+                    text='Упс. Кажется что-то пошло не так. Чтобы перезапустить бота нажмите кнопку под чатом. ',
+                    reply_markup=repair_bot_keyboard(),
+                    chat_id=event_chat_id
+                )
+            except AttributeError as exception:
+                print(f'Отбилась в закрытый диалог.', exception)
             except Exception as exception:
                 print(exception)
 
@@ -41,7 +61,7 @@ async def bot_start():
             return print(f"{event}")
 
     # error handler
-    # dp.errors.register(error_unknown_intent_handler)
+    dp.errors.register(error_unknown_intent_handler)
 
     # dialogs
     dp.include_router(
