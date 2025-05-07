@@ -1,3 +1,5 @@
+import sqlite3
+
 from db_configuration.db import get_connection
 
 
@@ -17,6 +19,53 @@ class User:
         conn.close()
 
 
+class TechnicalProblem:
+    @staticmethod
+    def get_all_technical_problem():
+        conn = get_connection()
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM technical_problems")
+        results = cursor.fetchall()
+
+        conn.close()
+        return results
+
+    @staticmethod
+    def get_all_unhidden_technical_problem():
+        conn = get_connection()
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM technical_problems WHERE hidden = 0")
+        results = cursor.fetchall()
+
+        conn.close()
+        return results
+
+    @staticmethod
+    def get_technical_problem_by_id(technical_problem_id: int):
+        conn = get_connection()
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM technical_problems WHERE id = ?", (technical_problem_id,))
+        result = cursor.fetchone()
+
+        conn.close()
+        return result
+
+    @staticmethod
+    def delete_technical_problem_by_id(technical_problem_id: int):
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("DELETE FROM technical_problems WHERE id = ?", (technical_problem_id,))
+        conn.commit()
+        conn.close()
+
+
 class Feedback:
     @staticmethod
     def add_feedback(tg_user_id: int, firstname: str, lastname: str, username: str, text: str):
@@ -32,8 +81,9 @@ class Feedback:
         conn.close()
 
     @staticmethod
-    def get_unviewed_feedback():
+    def get_all_unviewed_feedback():
         conn = get_connection()
+        conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
 
         cursor.execute("SELECT * FROM feedback WHERE viewed = 0")
@@ -43,8 +93,9 @@ class Feedback:
         return results
 
     @staticmethod
-    def get_viewed_feedback():
+    def get_all_viewed_feedback():
         conn = get_connection()
+        conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
 
         cursor.execute("SELECT * FROM feedback WHERE viewed = 1")
