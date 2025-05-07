@@ -10,7 +10,6 @@ from boiler_telegram_bot.keyboards import repair_bot_keyboard
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_router import boiler_dialog_router
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from boiler_telegram_bot.main_menu.main_menu_router import main_menu_router
-from db_configuration.crud import add_user_if_not_exists
 from settings import bot_token, DEBUG
 
 
@@ -24,11 +23,6 @@ async def bot_start():
         bot = Bot(token=bot_token)
         dp = Dispatcher()
         setup_dialogs(dp)
-
-    @dp.message(F.text == "test")
-    async def test_handler(message: Message):
-        add_user_if_not_exists(message.from_user.id, message.from_user.full_name)
-        await message.answer("Ты записан в базу!")
 
     @dp.message(F.text == '🏪 Перезапустить бота')
     async def repair_bot(message: Message, state: FSMContext, dialog_manager: DialogManager):
