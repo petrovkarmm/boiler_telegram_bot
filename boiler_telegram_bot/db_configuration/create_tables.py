@@ -8,7 +8,10 @@ def create_tables():
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS technical_problems (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT
+        name TEXT,
+        hidden BOOLEAN DEFAULT 1,
+        created DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated DATETIME DEFAULT CURRENT_TIMESTAMP
     )
     """)
 
@@ -20,7 +23,8 @@ def create_tables():
         user_lastname TEXT,
         user_username TEXT,
         feedback_text TEXT,
-        viewed BOOLEAN DEFAULT 0
+        viewed BOOLEAN DEFAULT 0,
+        created DATETIME DEFAULT CURRENT_TIMESTAMP
     )
     """)
 
