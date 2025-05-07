@@ -1,8 +1,8 @@
-from pathlib import Path
+import os
 import sqlite3
 
-DB_PATH = Path(__file__).resolve().parent.parent / "bot.db"
+DB_PATH = os.path.join(os.path.dirname(__file__), 'bot.db')
+
 
 def get_connection():
     return sqlite3.connect(DB_PATH)
-
