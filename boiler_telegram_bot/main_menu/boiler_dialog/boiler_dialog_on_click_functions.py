@@ -1,5 +1,6 @@
 import asyncio
 import random
+from typing import Any
 
 from aiogram.types import CallbackQuery
 from aiogram_dialog import DialogManager, BaseDialogManager, ShowMode
@@ -7,7 +8,7 @@ from aiogram_dialog.widgets.kbd import Button, ManagedCounter
 from aiogram.exceptions import TelegramRetryAfter
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
-from db_configuration.crud import Feedback
+from db_configuration.crud import Feedback, TechnicalProblem
 
 
 async def send_feedback(
@@ -37,3 +38,28 @@ async def send_feedback(
     await dialog_manager.switch_to(
         BoilerDialog.boiler_main_menu
     )
+
+
+async def on_technical_problem_selected(
+        callback: CallbackQuery,
+        widget: Any,
+        dialog_manager: DialogManager,
+        technical_problem_id_selected: int,
+):
+    technical_problem = TechnicalProblem.get_technical_problem_by_id(
+        technical_problem_id=technical_problem_id_selected
+    )
+
+    if technical_problem:
+        dialog_manager.dialog_data['technical_problem'] = technical_problem['name']
+        await dialog_manager.switch_to(
+            BoilerDialog.boiler_repair_description
+        )
+    else:
+        await callback.message.answer(
+            text='Кажется, что-то пошло не так. . .\n\n'
+                 'Попробуйте ещё раз.'
+        )
+        await dialog_manager.switch_to(
+            BoilerDialog.boiler_main_menu
+        )
