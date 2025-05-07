@@ -14,10 +14,15 @@ async def feedback_handler(
 ):
     user_answer = message.text
     if user_answer:
-        dialog_manager.dialog_data['user_answer'] = user_answer
-        await dialog_manager.switch_to(
-            BoilerDialog.boiler_accept_feedback
-        )
+        if len(user_answer) >= 1000:
+            await message.answer(
+                text='Ответ должен быть менее 1000 символов!'
+            )
+        else:
+            dialog_manager.dialog_data['user_answer'] = user_answer
+            await dialog_manager.switch_to(
+                BoilerDialog.boiler_accept_feedback
+            )
     else:
         await message.answer(
             text='Кажется, вы отправили что-то другое... =/'
@@ -31,10 +36,15 @@ async def technical_problem_handler(
 ):
     user_technical_problem = message.text
     if user_technical_problem:
-        dialog_manager.dialog_data['technical_problem'] = user_technical_problem
-        await dialog_manager.switch_to(
-            BoilerDialog.boiler_repair_description
-        )
+        if len(user_technical_problem) >= 1000:
+            await message.answer(
+                text='Тема проблемы должна быть менее 1000 символов!'
+            )
+        else:
+            dialog_manager.dialog_data['technical_problem'] = user_technical_problem
+            await dialog_manager.switch_to(
+                BoilerDialog.boiler_repair_description
+            )
     else:
         await message.answer(
             text='Кажется, вы отправили что-то другое... =/'
