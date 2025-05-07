@@ -25,6 +25,11 @@ async def bot_start():
         dp = Dispatcher()
         setup_dialogs(dp)
 
+    @dp.message(F.text == "test")
+    async def test_handler(message: Message):
+        add_user_if_not_exists(message.from_user.id, message.from_user.full_name)
+        await message.answer("Ты записан в базу!")
+
     @dp.message(F.text == '🏪 Перезапустить бота')
     async def repair_bot(message: Message, state: FSMContext, dialog_manager: DialogManager):
         await message.answer(
