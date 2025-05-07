@@ -12,7 +12,7 @@ from main_menu.admin_boiler_dialog.boiler_dialog_states import AdminBoilerDialog
 admin_boiler_main_menu = Window(
     Format(
         text='Добро пожаловать в административную панель бота Boiler.\n\n'
-             'Непросмотренных фидбеков: {feedbacks_count}'
+             'Непросмотренных отзывов: {feedbacks_count}'
     ),
     Button(
         id='go_to_boiler', text=Format('Перейти в бота'), on_click=go_to_boiler_bot
@@ -20,7 +20,7 @@ admin_boiler_main_menu = Window(
     Row(
         SwitchTo(
             id='view_feedbacks', text=Format('Просмотр фидбеков'),
-            state=AdminBoilerDialog.admin_boiler_feedbacks
+            state=AdminBoilerDialog.admin_boiler_feedbacks_menu
         ),
         SwitchTo(
             id='view_problems', text=Format('Редактирование проблем'),
@@ -31,25 +31,43 @@ admin_boiler_main_menu = Window(
     state=AdminBoilerDialog.admin_boiler_main_menu
 )
 
-# admin_boiler_feedbacks = Window(
-#     ScrollingGroup(
-#         Column(
-#             Select(
-#                 text=Format("{item.name}"),
-#                 id="tech_prob_group",
-#                 items=TECHNICAL_PROBLEM_KEY,
-#                 item_id_getter=technical_problem_id_getter,
-#                 on_click=on_technical_problem_selected,
-#             ),
-#         ),
-#         width=1,
-#         height=5,
-#         id="scroll_tech_prob_menu",
-#         hide_on_single_page=True,
-#     ),
-#     getter=None,
-#     state=AdminBoilerDialog.admin_boiler_feedbacks
-# )
+admin_boiler_feedbacks = Window(
+    Format(
+        text='Непросмотренных отзывов: {feedbacks_count}'
+    ),
+    Row(
+        SwitchTo(
+            id='new_feedbacks', text=Format('Новые отзывы'), state=AdminBoilerDialog.admin_boiler_new_feedbacks,
+            when=F['feedbacks_count'] > 0
+        ),
+        SwitchTo(
+            id='old_feedbacks', text=Format('Просмотренные отзывы'), state=AdminBoilerDialog.admin_boiler_old_feedbacks,
+            when=F['feedbacks_count'] == 0
+        )
+    ),
+    getter=feedback_count_getter,
+    state=AdminBoilerDialog.admin_boiler_feedbacks_menu
+)
+
+admin_boiler_new_feedbacks = Window(
+    ScrollingGroup(
+        Column(
+            Select(
+                text=Format("{item.title}"),
+                id="shop_item_select",
+                items=SHOP_KEY,
+                item_id_getter=shop_item_id_getter,
+                on_click=on_shop_item_selected,
+            ),
+        ),
+        width=1,
+        height=5,
+        id="scroll_executors_menu",
+        when=F["dialog_data"],
+        hide_on_single_page=True,
+    ),
+    state=AdminBoilerDialog.admin_boiler_new_feedbacks
+)
 
 admin_boiler_dialog = Dialog(
     admin_boiler_main_menu
