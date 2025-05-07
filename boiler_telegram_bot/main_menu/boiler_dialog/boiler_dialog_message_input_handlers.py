@@ -5,6 +5,7 @@ from aiogram_dialog.widgets.text import Format
 from aiogram.types import Message
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
+from main_menu.boiler_dialog.utils import normalize_phone_number
 
 
 async def feedback_handler(
@@ -14,9 +15,9 @@ async def feedback_handler(
 ):
     user_answer = message.text
     if user_answer:
-        if len(user_answer) >= 1000:
+        if len(user_answer) > 1000:
             await message.answer(
-                text='Ответ должен быть менее 1000 символов!'
+                text='Ответ не может быть более 1000 символов!'
             )
         else:
             dialog_manager.dialog_data['user_answer'] = user_answer
@@ -36,9 +37,9 @@ async def technical_problem_handler(
 ):
     user_technical_problem = message.text
     if user_technical_problem:
-        if len(user_technical_problem) >= 1000:
+        if len(user_technical_problem) >= 100:
             await message.answer(
-                text='Тема проблемы должна быть менее 1000 символов!'
+                text='Тема проблемы не может быть более 100 символов!'
             )
         else:
             dialog_manager.dialog_data['technical_problem'] = user_technical_problem
@@ -49,3 +50,79 @@ async def technical_problem_handler(
         await message.answer(
             text='Кажется, вы отправили что-то другое... =/'
         )
+
+
+async def technical_problem_description_handler(
+        message: Message,
+        message_input: MessageInput,
+        dialog_manager: DialogManager,
+):
+    user_technical_problem_description = message.text
+    if user_technical_problem_description:
+        if len(user_technical_problem_description) >= 2000:
+            await message.answer(
+                text='Описание проблемы не может быть более 2000 символов!'
+            )
+        else:
+            dialog_manager.dialog_data['technical_problem_description'] = user_technical_problem_description
+            await dialog_manager.switch_to(
+                BoilerDialog.boiler_repair_video_or_photo
+            )
+    else:
+        await message.answer(
+            text='Кажется, вы отправили что-то другое... =/'
+        )
+
+
+async def phone_handler(
+        message: Message,
+        message_input: MessageInput,
+        dialog_manager: DialogManager,
+):
+    user_phone = message.text
+
+    validate_user_phone = await normalize_phone_number(
+        user_phone
+    )
+
+    if validate_user_phone:
+        dialog_manager.dialog_data['user_phone'] = validate_user_phone
+        await dialog_manager.switch_to(
+            BoilerDialog.boiler_repair_name
+        )
+
+    else:
+        await message.answer(
+            text='Некорректный формат номера. Используйте формат +7 или 8.'
+        )
+
+
+async def name_handler(
+        message: Message,
+        message_input: MessageInput,
+        dialog_manager: DialogManager,
+):
+    dialog_manager.dialog_data['user_name'] = message.text
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_repair_accept_request
+    )
+
+
+async def video_handler(
+        message: Message,
+        message_input: MessageInput,
+        dialog_manager: DialogManager,
+):
+    await message.answer(
+        text='Отправлено видео.'
+    )
+
+
+async def photo_handler(
+        message: Message,
+        message_input: MessageInput,
+        dialog_manager: DialogManager,
+):
+    await message.answer(
+        text='Отправлено фото.'
+    )
