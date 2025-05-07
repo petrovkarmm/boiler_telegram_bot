@@ -9,6 +9,10 @@ from main_menu.admin_boiler_dialog.admin_boiler_dialog_getter import feedback_co
 from main_menu.admin_boiler_dialog.admin_boiler_dialog_on_click_functions import go_to_boiler_bot
 from main_menu.admin_boiler_dialog.boiler_dialog_states import AdminBoilerDialog
 
+from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog_dataclasses import FEEDBACK_KEY
+from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog_getter import new_feedbacks_getter, \
+    feedback_id_getter
+
 admin_boiler_main_menu = Window(
     Format(
         text='Добро пожаловать в административную панель бота Boiler.\n\n'
@@ -55,8 +59,8 @@ admin_boiler_new_feedbacks = Window(
             Select(
                 text=Format("{item.title}"),
                 id="shop_item_select",
-                items=SHOP_KEY,
-                item_id_getter=shop_item_id_getter,
+                items=FEEDBACK_KEY,
+                item_id_getter=feedback_id_getter,
                 on_click=on_shop_item_selected,
             ),
         ),
@@ -66,7 +70,8 @@ admin_boiler_new_feedbacks = Window(
         when=F["dialog_data"],
         hide_on_single_page=True,
     ),
-    state=AdminBoilerDialog.admin_boiler_new_feedbacks
+    state=AdminBoilerDialog.admin_boiler_new_feedbacks,
+    getter=new_feedbacks_getter
 )
 
 admin_boiler_dialog = Dialog(
