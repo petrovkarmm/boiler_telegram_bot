@@ -1,3 +1,5 @@
+from typing import Any
+
 from aiogram.types import CallbackQuery
 from aiogram_dialog import DialogManager
 from aiogram_dialog.widgets.kbd import Button
@@ -12,3 +14,12 @@ async def go_to_boiler_bot(
         BoilerDialog.boiler_main_menu
     )
 
+
+
+async def on_new_feedback_selected(
+        callback: CallbackQuery,
+        widget: Any,
+        dialog_manager: DialogManager,
+        new_feedback_id: int,
+):
+    pass
