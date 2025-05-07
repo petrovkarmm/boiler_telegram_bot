@@ -6,7 +6,8 @@ from aiogram_dialog.widgets.kbd import Button, SwitchTo, Back, Group, Row, Scrol
 from aiogram_dialog.widgets.text import Format
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_message_input_handlers import feedback_handler, \
-    technical_problem_handler, technical_problem_description_handler, video_handler, phone_handler, name_handler
+    technical_problem_handler, technical_problem_description_handler, phone_handler, name_handler, \
+    content_handler
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_on_click_functions import send_feedback, \
     on_technical_problem_selected
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
@@ -80,7 +81,7 @@ boiler_repair_problem = Window(
     ScrollingGroup(
         Column(
             Select(
-                text=Format("<b>{item.name}</b>"),
+                text=Format("{item.name}"),
                 id="tech_prob_group",
                 items=TECHNICAL_PROBLEM_KEY,
                 item_id_getter=technical_problem_id_getter,
@@ -141,7 +142,7 @@ boiler_repair_boiler_video_or_photo = Window(
         )
     ),
     MessageInput(
-        video_handler
+        content_handler
     ),
     state=BoilerDialog.boiler_repair_video_or_photo,
     parse_mode=ParseMode.HTML,

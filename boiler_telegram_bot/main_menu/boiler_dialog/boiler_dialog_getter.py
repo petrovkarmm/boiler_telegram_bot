@@ -5,7 +5,7 @@ from main_menu.boiler_dialog.boiler_dialog_dataclasses import TechnicalProblemDi
 
 
 def technical_problem_id_getter(technical_problem: TechnicalProblemDialog) -> int:
-    return TechnicalProblemDialog.id
+    return technical_problem.id
 
 
 async def technical_problems_getter(**_kwargs):
