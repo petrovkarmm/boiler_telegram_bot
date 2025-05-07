@@ -11,15 +11,27 @@ from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import Boi
 
 boiler_main_menu = Window(
     Format(
-        text='Добро пожаловать в официального бота компании BOILER.'
+        text='Здравствуйте!\n\n'
+             'В какой раздел сервиса вы хотите обратиться?'
     ),
     Row(
         SwitchTo(
             id='repair', text=Format('Ремонт'), state=BoilerDialog.boiler_repair_menu
         ),
         SwitchTo(
-            id='text_back', text=Format('Обратная связь'), state=BoilerDialog.boiler_feedback
-        )
+            id='tech_cat', text=Format('Подбор техники'), state=BoilerDialog.boiler_technical_catalog
+        ),
+    ),
+    Row(
+        SwitchTo(
+            id='rent', text=Format('Аренда'), state=BoilerDialog.boiler_rent
+        ),
+        SwitchTo(
+            id='bar_training', text=Format('Обучение Бариста'), state=BoilerDialog.boiler_barista_training
+        ),
+    ),
+    SwitchTo(
+        id='text_back', text=Format('Обратная связь'), state=BoilerDialog.boiler_feedback
     ),
     state=BoilerDialog.boiler_main_menu
 )
