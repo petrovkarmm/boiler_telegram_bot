@@ -108,21 +108,14 @@ async def name_handler(
     )
 
 
-async def video_handler(
+async def content_handler(
         message: Message,
         message_input: MessageInput,
         dialog_manager: DialogManager,
 ):
-    await message.answer(
-        text='Отправлено видео.'
-    )
-
-
-async def photo_handler(
-        message: Message,
-        message_input: MessageInput,
-        dialog_manager: DialogManager,
-):
-    await message.answer(
-        text='Отправлено фото.'
-    )
+    if message.video:
+        await message.answer("Отправлено видео.")
+    elif message.photo:
+        await message.answer("Отправлено фото.")
+    else:
+        await message.answer("Пожалуйста, отправьте фото или видео, или нажмите 'Далее' для пропуска.")
