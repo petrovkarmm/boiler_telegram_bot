@@ -1,29 +1,29 @@
 import asyncio
-import os
-from pprint import pprint
 
 from aiogram import Bot, Dispatcher, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import ErrorEvent, Message, ReplyKeyboardRemove
 from aiogram_dialog import setup_dialogs, DialogManager
 from aiogram_dialog.api.exceptions import UnknownIntent, OutdatedIntent
-from dotenv import load_dotenv, find_dotenv
 
 from boiler_telegram_bot.keyboards import repair_bot_keyboard
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_router import boiler_dialog_router
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from boiler_telegram_bot.main_menu.main_menu_router import main_menu_router
-
-load_dotenv(find_dotenv())
-
-token = os.getenv("BOT_TOKEN")
+from db_configuration.crud import add_user_if_not_exists
+from settings import bot_token, DEBUG
 
 
 async def bot_start():
     # main configuration
-    bot = Bot(token=token)
-    dp = Dispatcher()
-    setup_dialogs(dp)
+    if DEBUG:
+        bot = Bot(token=bot_token)
+        dp = Dispatcher()
+        setup_dialogs(dp)
+    else:
+        bot = Bot(token=bot_token)
+        dp = Dispatcher()
+        setup_dialogs(dp)
 
     @dp.message(F.text == '🏪 Перезапустить бота')
     async def repair_bot(message: Message, state: FSMContext, dialog_manager: DialogManager):
@@ -58,7 +58,7 @@ async def bot_start():
                 print(exception)
 
         else:
-            return print(f"{event}")
+            return print(f"{event.exception}")
 
     # error handler
     dp.errors.register(error_unknown_intent_handler)
