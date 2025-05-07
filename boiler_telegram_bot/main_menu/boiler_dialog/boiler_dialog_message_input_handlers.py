@@ -22,3 +22,20 @@ async def feedback_handler(
         await message.answer(
             text='Кажется, вы отправили что-то другое... =/'
         )
+
+
+async def technical_problem_handler(
+        message: Message,
+        message_input: MessageInput,
+        dialog_manager: DialogManager,
+):
+    user_technical_problem = message.text
+    if user_technical_problem:
+        dialog_manager.dialog_data['technical_problem'] = user_technical_problem
+        await dialog_manager.switch_to(
+            BoilerDialog.boiler_repair_description
+        )
+    else:
+        await message.answer(
+            text='Кажется, вы отправили что-то другое... =/'
+        )
