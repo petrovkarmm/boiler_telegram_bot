@@ -26,7 +26,7 @@ class TechnicalProblem:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM technical_problems")
+        cursor.execute("SELECT * FROM technical_problem")
         results = cursor.fetchall()
 
         conn.close()
@@ -38,7 +38,7 @@ class TechnicalProblem:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM technical_problems WHERE hidden = 0")
+        cursor.execute("SELECT * FROM technical_problem WHERE hidden = 0")
         results = cursor.fetchall()
 
         conn.close()
@@ -50,7 +50,7 @@ class TechnicalProblem:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM technical_problems WHERE id = ?", (technical_problem_id,))
+        cursor.execute("SELECT * FROM technical_problem WHERE id = ?", (technical_problem_id,))
         result = cursor.fetchone()
 
         conn.close()
@@ -61,7 +61,20 @@ class TechnicalProblem:
         conn = get_connection()
         cursor = conn.cursor()
 
-        cursor.execute("DELETE FROM technical_problems WHERE id = ?", (technical_problem_id,))
+        cursor.execute("DELETE FROM technical_problem WHERE id = ?", (technical_problem_id,))
+        conn.commit()
+        conn.close()
+
+    @staticmethod
+    def add_technical_problem(name: str):
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+        INSERT INTO technical_problem (name, hidden)
+        VALUES (?, ?)
+        """, (name, 0))
+
         conn.commit()
         conn.close()
 
