@@ -125,3 +125,13 @@ class Feedback:
         cursor.execute("UPDATE feedback SET viewed = 1 WHERE id = ?", (feedback_id,))
         conn.commit()
         conn.close()
+
+    @staticmethod
+    def get_feedback_by_id(feedback_id: int):
+        conn = get_connection()
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM feedback WHERE id = ?",
+                       (feedback_id, ))
+        conn.commit()
+        conn.close()
