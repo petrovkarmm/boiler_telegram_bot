@@ -6,7 +6,7 @@ def create_tables():
     cursor = conn.cursor()
 
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS technical_problems (
+    CREATE TABLE IF NOT EXISTS technical_problem (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         hidden BOOLEAN DEFAULT 1,
