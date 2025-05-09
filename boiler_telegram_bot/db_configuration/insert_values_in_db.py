@@ -10,17 +10,17 @@ if __name__ == '__main__':
     feedbacks = [
         {
             'tg_user_id': 123456,
-            'user_firstname': 'Иван',
-            'user_lastname': 'Иванов',
-            'user_username': 'ivivanov',
-            'feedback_text': 'Отличный сервис, спасибо!'
+            'firstname': 'Иван',
+            'lastname': 'Иванов',
+            'username': '@ivivanov',
+            'text': 'Отличный сервис, спасибо!'
         },
         {
             'tg_user_id': 789012,
-            'user_firstname': 'Ольга',
-            'user_lastname': 'Петрова',
-            'user_username': 'olgapet',
-            'feedback_text': 'Очень долго ждали мастера.'
+            'firstname': 'Ольга',
+            'lastname': 'Петрова',
+            'username': '@olgapet',
+            'text': 'Очень долго ждали мастера.'
         }
     ]
 
