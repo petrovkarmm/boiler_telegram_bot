@@ -5,6 +5,7 @@ from aiogram_dialog import DialogManager
 from aiogram_dialog.widgets.kbd import Button
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
+from main_menu.admin_boiler_dialog.boiler_dialog_states import AdminBoilerDialog
 
 
 async def go_to_boiler_bot(
@@ -15,11 +16,32 @@ async def go_to_boiler_bot(
     )
 
 
+async def go_to_new_feedbacks(
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+):
+    dialog_manager.dialog_data['feedback_menu'] = 'new'
+    await dialog_manager.switch_to(
+        AdminBoilerDialog.admin_boiler_new_feedbacks
+    )
 
-async def on_new_feedback_selected(
+
+async def go_to_old_feedbacks(
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+):
+    dialog_manager.dialog_data['feedback_menu'] = 'old'
+    await dialog_manager.switch_to(
+        AdminBoilerDialog.admin_boiler_old_feedbacks
+    )
+
+
+async def on_feedback_selected(
         callback: CallbackQuery,
         widget: Any,
         dialog_manager: DialogManager,
-        new_feedback_id: int,
+        feedback_id: int,
 ):
-    pass
+    dialog_manager.dialog_data['feedback_id'] = feedback_id
+
+    await dialog_manager.switch_to(
+        AdminBoilerDialog.admin_boiler_feedback_view
+    )
