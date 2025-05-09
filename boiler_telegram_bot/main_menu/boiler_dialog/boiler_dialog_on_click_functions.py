@@ -17,9 +17,20 @@ async def send_feedback(
     user_answer = dialog_manager.dialog_data.get('user_answer', 'ERROR')
 
     tg_user_id = callback.from_user.id
-    user_username = '@' + callback.from_user.username
+    user_username = callback.from_user.username
     user_first_name = callback.from_user.first_name
     user_last_name = callback.from_user.last_name
+
+    if user_username:
+        user_username = '@' + user_username
+    else:
+        user_username = 'Username отсутствует'
+
+    if not user_first_name:
+        user_first_name = 'Имя отсутствует'
+
+    if not user_last_name:
+        user_last_name = 'Фамилия отсутствует'
 
     Feedback.add_feedback(
         tg_user_id=tg_user_id,
