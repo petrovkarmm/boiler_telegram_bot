@@ -11,4 +11,4 @@ class FeedbackDialog:
 
     @staticmethod
     def formatted_feedback_text(feedback_text: str):
-        return feedback_text[:10]
+        return f'{feedback_text[:15]}...'
