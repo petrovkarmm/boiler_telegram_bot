@@ -131,7 +131,10 @@ class Feedback:
         conn = get_connection()
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
+
         cursor.execute("SELECT * FROM feedback WHERE id = ?",
                        (feedback_id, ))
-        conn.commit()
+        result = cursor.fetchone()
+
         conn.close()
+        return result
