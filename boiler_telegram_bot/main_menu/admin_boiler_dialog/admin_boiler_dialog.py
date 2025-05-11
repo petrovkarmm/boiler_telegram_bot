@@ -7,7 +7,7 @@ from aiogram_dialog.widgets.text import Format
 
 from main_menu.admin_boiler_dialog.admin_boiler_dialog_getter import feedbacks_count_getter, feedback_getter
 from main_menu.admin_boiler_dialog.admin_boiler_dialog_on_click_functions import go_to_boiler_bot, \
-    on_feedback_selected, go_to_new_feedbacks, go_to_old_feedbacks
+    on_feedback_selected, go_to_new_feedbacks, go_to_old_feedbacks, mark_feedback
 from main_menu.admin_boiler_dialog.boiler_dialog_states import AdminBoilerDialog
 
 from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog_dataclasses import FEEDBACK_KEY
@@ -17,10 +17,7 @@ from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog_gette
 admin_boiler_main_menu = Window(
     Format(
         text='Добро пожаловать в административную панель бота Boiler.\n\n'
-             'Непросмотренных отзывов: {feedbacks_count}'
-    ),
-    Button(
-        id='go_to_boiler', text=Format('Перейти в бота'), on_click=go_to_boiler_bot
+             'Непросмотренных отзывов: {new_feedbacks_count}'
     ),
     Row(
         SwitchTo(
@@ -32,22 +29,25 @@ admin_boiler_main_menu = Window(
             state=AdminBoilerDialog.admin_boiler_technical_problems
         ),
     ),
+    Button(
+        id='go_to_boiler', text=Format('Перейти в бота'), on_click=go_to_boiler_bot
+    ),
     getter=feedbacks_count_getter,
     state=AdminBoilerDialog.admin_boiler_main_menu
 )
 
 admin_boiler_feedbacks = Window(
     Format(
-        text='Непросмотренных отзывов: {feedbacks_count}'
+        text='Непросмотренных отзывов: {new_feedbacks_count}',
     ),
     Row(
         Button(
             id='new_feedbacks', text=Format('Новые отзывы'), on_click=go_to_new_feedbacks,
-            when=F['feedbacks_count'] > 0
+            when=F['new_feedbacks_count'] > 0
         ),
         Button(
             id='old_feedbacks', text=Format('Просмотренные отзывы'), on_click=go_to_old_feedbacks,
-            when=F['feedbacks_count'] == 0
+            when=F['old_feedbacks_count'] > 0
         )
     ),
     Row(
@@ -59,9 +59,14 @@ admin_boiler_feedbacks = Window(
     state=AdminBoilerDialog.admin_boiler_feedbacks_menu
 )
 
-admin_boiler_new_feedbacks = Window(
+admin_boiler_feedbacks_list = Window(
     Format(
-        text='Выберите фидбек для прочтения:'
+        text='Непросмотренные отзывы отсутствуют.',
+        when=F['new_feedbacks_count'] == 0 and F['dialog_data']['feedback_menu'] == 'new'
+    ),
+    Format(
+        text='Выберите фидбек для прочтения:',
+        when=F['new_feedbacks_count'] > 0
     ),
     ScrollingGroup(
         Column(
@@ -77,6 +82,7 @@ admin_boiler_new_feedbacks = Window(
         height=5,
         id="scroll_new_fb",
         hide_on_single_page=True,
+        when=F['new_feedbacks_count'] > 0
     ),
     Row(
         SwitchTo(
@@ -86,7 +92,7 @@ admin_boiler_new_feedbacks = Window(
             id='back_to_menu', text=Format('В меню'), state=AdminBoilerDialog.admin_boiler_main_menu
         )
     ),
-    state=AdminBoilerDialog.admin_boiler_new_feedbacks,
+    state=AdminBoilerDialog.admin_boiler_feedbacks_list,
     getter=feedbacks_getter
 )
 
@@ -98,9 +104,13 @@ admin_boiler_feedback_view = Window(
              'Телеграм ID: {tg_user_id}\n'
              '{user_username} | {user_lastname} | {user_firstname}'
     ),
+    Button(
+        id='mark_feedback', text=Format('Отметить прочтённым'), on_click=mark_feedback,
+        when=F['dialog_data']['feedback_menu'] == 'new'
+    ),
     Row(
         SwitchTo(
-            id='back_to_new_fb_menu', text=Format('Назад'), state=AdminBoilerDialog.admin_boiler_new_feedbacks
+            id='back_to_new_fb_menu', text=Format('Назад'), state=AdminBoilerDialog.admin_boiler_feedbacks_list
         ),
         SwitchTo(
             id='back_to_menu', text=Format('В меню'), state=AdminBoilerDialog.admin_boiler_main_menu
@@ -114,7 +124,7 @@ admin_boiler_feedback_view = Window(
 admin_boiler_dialog = Dialog(
     admin_boiler_main_menu,
     admin_boiler_feedbacks,
-    admin_boiler_new_feedbacks,
+    admin_boiler_feedbacks_list,
 
     admin_boiler_feedback_view
 )

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from aiogram_dialog import DialogManager
 
 from db_configuration.crud import Feedback
@@ -5,10 +7,15 @@ from main_menu.admin_boiler_dialog.admin_boiler_dialog_dataclasses import Feedba
 
 
 async def feedbacks_count_getter(dialog_manager: DialogManager, **_kwargs):
-    feedbacks = Feedback.get_all_unviewed_feedback()
+    new_feedbacks = Feedback.get_all_unviewed_feedback()
+    old_feedbacks = Feedback.get_all_viewed_feedback()
+
+    new_feedbacks_count = len(new_feedbacks)
+    old_feedbacks_count = len(old_feedbacks)
 
     return {
-        'feedbacks_count': len(feedbacks)
+        'new_feedbacks_count': new_feedbacks_count,
+        'old_feedbacks_count': old_feedbacks_count
     }
 
 
@@ -24,13 +31,16 @@ async def feedback_getter(dialog_manager: DialogManager, **_kwargs):
     feedback_text = feedback['feedback_text']
     created = feedback['created']
 
+    created_dt = datetime.strptime(created, "%Y-%m-%d %H:%M:%S")
+    created_formatted = created_dt.strftime("%d.%m.%Y %H:%M:%S")
+
     return {
         "tg_user_id": tg_user_id,
         "user_firstname": user_firstname,
         "user_lastname": user_lastname,
         "user_username": user_username,
         "feedback_text": feedback_text,
-        "created": created
+        "created": created_formatted
     }
 
 
@@ -43,7 +53,8 @@ async def feedbacks_getter(dialog_manager: DialogManager, **_kwargs):
 
     if menu_status == 'new':
 
-        new_feedbacks = Feedback.get_all_unviewed_feedback()
+        feedbacks = Feedback.get_all_unviewed_feedback()
+        feedbacks_count = len(feedbacks)
 
         return {
             FEEDBACK_KEY: [
@@ -53,12 +64,25 @@ async def feedbacks_getter(dialog_manager: DialogManager, **_kwargs):
                         new_feedback["feedback_text"]
                     )
                 )
-                for new_feedback in new_feedbacks
-            ]
+                for new_feedback in feedbacks
+            ],
+            'new_feedbacks_count': feedbacks_count
         }
 
     else:
 
-        # TODO после добавление окна old feedbacks
+        feedbacks = Feedback.get_all_viewed_feedback()
+        feedbacks_count = len(feedbacks)
 
-        pass
+        return {
+            FEEDBACK_KEY: [
+                FeedbackDialog(
+                    new_feedback["id"],
+                    FeedbackDialog.formatted_feedback_text(
+                        new_feedback["feedback_text"]
+                    )
+                )
+                for new_feedback in feedbacks
+            ],
+            'new_feedbacks_count': feedbacks_count
+        }
