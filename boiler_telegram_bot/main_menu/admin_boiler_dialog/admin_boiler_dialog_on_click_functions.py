@@ -48,6 +48,17 @@ async def on_feedback_selected(
     )
 
 
+async def on_technical_problem_selected(
+        callback: CallbackQuery,
+        widget: Any,
+        dialog_manager: DialogManager,
+        technical_problem_id: int,
+):
+    await callback.answer(
+        text=str(technical_problem_id)
+    )
+
+
 async def mark_feedback(
         callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ):
