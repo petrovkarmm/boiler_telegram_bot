@@ -20,7 +20,7 @@ async def confirm_sending_call_technician(
     technical_problem = dialog_manager.dialog_data['technical_problem']
     technical_problem_description = dialog_manager.dialog_data['technical_problem_description']
     user_phone = dialog_manager.dialog_data['user_phone']
-    media_info = dialog_manager.dialog_data.get('media_info', 'Медиа отсутствует.')
+    media_info = 'Медиа отсутствует.'
 
     #  TODO интеграция с CRM системой.
 
@@ -40,6 +40,8 @@ async def confirm_sending_call_technician(
         text="✅ <b>Заявка успешно принята!</b>\n📞 Ожидайте звонка.",
         parse_mode=ParseMode.HTML
     )
+
+    dialog_manager.show_mode = ShowMode.DELETE_AND_SEND
 
     await dialog_manager.switch_to(
         BoilerDialog.boiler_main_menu

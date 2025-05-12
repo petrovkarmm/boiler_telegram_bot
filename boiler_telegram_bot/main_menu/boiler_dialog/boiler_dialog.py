@@ -9,7 +9,7 @@ from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_message_input_han
     technical_problem_handler, technical_problem_description_handler, phone_handler, name_handler, \
     content_handler
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_on_click_functions import send_feedback, \
-    on_technical_problem_selected
+    on_technical_problem_selected, confirm_sending_call_technician
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_PROBLEM_KEY
 from main_menu.boiler_dialog.boiler_dialog_getter import technical_problem_id_getter, technical_problems_getter
@@ -221,13 +221,12 @@ boiler_repair_accept_request = Window(
             '✅ <b>{dialog_data[user_name]}</b>, пожалуйста, проверьте все данные перед отправкой заявки:\n\n'
             '📌 <b>Тема проблемы:</b> <i>{dialog_data[technical_problem]}</i>\n\n'
             '📝 <b>Описание:</b> <i>{dialog_data[technical_problem_description]}</i>\n\n'
-            '📞 <b>Телефон:</b> <i>{dialog_data[user_phone]}</i>\n\n'
-            '{dialog_data.get("media_info", "")}'
+            '📞 <b>Телефон:</b> <i>{dialog_data[user_phone]}</i>'
             '\n\nЕсли всё верно — нажмите <b>«Отправить»</b>.'
         )
     ),
     Button(
-        id='accept_request', text=Format('📤 Отправить'), on_click=None
+        id='accept_request', text=Format('📤 Отправить'), on_click=confirm_sending_call_technician
     ),
     Row(
         SwitchTo(
