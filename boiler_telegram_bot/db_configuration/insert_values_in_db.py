@@ -2,9 +2,9 @@ from db_configuration.crud import TechnicalProblem, Feedback
 
 if __name__ == '__main__':
     problems = [
-        'Не работает кофемашина',
-        'Не работает кофемолка',
-        'Сбились настройки'
+        ['Не работает кофемашина', 0],
+        ['Не работает кофемолка', 1],
+        ['Сбились настройки', 1]
     ]
 
     feedbacks = [
@@ -25,7 +25,7 @@ if __name__ == '__main__':
     ]
 
     for problem in problems:
-        TechnicalProblem.add_technical_problem(problem)
+        TechnicalProblem.add_technical_problem(name=problem[0], hidden=problem[1])
 
     for fb in feedbacks:
         Feedback.add_feedback(**fb)
