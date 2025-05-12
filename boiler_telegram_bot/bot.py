@@ -26,7 +26,7 @@ async def bot_start():
         dp = Dispatcher()
         setup_dialogs(dp)
 
-    @dp.message(F.text == 'admin_test')
+    @dp.message(F.text == 'admin')
     async def admin_panel_start(message: Message, state: FSMContext, dialog_manager: DialogManager):
         await dialog_manager.start(
             AdminBoilerDialog.admin_boiler_main_menu
