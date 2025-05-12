@@ -123,22 +123,6 @@ admin_boiler_feedback_view = Window(
     parse_mode=ParseMode.HTML
 )
 
-technical_problem_view = Window(
-    Format(
-        text='Test'
-    ),
-    Row(
-        SwitchTo(
-            id='back_to_new_fb_menu', text=Format('Назад'), state=AdminBoilerDialog.admin_boiler_technical_problems_list
-        ),
-        SwitchTo(
-            id='back_to_menu', text=Format('В меню'), state=AdminBoilerDialog.admin_boiler_main_menu
-        )
-    ),
-    getter=technical_problem_getter,
-    state=AdminBoilerDialog.admin_boiler_technical_problem_view
-)
-
 admin_boiler_technical_problems_list = Window(
     Format(
         text='Выберите проблему для редактирования:'
@@ -165,6 +149,34 @@ admin_boiler_technical_problems_list = Window(
     state=AdminBoilerDialog.admin_boiler_technical_problems_list
 )
 
+admin_boiler_technical_problem_view = Window(
+    Format(
+        text='{technical_problem_name}\n\n'
+             'Статус: {technical_problem_hidden}\n\n'
+             'Дата создания: {technical_problem_created}\n'
+             'Дата обновления: {technical_problem_updated}'
+    ),
+    Button(
+        id='edit_name', text=Format('Редактировать'), on_click=None
+    ),
+    Button(
+        id='hide_problem', text=Format('Скрыть'), on_click=None, when=F['technical_problem_hidden'] == 'Отображается'
+    ),
+    Button(
+        id='open_problem', text=Format('Отобразить'), on_click=None, when=F['technical_problem_hidden'] == 'Скрыто'
+    ),
+    Row(
+        SwitchTo(
+            id='back_to_new_fb_menu', text=Format('Назад'), state=AdminBoilerDialog.admin_boiler_technical_problems_list
+        ),
+        SwitchTo(
+            id='back_to_menu', text=Format('В меню'), state=AdminBoilerDialog.admin_boiler_main_menu
+        )
+    ),
+    getter=technical_problem_getter,
+    state=AdminBoilerDialog.admin_boiler_technical_problem_view
+)
+
 admin_boiler_dialog = Dialog(
     admin_boiler_main_menu,
 
@@ -173,5 +185,5 @@ admin_boiler_dialog = Dialog(
     admin_boiler_feedback_view,
 
     admin_boiler_technical_problems_list,
-    technical_problem_view
+    admin_boiler_technical_problem_view
 )
