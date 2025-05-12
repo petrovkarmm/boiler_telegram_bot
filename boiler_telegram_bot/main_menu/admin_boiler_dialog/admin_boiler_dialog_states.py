@@ -10,3 +10,4 @@ class AdminBoilerDialog(StatesGroup):
 
     admin_boiler_technical_problems_list = State()
     admin_boiler_technical_problem_view = State()
+    admin_boiler_technical_problem_create_new = State()
