@@ -66,14 +66,14 @@ class TechnicalProblem:
         conn.close()
 
     @staticmethod
-    def add_technical_problem(name: str):
+    def add_technical_problem(name: str, hidden: int):
         conn = get_connection()
         cursor = conn.cursor()
 
         cursor.execute("""
         INSERT INTO technical_problem (name, hidden)
         VALUES (?, ?)
-        """, (name, 0))
+        """, (name, hidden))
 
         conn.commit()
         conn.close()
