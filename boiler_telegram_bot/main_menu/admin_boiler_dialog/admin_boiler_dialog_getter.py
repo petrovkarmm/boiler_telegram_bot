@@ -2,8 +2,10 @@ from datetime import datetime
 
 from aiogram_dialog import DialogManager
 
-from db_configuration.crud import Feedback
-from main_menu.admin_boiler_dialog.admin_boiler_dialog_dataclasses import FeedbackDialog, FEEDBACK_KEY
+from db_configuration.crud import Feedback, TechnicalProblem
+from main_menu.admin_boiler_dialog.admin_boiler_dialog_dataclasses import FeedbackDialog, FEEDBACK_KEY, \
+    TECHNICAL_PROBLEM_KEY
+from main_menu.boiler_dialog.boiler_dialog_dataclasses import TechnicalProblemDialog
 
 
 async def feedbacks_count_getter(dialog_manager: DialogManager, **_kwargs):
@@ -48,6 +50,10 @@ def feedback_id_getter(feedback: FeedbackDialog) -> int:
     return feedback.id
 
 
+def technical_problem_id_getter(technical_problem: TechnicalProblemDialog) -> int:
+    return technical_problem.id
+
+
 async def feedbacks_getter(dialog_manager: DialogManager, **_kwargs):
     menu_status = dialog_manager.dialog_data['feedback_menu']
 
@@ -86,3 +92,17 @@ async def feedbacks_getter(dialog_manager: DialogManager, **_kwargs):
             ],
             'new_feedbacks_count': feedbacks_count
         }
+
+
+async def technical_problems_getter(dialog_manager: DialogManager, **_kwargs):
+    technical_problems = TechnicalProblem.get_all_technical_problem()
+
+    return {
+        TECHNICAL_PROBLEM_KEY: [
+            TechnicalProblemDialog(
+                technical_problem["id"],
+                technical_problem["name"]
+            )
+            for technical_problem in technical_problems
+        ]
+    }
