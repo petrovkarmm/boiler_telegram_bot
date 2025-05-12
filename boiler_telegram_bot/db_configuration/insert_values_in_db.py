@@ -1,4 +1,5 @@
-from db_configuration.crud import TechnicalProblem, Feedback
+from db_configuration.models.technical_problem import TechnicalProblem
+from db_configuration.models.feedback import Feedback
 
 if __name__ == '__main__':
     problems = [
