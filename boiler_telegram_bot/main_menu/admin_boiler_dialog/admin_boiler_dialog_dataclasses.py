@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-FEEDBACK_KEY = "feedback"
-TECHNICAL_PROBLEM_KEY = "technical_problem"
+ADMIN_FEEDBACK_KEY = "feedback"
+ADMIN_TECHNICAL_PROBLEM_KEY = "technical_problem"
 
 
 @dataclass
-class FeedbackDialog:
+class AdminFeedbackDialog:
     id: int
     feedback_text: str
 
@@ -16,6 +16,13 @@ class FeedbackDialog:
 
 
 @dataclass
-class TechnicalProblemDialog:
+class AdminTechnicalProblemDialog:
     id: int
     name: str
+
+    @staticmethod
+    def formatted_hidden_problems(name: str, hidden: int):
+        if hidden == 1:
+            return f'🔓 {name} 🔓'
+        else:
+            return f'{name}'
