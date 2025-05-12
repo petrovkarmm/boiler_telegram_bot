@@ -227,7 +227,7 @@ boiler_repair_accept_request = Window(
         )
     ),
     Button(
-        id='accept_request', text=Format('Отправить'), on_click=None
+        id='accept_request', text=Format('📤 Отправить'), on_click=None
     ),
     Row(
         SwitchTo(
