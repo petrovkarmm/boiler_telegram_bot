@@ -6,7 +6,7 @@ from aiogram_dialog.widgets.kbd import Button
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from db_configuration.crud import Feedback
-from main_menu.admin_boiler_dialog.boiler_dialog_states import AdminBoilerDialog
+from main_menu.admin_boiler_dialog.admin_boiler_dialog_states import AdminBoilerDialog
 
 
 async def go_to_boiler_bot(
@@ -54,8 +54,10 @@ async def on_technical_problem_selected(
         dialog_manager: DialogManager,
         technical_problem_id: int,
 ):
-    await callback.answer(
-        text=str(technical_problem_id)
+    dialog_manager.dialog_data['technical_problem_id'] = technical_problem_id
+
+    await dialog_manager.switch_to(
+        AdminBoilerDialog.admin_boiler_technical_problem_view
     )
 
 
