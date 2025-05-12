@@ -204,7 +204,7 @@ admin_boiler_technical_problem_create = Window(
     ),
     Row(
         SwitchTo(
-            id='back_to_new_fb_menu', text=Format('🔙 Назад'), state=AdminBoilerDialog.admin_boiler_technical_problem_edit
+            id='back_to_new_fb_menu', text=Format('🔙 Назад'), state=AdminBoilerDialog.admin_boiler_feedbacks_list
         ),
         SwitchTo(
             id='back_to_menu', text=Format('🏠 В меню'), state=AdminBoilerDialog.admin_boiler_main_menu
