@@ -8,7 +8,8 @@ from aiogram_dialog.widgets.text import Format
 from main_menu.admin_boiler_dialog.admin_boiler_dialog_getter import feedbacks_count_getter, feedback_getter, \
     technical_problem_id_getter, technical_problems_getter, technical_problem_getter
 from main_menu.admin_boiler_dialog.admin_boiler_dialog_on_click_functions import go_to_boiler_bot, \
-    on_feedback_selected, go_to_new_feedbacks, go_to_old_feedbacks, mark_feedback, on_technical_problem_selected
+    on_feedback_selected, go_to_new_feedbacks, go_to_old_feedbacks, mark_feedback, on_technical_problem_selected, \
+    toggle_technical_problem_hidden_status
 from main_menu.admin_boiler_dialog.admin_boiler_dialog_states import AdminBoilerDialog
 
 from main_menu.admin_boiler_dialog.admin_boiler_dialog_dataclasses import ADMIN_FEEDBACK_KEY, \
@@ -151,19 +152,21 @@ admin_boiler_technical_problems_list = Window(
 
 admin_boiler_technical_problem_view = Window(
     Format(
-        text='{technical_problem_name}\n\n'
+        text='<b>{technical_problem_name}</b>\n\n'
              'Статус: {technical_problem_hidden}\n\n'
              'Дата создания: {technical_problem_created}\n'
              'Дата обновления: {technical_problem_updated}'
     ),
     Button(
-        id='edit_name', text=Format('Редактировать'), on_click=None
+        id='edit_name', text=Format('Редактировать'), on_click=None # TODO редактирование
     ),
     Button(
-        id='hide_problem', text=Format('Скрыть'), on_click=None, when=F['technical_problem_hidden'] == 'Отображается'
+        id='hide_problem', text=Format('Скрыть'), on_click=toggle_technical_problem_hidden_status,
+        when=F['technical_problem_hidden'] == 'Отображается'
     ),
     Button(
-        id='open_problem', text=Format('Отобразить'), on_click=None, when=F['technical_problem_hidden'] == 'Скрыто'
+        id='open_problem', text=Format('Отобразить'), on_click=toggle_technical_problem_hidden_status,
+        when=F['technical_problem_hidden'] == 'Скрыт'
     ),
     Row(
         SwitchTo(
@@ -174,7 +177,8 @@ admin_boiler_technical_problem_view = Window(
         )
     ),
     getter=technical_problem_getter,
-    state=AdminBoilerDialog.admin_boiler_technical_problem_view
+    state=AdminBoilerDialog.admin_boiler_technical_problem_view,
+    parse_mode=ParseMode.HTML
 )
 
 admin_boiler_dialog = Dialog(

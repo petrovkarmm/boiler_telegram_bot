@@ -32,11 +32,17 @@ async def technical_problem_getter(dialog_manager: DialogManager, **_kwargs):
     technical_problem_created = technical_problem['created']
     technical_problem_updated = technical_problem['updated']
 
+    technical_problem_created_dt = datetime.strptime(technical_problem_created, "%Y-%m-%d %H:%M:%S")
+    technical_problem_created_formatted = technical_problem_created_dt.strftime("%d.%m.%Y %H:%M:%S")
+
+    technical_problem_updated_dt = datetime.strptime(technical_problem_updated, "%Y-%m-%d %H:%M:%S")
+    technical_problem_updated_formatted = technical_problem_updated_dt.strftime("%d.%m.%Y %H:%M:%S")
+
     return {
         'technical_problem_name': technical_problem_name,
         'technical_problem_hidden': technical_problem_hidden,
-        'technical_problem_created': technical_problem_created,
-        'technical_problem_updated': technical_problem_updated
+        'technical_problem_created': technical_problem_created_formatted,
+        'technical_problem_updated': technical_problem_updated_formatted
     }
 
 
