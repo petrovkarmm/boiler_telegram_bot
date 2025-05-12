@@ -2,6 +2,7 @@ import asyncio
 import random
 from typing import Any
 
+from aiogram.enums import ParseMode
 from aiogram.types import CallbackQuery
 from aiogram_dialog import DialogManager, BaseDialogManager, ShowMode
 from aiogram_dialog.widgets.kbd import Button, ManagedCounter
@@ -42,7 +43,12 @@ async def send_feedback(
     )
 
     await callback.message.answer(
-        text='Спасибо, что помогаете нам стать лучше!'
+        text=(
+            "🙏 <b>Спасибо, что помогаете нам стать лучше!</b>\n\n"
+            "Ваш отзыв очень важен для нас 💬\n"
+            "Мы ценим ваше время и поддержку! 🌟"
+        ),
+        parse_mode=ParseMode.HTML
     )
 
     dialog_manager.show_mode = ShowMode.DELETE_AND_SEND
@@ -69,8 +75,12 @@ async def on_technical_problem_selected(
         )
     else:
         await callback.message.answer(
-            text='Кажется, что-то пошло не так. . .\n\n'
-                 'Попробуйте ещё раз.'
+            text=(
+                "❌ <b>Кажется, что-то пошло не так...</b>\n\n"
+                "Пожалуйста, попробуйте ещё раз 🔄\n"
+                "Если проблема не исчезнет, сообщите нам! 💬"
+            ),
+            parse_mode=ParseMode.HTML
         )
         await dialog_manager.switch_to(
             BoilerDialog.boiler_main_menu

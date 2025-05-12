@@ -96,7 +96,7 @@ admin_boiler_feedbacks_list = Window(
     ),
     Row(
         SwitchTo(
-            id='back_to_fb_menu', text=Format('🔙 Назад'), state=AdminBoilerDialog.admin_boiler_feedbacks_menu
+            id='back_to_fb_menu', text=Format('⬅️ Назад'), state=AdminBoilerDialog.admin_boiler_feedbacks_menu
         ),
         SwitchTo(
             id='back_to_menu', text=Format('🏠 В меню'), state=AdminBoilerDialog.admin_boiler_main_menu
@@ -123,7 +123,7 @@ admin_boiler_feedback_view = Window(
     ),
     Row(
         SwitchTo(
-            id='back_to_new_fb_menu', text=Format('🔙 Назад'), state=AdminBoilerDialog.admin_boiler_feedbacks_list
+            id='back_to_new_fb_menu', text=Format('⬅️ Назад'), state=AdminBoilerDialog.admin_boiler_feedbacks_list
         ),
         SwitchTo(
             id='back_to_menu', text=Format('🏠 В меню'), state=AdminBoilerDialog.admin_boiler_main_menu
@@ -187,7 +187,7 @@ admin_boiler_technical_problem_view = Window(
     ),
     Row(
         SwitchTo(
-            id='back_to_new_fb_menu', text=Format('🔙 Назад'), state=AdminBoilerDialog.admin_boiler_technical_problems_list
+            id='back_to_new_fb_menu', text=Format('⬅️ Назад'), state=AdminBoilerDialog.admin_boiler_technical_problems_list
         ),
         SwitchTo(
             id='back_to_menu', text=Format('🏠 В меню'), state=AdminBoilerDialog.admin_boiler_main_menu
@@ -204,7 +204,7 @@ admin_boiler_technical_problem_create = Window(
     ),
     Row(
         SwitchTo(
-            id='back_to_new_fb_menu', text=Format('🔙 Назад'), state=AdminBoilerDialog.admin_boiler_feedbacks_list
+            id='back_to_new_fb_menu', text=Format('⬅️ Назад'), state=AdminBoilerDialog.admin_boiler_feedbacks_list
         ),
         SwitchTo(
             id='back_to_menu', text=Format('🏠 В меню'), state=AdminBoilerDialog.admin_boiler_main_menu

@@ -1,3 +1,4 @@
+from aiogram.enums import ParseMode
 from aiogram_dialog import Window, DialogManager, ShowMode
 from aiogram_dialog.widgets.input import MessageInput
 from aiogram_dialog.widgets.kbd import SwitchTo
@@ -17,7 +18,11 @@ async def feedback_handler(
     if user_answer:
         if len(user_answer) > 1000:
             await message.answer(
-                text='Ответ не может быть более 1000 символов!'
+                text=(
+                    "⚠️ <b>Ответ слишком длинный!</b>\n\n"
+                    "Максимальная длина — <b>1000 символов</b>.\n"
+                    "Пожалуйста, сократите текст и попробуйте ещё раз ✂️"
+                ),
             )
         else:
             dialog_manager.dialog_data['user_answer'] = user_answer
@@ -26,7 +31,7 @@ async def feedback_handler(
             )
     else:
         await message.answer(
-            text='Кажется, вы отправили что-то другое... =/'
+            text='🤔 Похоже, вы отправили что-то не то...'
         )
 
 
@@ -39,7 +44,11 @@ async def technical_problem_handler(
     if user_technical_problem:
         if len(user_technical_problem) >= 100:
             await message.answer(
-                text='Тема проблемы не может быть более 100 символов!'
+                text=(
+                    "⚠️ <b>Тема проблемы слишком длинная!</b>\n\n"
+                    "Максимальная длина — <b>100 символов</b>.\n"
+                    "Пожалуйста, сократите текст и попробуйте ещё раз ✂️"
+                ),
             )
         else:
             dialog_manager.dialog_data['technical_problem'] = user_technical_problem
@@ -48,7 +57,7 @@ async def technical_problem_handler(
             )
     else:
         await message.answer(
-            text='Кажется, вы отправили что-то другое... =/'
+            text='🤔 Похоже, вы отправили что-то не то...'
         )
 
 
@@ -61,7 +70,12 @@ async def technical_problem_description_handler(
     if user_technical_problem_description:
         if len(user_technical_problem_description) >= 2000:
             await message.answer(
-                text='Описание проблемы не может быть более 2000 символов!'
+                text=(
+                    "⚠️ <b>Описание слишком длинное!</b>\n\n"
+                    "Максимальная длина — <b>2000 символов</b>.\n"
+                    "Пожалуйста, сократите текст и попробуйте ещё раз ✂️"
+                ),
+                parse_mode=ParseMode.HTML
             )
         else:
             dialog_manager.dialog_data['technical_problem_description'] = user_technical_problem_description
@@ -70,7 +84,7 @@ async def technical_problem_description_handler(
             )
     else:
         await message.answer(
-            text='Кажется, вы отправили что-то другое... =/'
+            text='🤔 Похоже, вы отправили что-то не то...'
         )
 
 
@@ -93,7 +107,11 @@ async def phone_handler(
 
     else:
         await message.answer(
-            text='Некорректный формат номера. Используйте формат +7 или 8.'
+            text="❌ <b>Некорректный номер телефона</b>\n\n"
+                 "Пожалуйста, введите номер в одном из следующих форматов:\n"
+                 "📱 <code>+7XXXXXXXXXX</code> или <code>8XXXXXXXXXX</code>\n\n"
+                 "Попробуйте ещё раз 👇",
+            parse_mode=ParseMode.HTML
         )
 
 
