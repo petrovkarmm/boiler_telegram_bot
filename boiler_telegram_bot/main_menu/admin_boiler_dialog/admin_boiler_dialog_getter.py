@@ -1,11 +1,11 @@
 from datetime import datetime
+from pprint import pprint
 
 from aiogram_dialog import DialogManager
 
 from db_configuration.crud import Feedback, TechnicalProblem
-from main_menu.admin_boiler_dialog.admin_boiler_dialog_dataclasses import FeedbackDialog, FEEDBACK_KEY, \
-    TECHNICAL_PROBLEM_KEY
-from main_menu.boiler_dialog.boiler_dialog_dataclasses import TechnicalProblemDialog
+from main_menu.admin_boiler_dialog.admin_boiler_dialog_dataclasses import AdminFeedbackDialog, ADMIN_FEEDBACK_KEY, \
+    ADMIN_TECHNICAL_PROBLEM_KEY, AdminTechnicalProblemDialog
 
 
 async def feedbacks_count_getter(dialog_manager: DialogManager, **_kwargs):
@@ -18,6 +18,20 @@ async def feedbacks_count_getter(dialog_manager: DialogManager, **_kwargs):
     return {
         'new_feedbacks_count': new_feedbacks_count,
         'old_feedbacks_count': old_feedbacks_count
+    }
+
+
+async def technical_problem_getter(dialog_manager: DialogManager, **_kwargs):
+    technical_problem_id = dialog_manager.dialog_data['technical_problem_id']
+
+    technical_problem = TechnicalProblem.get_technical_problem_by_id(technical_problem_id=technical_problem_id)
+
+    pprint(technical_problem)
+
+    # TODO распарсить technical_problem и отправить на return
+
+    return {
+        'test': 'test'
     }
 
 
@@ -46,11 +60,11 @@ async def feedback_getter(dialog_manager: DialogManager, **_kwargs):
     }
 
 
-def feedback_id_getter(feedback: FeedbackDialog) -> int:
+def feedback_id_getter(feedback: AdminFeedbackDialog) -> int:
     return feedback.id
 
 
-def technical_problem_id_getter(technical_problem: TechnicalProblemDialog) -> int:
+def technical_problem_id_getter(technical_problem: AdminTechnicalProblemDialog) -> int:
     return technical_problem.id
 
 
@@ -63,10 +77,10 @@ async def feedbacks_getter(dialog_manager: DialogManager, **_kwargs):
         feedbacks_count = len(feedbacks)
 
         return {
-            FEEDBACK_KEY: [
-                FeedbackDialog(
+            ADMIN_FEEDBACK_KEY: [
+                AdminFeedbackDialog(
                     new_feedback["id"],
-                    FeedbackDialog.formatted_feedback_text(
+                    AdminFeedbackDialog.formatted_feedback_text(
                         new_feedback["feedback_text"]
                     )
                 )
@@ -81,10 +95,10 @@ async def feedbacks_getter(dialog_manager: DialogManager, **_kwargs):
         feedbacks_count = len(feedbacks)
 
         return {
-            FEEDBACK_KEY: [
-                FeedbackDialog(
+            ADMIN_FEEDBACK_KEY: [
+                AdminFeedbackDialog(
                     new_feedback["id"],
-                    FeedbackDialog.formatted_feedback_text(
+                    AdminFeedbackDialog.formatted_feedback_text(
                         new_feedback["feedback_text"]
                     )
                 )
@@ -98,10 +112,13 @@ async def technical_problems_getter(dialog_manager: DialogManager, **_kwargs):
     technical_problems = TechnicalProblem.get_all_technical_problem()
 
     return {
-        TECHNICAL_PROBLEM_KEY: [
-            TechnicalProblemDialog(
-                technical_problem["id"],
-                technical_problem["name"]
+        ADMIN_TECHNICAL_PROBLEM_KEY: [
+            AdminTechnicalProblemDialog(
+                id=technical_problem["id"],
+                name=AdminTechnicalProblemDialog.formatted_hidden_problems(
+                    name=technical_problem['name'],
+                    hidden=technical_problem['hidden']
+                )
             )
             for technical_problem in technical_problems
         ]
