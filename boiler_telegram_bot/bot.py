@@ -1,6 +1,7 @@
 import asyncio
 
 from aiogram import Bot, Dispatcher, F
+from aiogram.enums import ParseMode
 from aiogram.fsm.context import FSMContext
 from aiogram.types import ErrorEvent, Message, ReplyKeyboardRemove
 from aiogram_dialog import setup_dialogs, DialogManager
@@ -26,7 +27,7 @@ async def bot_start():
         dp = Dispatcher()
         setup_dialogs(dp)
 
-    @dp.message(F.text == 'admin')
+    @dp.message(F.text == 'admin')  # TODO Придумать нормальный вход для админов.
     async def admin_panel_start(message: Message, state: FSMContext, dialog_manager: DialogManager):
         await dialog_manager.start(
             AdminBoilerDialog.admin_boiler_main_menu
@@ -35,8 +36,9 @@ async def bot_start():
     @dp.message(F.text == '🏪 Перезапустить бота')
     async def repair_bot(message: Message, state: FSMContext, dialog_manager: DialogManager):
         await message.answer(
-            text='Перезапускаемся. . .',
-            reply_markup=ReplyKeyboardRemove()
+            text='🔄 <b>Перезапускаемся...</b> 🚀',
+            reply_markup=ReplyKeyboardRemove(),
+            parse_mode=ParseMode.HTML
         )
 
         await dialog_manager.start(
@@ -55,9 +57,10 @@ async def bot_start():
                     chat_id=event_chat_id, message_id=event_message_id
                 )
                 await bot.send_message(
-                    text='Упс. Кажется что-то пошло не так. Чтобы перезапустить бота нажмите кнопку под чатом. ',
+                    text='⚠️ Упс! Кажется, что-то пошло не так. Чтобы перезапустить бота, нажмите кнопку под чатом. 🔄',
                     reply_markup=repair_bot_keyboard(),
-                    chat_id=event_chat_id
+                    chat_id=event_chat_id,
+                    parse_mode=ParseMode.HTML
                 )
             except AttributeError as exception:
                 print(f'Отбилась в закрытый диалог.', exception)
