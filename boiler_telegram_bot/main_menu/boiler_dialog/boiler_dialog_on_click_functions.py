@@ -13,6 +13,39 @@ from db_configuration.models.technical_problem import TechnicalProblem
 from db_configuration.models.feedback import Feedback
 
 
+async def confirm_sending_call_technician(
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+):
+    user_name = dialog_manager.dialog_data['user_name']
+    technical_problem = dialog_manager.dialog_data['technical_problem']
+    technical_problem_description = dialog_manager.dialog_data['technical_problem_description']
+    user_phone = dialog_manager.dialog_data['user_phone']
+    media_info = dialog_manager.dialog_data.get('media_info', 'Медиа отсутствует.')
+
+    #  TODO интеграция с CRM системой.
+
+    await callback.message.answer(
+        text=(
+            "<b>📤 Имитируем отправку в CRM систему...</b>\n\n"
+            f"👤 <b>Имя пользователя:</b> {user_name}\n"
+            f"📞 <b>Телефон:</b> {user_phone}\n"
+            f"🛠 <b>Описание проблемы:</b> {technical_problem_description}\n"
+            f"⚙️ <b>Тип проблемы:</b> {technical_problem}\n"
+            f"🖼 <b>Медиа:</b> {media_info}"
+        ),
+        parse_mode=ParseMode.HTML
+    )
+
+    await callback.message.answer(
+        text="✅ <b>Заявка успешно принята!</b>\n📞 Ожидайте звонка.",
+        parse_mode=ParseMode.HTML
+    )
+
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_main_menu
+    )
+
+
 async def send_feedback(
         callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ):
