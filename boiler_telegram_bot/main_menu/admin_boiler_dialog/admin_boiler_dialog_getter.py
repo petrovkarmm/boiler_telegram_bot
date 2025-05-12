@@ -3,7 +3,8 @@ from pprint import pprint
 
 from aiogram_dialog import DialogManager
 
-from db_configuration.crud import Feedback, TechnicalProblem
+from db_configuration.models.technical_problem import TechnicalProblem
+from db_configuration.models.feedback import Feedback
 from main_menu.admin_boiler_dialog.admin_boiler_dialog_dataclasses import AdminFeedbackDialog, ADMIN_FEEDBACK_KEY, \
     ADMIN_TECHNICAL_PROBLEM_KEY, AdminTechnicalProblemDialog
 
@@ -26,12 +27,16 @@ async def technical_problem_getter(dialog_manager: DialogManager, **_kwargs):
 
     technical_problem = TechnicalProblem.get_technical_problem_by_id(technical_problem_id=technical_problem_id)
 
-    pprint(technical_problem)
-
-    # TODO распарсить technical_problem и отправить на return
+    technical_problem_name = technical_problem['name']
+    technical_problem_hidden = 'Скрыт' if technical_problem['hidden'] == 1 else 'Отображается'
+    technical_problem_created = technical_problem['created']
+    technical_problem_updated = technical_problem['updated']
 
     return {
-        'test': 'test'
+        'technical_problem_name': technical_problem_name,
+        'technical_problem_hidden': technical_problem_hidden,
+        'technical_problem_created': technical_problem_created,
+        'technical_problem_updated': technical_problem_updated
     }
 
 
