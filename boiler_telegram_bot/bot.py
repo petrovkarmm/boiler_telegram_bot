@@ -12,7 +12,7 @@ from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import Boi
 from boiler_telegram_bot.main_menu.main_menu_router import main_menu_router
 from db_configuration.crud import TechnicalProblem
 from main_menu.admin_boiler_dialog.admin_boiler_dialog_router import admin_boiler_dialog_router
-from main_menu.admin_boiler_dialog.boiler_dialog_states import AdminBoilerDialog
+from main_menu.admin_boiler_dialog.admin_boiler_dialog_states import AdminBoilerDialog
 from settings import bot_token, DEBUG
 
 
