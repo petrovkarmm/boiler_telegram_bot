@@ -62,6 +62,20 @@ async def on_technical_problem_selected(
     )
 
 
+async def deleting_technical_problem(
+        callback: CallbackQuery,
+        widget: Any,
+        dialog_manager: DialogManager,
+):
+    technical_problem_id = dialog_manager.dialog_data['technical_problem_id']
+
+    TechnicalProblem.delete_technical_problem_by_id(technical_problem_id=technical_problem_id)
+
+    await dialog_manager.switch_to(
+        AdminBoilerDialog.admin_boiler_technical_problems_list
+    )
+
+
 async def toggle_technical_problem_hidden_status(
         callback: CallbackQuery,
         widget: Any,
