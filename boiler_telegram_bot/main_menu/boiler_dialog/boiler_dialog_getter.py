@@ -1,6 +1,6 @@
 from aiogram_dialog import DialogManager
 
-from db_configuration.crud import TechnicalProblem
+from db_configuration.models.technical_problem import TechnicalProblem
 from main_menu.boiler_dialog.boiler_dialog_dataclasses import TechnicalProblemDialog, TECHNICAL_PROBLEM_KEY
 
 

@@ -8,7 +8,8 @@ from aiogram_dialog.widgets.kbd import Button, ManagedCounter
 from aiogram.exceptions import TelegramRetryAfter
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
-from db_configuration.crud import Feedback, TechnicalProblem
+from db_configuration.models.technical_problem import TechnicalProblem
+from db_configuration.models.feedback import Feedback
 
 
 async def send_feedback(

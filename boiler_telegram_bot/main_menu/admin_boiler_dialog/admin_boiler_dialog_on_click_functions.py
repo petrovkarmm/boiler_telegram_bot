@@ -5,7 +5,7 @@ from aiogram_dialog import DialogManager
 from aiogram_dialog.widgets.kbd import Button
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
-from db_configuration.crud import Feedback
+from db_configuration.models.feedback import Feedback
 from main_menu.admin_boiler_dialog.admin_boiler_dialog_states import AdminBoilerDialog
 
 
