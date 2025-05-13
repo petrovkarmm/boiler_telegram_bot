@@ -56,10 +56,13 @@ class User:
             conn.commit()
 
     @staticmethod
-    def get_user_by_telegram_id(telegram_id: int) -> dict | None:
+    def get_user_by_telegram_id(telegram_id: str):
         with get_connection() as conn:
-            conn.row_factory = sqlite3.Row  # Позволяет получать строки как словари
+            conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
+
             cursor.execute("SELECT * FROM user WHERE telegram_id = ?", (telegram_id,))
-            row = cursor.fetchone()
-            return dict(row) if row else None
+
+            result = cursor.fetchone()
+
+            return result
