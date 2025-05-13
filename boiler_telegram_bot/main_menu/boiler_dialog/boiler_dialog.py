@@ -2,14 +2,14 @@ from aiogram import F
 from aiogram.enums import ParseMode
 from aiogram_dialog import Dialog, Window
 from aiogram_dialog.widgets.input import MessageInput
-from aiogram_dialog.widgets.kbd import Button, SwitchTo, Back, Group, Row, ScrollingGroup, Column, Select
+from aiogram_dialog.widgets.kbd import Button, SwitchTo, Back, Group, Row, ScrollingGroup, Column, Select, Counter
 from aiogram_dialog.widgets.text import Format
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_message_input_handlers import feedback_handler, \
     technical_problem_handler, technical_problem_description_handler, phone_handler, name_handler, \
-    content_handler
+    content_handler, get_itn_and_organization_name
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_on_click_functions import send_feedback, \
-    on_technical_problem_selected, confirm_sending_call_technician
+    on_technical_problem_selected, confirm_sending_call_technician, get_barista_count_and_switch
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_PROBLEM_KEY
 from main_menu.boiler_dialog.boiler_dialog_getter import technical_problem_id_getter, technical_problems_getter
@@ -29,10 +29,11 @@ boiler_main_menu = Window(
     ),
     Row(
         SwitchTo(
-            id='tech_cat', text=Format('📦 Подбор техники'), state=BoilerDialog.boiler_technical_catalog
+            id='tech_cat', text=Format('📦 Подбор техники'), state=BoilerDialog.boiler_technical_catalog_type_choose
         ),
         SwitchTo(
-            id='bar_training', text=Format('☕ Обучение бариста'), state=BoilerDialog.boiler_barista_training
+            id='bar_training', text=Format('☕ Обучение бариста'),
+            state=BoilerDialog.boiler_barista_training_choose_count
         ),
     ),
     SwitchTo(
@@ -237,6 +238,58 @@ boiler_repair_accept_request = Window(
     parse_mode=ParseMode.HTML,
 )
 
+boiler_technical_catalog_type_choose = Window(
+    Format(
+        text='Выбор типа техники test'
+    ),
+
+    state=BoilerDialog.boiler_technical_catalog_type_choose
+)
+
+boiler_barista_training_choose_count = Window(
+    Format(
+        text='Подскажите, сколько человек планируете обучить?'
+    ),
+    Counter(
+        id="barista_counter",
+        default=1,
+        max_value=100,
+        on_text_click=None,
+    ),
+    Button(
+        id='accept_count', text=Format('Подтвердить'), on_click=get_barista_count_and_switch
+    ),
+    SwitchTo(
+        id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+    ),
+    state=BoilerDialog.boiler_barista_training_choose_count
+)
+
+boiler_barista_training_get_itn_and_org_name = Window(
+    Format(
+        text='Пожалуйста, укажите <b>название</b> и <b>ИНН организации</b> для идентификации. Спасибо! 🙏'
+    ),
+    MessageInput(
+        get_itn_and_organization_name
+    ),
+    state=BoilerDialog.boiler_barista_training_get_itn_and_org_name
+)
+
+boiler_barista_training_accept_request = Window(
+    Format(
+        'test'
+    ),
+    Row(
+        SwitchTo(
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_barista_training_get_itn_and_org_name
+        ),
+        SwitchTo(
+            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+        )
+    ),
+    state=BoilerDialog.boiler_barista_training_accept_request
+)
+
 boiler_dialog = Dialog(
     boiler_main_menu,
 
@@ -248,5 +301,9 @@ boiler_dialog = Dialog(
     boiler_repair_boiler_video_or_photo,
     boiler_repair_phone,
     boiler_repair_name,
-    boiler_repair_accept_request
+    boiler_repair_accept_request,
+
+    boiler_barista_training_choose_count,
+    boiler_barista_training_get_itn_and_org_name,
+    boiler_barista_training_accept_request
 )
