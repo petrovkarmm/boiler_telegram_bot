@@ -13,7 +13,7 @@ def technical_problem_id_getter(technical_problem: TechnicalProblemDialog) -> in
     return technical_problem.id
 
 
-async def user_data_barista_getter(dialog_manager: DialogManager, **_kwargs):
+async def user_data_profile_barista_getter(dialog_manager: DialogManager, **_kwargs):
     event_update = _kwargs.get('event_update')
 
     user_id = str(event_update.event.from_user.id)
@@ -42,7 +42,7 @@ async def user_data_barista_getter(dialog_manager: DialogManager, **_kwargs):
         )
 
 
-async def user_data_problem_getter(dialog_manager: DialogManager, **_kwargs):
+async def user_data_profile_getter(dialog_manager: DialogManager, **_kwargs):
     event_update = _kwargs.get('event_update')
 
     user_id = str(event_update.event.from_user.id)
