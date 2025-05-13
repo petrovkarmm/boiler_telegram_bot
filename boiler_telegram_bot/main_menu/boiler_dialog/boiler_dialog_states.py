@@ -10,8 +10,6 @@ class BoilerDialog(StatesGroup):
     boiler_repair_problem = State()
     boiler_repair_description = State()
     boiler_repair_video_or_photo = State()
-    boiler_repair_name = State()
-    boiler_repair_phone = State()
     boiler_repair_accept_request = State()
 
     boiler_technical_catalog_type_choose = State()
