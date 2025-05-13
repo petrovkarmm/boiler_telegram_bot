@@ -8,13 +8,14 @@ from aiogram_dialog.widgets.text import Format
 from main_menu.global_utils.global_messages_input import get_itn_and_organization_name
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_message_input_handlers import feedback_handler, \
-    technical_problem_handler, technical_problem_description_handler, phone_handler, name_handler, \
+    technical_problem_handler, technical_problem_description_handler, \
     content_handler
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_on_click_functions import send_feedback, \
     on_technical_problem_selected, confirm_sending_call_technician, get_barista_count_and_switch
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_PROBLEM_KEY
-from main_menu.boiler_dialog.boiler_dialog_getter import technical_problem_id_getter, technical_problems_getter
+from main_menu.boiler_dialog.boiler_dialog_getter import technical_problem_id_getter, technical_problems_getter, \
+    user_data_getter
 
 boiler_main_menu = Window(
     Format(
@@ -125,7 +126,6 @@ boiler_repair_description = Window(
         text=(
             '📝 <b>Тема проблемы:</b> <i>{dialog_data[technical_problem]}</i>\n\n'
             '📌 Пожалуйста, опишите проблему максимально подробно.\n'
-            'В конце укажите <b>название</b> и <b>ИНН организации</b> для идентификации. Спасибо! 🙏'
         )
     ),
     Row(
@@ -153,7 +153,7 @@ boiler_repair_boiler_video_or_photo = Window(
         )
     ),
     SwitchTo(
-        id='skip_step', text=Format('➡️ Далее'), state=BoilerDialog.boiler_repair_phone
+        id='skip_step', text=Format('➡️ Далее'), state=BoilerDialog.boiler_repair_accept_request
     ),
     Row(
         SwitchTo(
@@ -170,61 +170,13 @@ boiler_repair_boiler_video_or_photo = Window(
     parse_mode=ParseMode.HTML,
 )
 
-boiler_repair_phone = Window(
-    Format(
-        text=(
-            '📌 <b>Тема проблемы:</b> <i>{dialog_data[technical_problem]}</i>\n\n'
-            '📝 <b>Описание:</b> <i>{dialog_data[technical_problem_description]}</i>\n\n'
-            '📞 Пожалуйста, укажите номер телефона для связи.\n'
-            'Формат: <b>+7XXXXXXXXXX</b> или <b>8XXXXXXXXXX</b>'
-        )
-    ),
-    Row(
-        SwitchTo(
-            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_repair_video_or_photo
-        ),
-        SwitchTo(
-            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
-        )
-    ),
-    MessageInput(
-        phone_handler
-    ),
-    state=BoilerDialog.boiler_repair_phone,
-    parse_mode=ParseMode.HTML,
-)
-
-boiler_repair_name = Window(
-    Format(
-        text=(
-            '📌 <b>Тема проблемы:</b> <i>{dialog_data[technical_problem]}</i>\n\n'
-            '📝 <b>Описание:</b> <i>{dialog_data[technical_problem_description]}</i>\n\n'
-            '📞 <b>Телефон:</b> <i>{dialog_data[user_phone]}</i>\n\n'
-            '🙋 Как к вам можно обращаться? Напишите ваше имя.'
-        )
-    ),
-    Row(
-        SwitchTo(
-            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_repair_phone
-        ),
-        SwitchTo(
-            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
-        )
-    ),
-    MessageInput(
-        name_handler
-    ),
-    state=BoilerDialog.boiler_repair_name,
-    parse_mode=ParseMode.HTML,
-)
-
 boiler_repair_accept_request = Window(
     Format(
         text=(
-            '✅ <b>{dialog_data[user_name]}</b>, пожалуйста, проверьте все данные перед отправкой заявки:\n\n'
+            '✅ <b>{user_name}</b>, пожалуйста, проверьте все данные перед отправкой заявки:\n\n'
             '📌 <b>Тема проблемы:</b> <i>{dialog_data[technical_problem]}</i>\n\n'
             '📝 <b>Описание:</b> <i>{dialog_data[technical_problem_description]}</i>\n\n'
-            '📞 <b>Телефон:</b> <i>{dialog_data[user_phone]}</i>'
+            '📞 <b>Телефон:</b> <i>{user_phone}</i>'
             '\n\nЕсли всё верно — нажмите <b>«Отправить»</b>.'
         )
     ),
@@ -233,9 +185,13 @@ boiler_repair_accept_request = Window(
     ),
     Row(
         SwitchTo(
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_repair_description
+        ),
+        SwitchTo(
             id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
         )
     ),
+    getter=user_data_getter,
     state=BoilerDialog.boiler_repair_accept_request,
     parse_mode=ParseMode.HTML,
 )
@@ -321,8 +277,6 @@ boiler_dialog = Dialog(
     boiler_repair_problem,
     boiler_repair_description,
     boiler_repair_boiler_video_or_photo,
-    boiler_repair_phone,
-    boiler_repair_name,
     boiler_repair_accept_request,
 
     boiler_barista_training_choose_count,

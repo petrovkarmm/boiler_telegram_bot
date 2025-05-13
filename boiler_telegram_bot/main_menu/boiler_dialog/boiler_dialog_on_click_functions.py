@@ -65,6 +65,8 @@ async def send_feedback(
 ):
     user_answer = dialog_manager.dialog_data.get('user_answer', 'ERROR')
 
+    #  TODO данные из БД.
+
     tg_user_id = callback.from_user.id
     user_username = callback.from_user.username
     user_first_name = callback.from_user.first_name

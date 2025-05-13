@@ -88,44 +88,6 @@ async def technical_problem_description_handler(
         )
 
 
-async def phone_handler(
-        message: Message,
-        message_input: MessageInput,
-        dialog_manager: DialogManager,
-):
-    user_phone = message.text
-
-    validate_user_phone = await normalize_phone_number(
-        user_phone
-    )
-
-    if validate_user_phone:
-        dialog_manager.dialog_data['user_phone'] = validate_user_phone
-        await dialog_manager.switch_to(
-            BoilerDialog.boiler_repair_name
-        )
-
-    else:
-        await message.answer(
-            text="❌ <b>Некорректный номер телефона</b>\n\n"
-                 "Пожалуйста, введите номер в одном из следующих форматов:\n"
-                 "📱 <code>+7XXXXXXXXXX</code> или <code>8XXXXXXXXXX</code>\n\n"
-                 "Попробуйте ещё раз 👇",
-            parse_mode=ParseMode.HTML
-        )
-
-
-async def name_handler(
-        message: Message,
-        message_input: MessageInput,
-        dialog_manager: DialogManager,
-):
-    dialog_manager.dialog_data['user_name'] = message.text
-    await dialog_manager.switch_to(
-        BoilerDialog.boiler_repair_accept_request
-    )
-
-
 async def content_handler(
         message: Message,
         message_input: MessageInput,
