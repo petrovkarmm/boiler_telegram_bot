@@ -5,8 +5,13 @@ from aiogram.types import Message, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from aiogram_dialog import DialogManager
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
+from middlewares.registration_middleware import UserInDatabaseChecker
 
 main_menu_router = Router()
+
+main_menu_router.message.middleware.register(
+    UserInDatabaseChecker()
+)
 
 
 @main_menu_router.message(Command('start'))
