@@ -20,9 +20,7 @@ async def get_barista_count_and_switch(
 
     barista_value = barista_counter.get_value()  # int число от 1 до 24
     dialog_manager.dialog_data['barista_value'] = barista_value
-    await dialog_manager.switch_to(
-        BoilerDialog.boiler_barista_training_get_itn_and_org_name
-    )
+    #  TODO в окно итоговое
 
 
 async def confirm_sending_call_technician(
