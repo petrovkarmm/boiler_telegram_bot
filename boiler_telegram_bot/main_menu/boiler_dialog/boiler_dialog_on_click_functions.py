@@ -11,6 +11,8 @@ from aiogram.exceptions import TelegramRetryAfter
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from db_configuration.models.technical_problem import TechnicalProblem
 from db_configuration.models.feedback import Feedback
+from db_configuration.models.user import User
+from main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
 
 
 async def get_barista_count_and_switch(
@@ -20,42 +22,110 @@ async def get_barista_count_and_switch(
 
     barista_value = barista_counter.get_value()  # int число от 1 до 24
     dialog_manager.dialog_data['barista_value'] = barista_value
-    #  TODO в окно итоговое
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_barista_training_accept_request
+    )
 
 
 async def confirm_sending_call_technician(
         callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ):
-    user_name = dialog_manager.dialog_data['user_name']
-    technical_problem = dialog_manager.dialog_data['technical_problem']
-    technical_problem_description = dialog_manager.dialog_data['technical_problem_description']
-    user_phone = dialog_manager.dialog_data['user_phone']
-    media_info = 'Медиа отсутствует.'
+    user_id = str(callback.from_user.id)
 
-    #  TODO интеграция с CRM системой.
-
-    await callback.message.answer(
-        text=(
-            "<b>📤 Имитируем отправку в CRM систему...</b>\n\n"
-            f"👤 <b>Имя пользователя:</b> {user_name}\n"
-            f"📞 <b>Телефон:</b> {user_phone}\n"
-            f"🛠 <b>Описание проблемы:</b> {technical_problem_description}\n"
-            f"⚙️ <b>Тип проблемы:</b> {technical_problem}\n"
-            f"🖼 <b>Медиа:</b> {media_info}"
-        ),
-        parse_mode=ParseMode.HTML
+    user_data = User.get_user_by_telegram_id(
+        user_id
     )
 
-    await callback.message.answer(
-        text="✅ <b>Заявка успешно принята!</b>\n📞 Ожидайте звонка.",
-        parse_mode=ParseMode.HTML
+    if user_data:
+        user_phone = user_data['phone']
+        user_name = user_data['name']
+        organization_itn = user_data['organization_itn']
+        organization_name = user_data['organization_name']
+
+        technical_problem = dialog_manager.dialog_data['technical_problem']
+        technical_problem_description = dialog_manager.dialog_data['technical_problem_description']
+        user_address = dialog_manager.dialog_data['user_address']
+        media_info = 'Медиа отсутствует.'
+
+        #  TODO интеграция с CRM системой.
+
+        await callback.message.answer(
+            text=(
+                "<b>📤 Имитируем отправку в CRM систему...</b>\n\n"
+                f"👤 <b>Имя пользователя:</b> {user_name}\n"
+                f"📞 <b>Телефон:</b> {user_phone}\n"
+                f"🛠 <b>Описание проблемы:</b> {technical_problem_description}\n"
+                f"⚙️ <b>Тип проблемы:</b> {technical_problem}\n"
+                f'🏘 <b>Адрес:</b> {user_address}\n'
+                f"🏢 <b>Организация:</b> {organization_name}\n"
+                f"🧾 <b>ИНН:</b> {organization_itn}\n"
+                f"🖼 <b>Медиа:</b> {media_info}"
+            ),
+            parse_mode=ParseMode.HTML
+        )
+
+        await callback.message.answer(
+            text="✅ <b>Заявка успешно принята!</b>\n📞 Ожидайте звонка.",
+            parse_mode=ParseMode.HTML
+        )
+
+        dialog_manager.show_mode = ShowMode.DELETE_AND_SEND
+
+        await dialog_manager.switch_to(
+            BoilerDialog.boiler_main_menu
+        )
+
+    else:
+        await dialog_manager.start(
+            BoilerRegistrationDialog.boiler_registration_user_name
+        )
+
+
+async def confirm_sending_barista_training(
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+):
+    user_id = str(callback.from_user.id)
+
+    user_data = User.get_user_by_telegram_id(
+        user_id
     )
 
-    dialog_manager.show_mode = ShowMode.DELETE_AND_SEND
+    if user_data:
+        barista_value = dialog_manager.dialog_data['barista_value']
+        user_phone = user_data['phone']
+        user_name = user_data['name']
+        organization_itn = user_data['organization_itn']
+        organization_name = user_data['organization_name']
 
-    await dialog_manager.switch_to(
-        BoilerDialog.boiler_main_menu
-    )
+        await callback.message.answer(
+            text=(
+                "<b>📤 Имитируем отправку в CRM систему...</b>\n"
+                f"👤 <b>Имя пользователя:</b> {user_name}\n"
+                f'📌 <b>Кол-во человек на обучение:</b> {barista_value}\n'
+                f'📞 <b>Телефон:</b> {user_phone}\n'
+                f"🏢 <b>Организация:</b> {organization_name}\n"
+                f"🧾 <b>ИНН:</b> {organization_itn}\n"
+
+            ),
+            parse_mode=ParseMode.HTML
+        )
+
+        await callback.message.answer(
+            text="✅ <b>Заявка успешно принята!</b>\n📞 Ожидайте звонка.",
+            parse_mode=ParseMode.HTML
+        )
+
+        dialog_manager.show_mode = ShowMode.DELETE_AND_SEND
+
+        await dialog_manager.switch_to(
+            BoilerDialog.boiler_main_menu
+        )
+
+
+    else:
+        await dialog_manager.start(
+            BoilerRegistrationDialog.boiler_registration_user_name
+        )
 
 
 async def send_feedback(

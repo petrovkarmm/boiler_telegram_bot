@@ -99,3 +99,17 @@ async def content_handler(
         await message.answer("Отправлено фото.")
     else:
         await message.answer("Пожалуйста, отправьте фото или видео, или нажмите 'Далее' для пропуска.")
+
+
+async def address_getter(
+        message: Message,
+        message_input: MessageInput,
+        dialog_manager: DialogManager,
+):
+    user_address = message.text
+
+    dialog_manager.dialog_data['user_address'] = user_address
+
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_repair_accept_request
+    )

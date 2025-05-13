@@ -13,7 +13,7 @@ def technical_problem_id_getter(technical_problem: TechnicalProblemDialog) -> in
     return technical_problem.id
 
 
-async def user_data_getter(dialog_manager: DialogManager, **_kwargs):
+async def user_data_barista_getter(dialog_manager: DialogManager, **_kwargs):
     event_update = _kwargs.get('event_update')
 
     user_id = str(event_update.event.from_user.id)
@@ -22,16 +22,46 @@ async def user_data_getter(dialog_manager: DialogManager, **_kwargs):
         user_id
     )
 
-    print(user_data)
+    if user_data:
+        barista_value = dialog_manager.dialog_data['barista_value']
+        user_phone = user_data['phone']
+        user_name = user_data['name']
+        organization_itn = user_data['organization_itn']
+        organization_name = user_data['organization_name']
+
+        return {
+            'user_phone': user_phone,
+            'user_name': user_name,
+            'organization_name': organization_name,
+            'organization_itn': organization_itn,
+            'barista_value': barista_value
+        }
+    else:
+        await dialog_manager.start(
+            BoilerRegistrationDialog.boiler_registration_user_name
+        )
+
+
+async def user_data_problem_getter(dialog_manager: DialogManager, **_kwargs):
+    event_update = _kwargs.get('event_update')
+
+    user_id = str(event_update.event.from_user.id)
+
+    user_data = User.get_user_by_telegram_id(
+        user_id
+    )
 
     if user_data:
         user_phone = user_data['phone']
         user_name = user_data['name']
-        print(user_phone)
-        print(user_name)
+        organization_itn = user_data['organization_itn']
+        organization_name = user_data['organization_name']
+
         return {
             'user_phone': user_phone,
-            'user_name': user_name
+            'user_name': user_name,
+            'organization_name': organization_name,
+            'organization_itn': organization_itn,
         }
     else:
         await dialog_manager.start(
