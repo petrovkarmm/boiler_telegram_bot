@@ -6,6 +6,22 @@ def create_tables():
     cursor = conn.cursor()
 
     cursor.execute("""
+    CREATE TABLE IF NOT EXISTS user (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        telegram_id TEXT,
+        telegram_first_name TEXT,
+        telegram_last_name TEXT,
+        telegram_username TEXT,
+        name TEXT,
+        phone TEXT,
+        organization_itn TEXT,
+        organization_name TEXT,
+        created DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    cursor.execute("""
     CREATE TABLE IF NOT EXISTS technical_problem (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
