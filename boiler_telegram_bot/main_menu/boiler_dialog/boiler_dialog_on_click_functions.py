@@ -13,6 +13,18 @@ from db_configuration.models.technical_problem import TechnicalProblem
 from db_configuration.models.feedback import Feedback
 
 
+async def get_barista_count_and_switch(
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+):
+    barista_counter: ManagedCounter = dialog_manager.find('barista_counter')
+
+    barista_value = barista_counter.get_value()  # int число от 1 до 24
+    dialog_manager.dialog_data['barista_value'] = barista_value
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_barista_training_get_itn_and_org_name
+    )
+
+
 async def confirm_sending_call_technician(
         callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ):
