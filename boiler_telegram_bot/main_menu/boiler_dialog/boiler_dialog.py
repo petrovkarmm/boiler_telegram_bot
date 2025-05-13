@@ -16,7 +16,7 @@ from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_on_click_function
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_PROBLEM_KEY
 from main_menu.boiler_dialog.boiler_dialog_getter import technical_problem_id_getter, technical_problems_getter, \
-    user_data_problem_getter, user_data_barista_getter
+    user_data_profile_getter, user_data_profile_barista_getter
 
 boiler_main_menu = Window(
     Format(
@@ -41,9 +41,42 @@ boiler_main_menu = Window(
         ),
     ),
     SwitchTo(
+        id='profile_edit', text=Format('Редактирование профиля'), state=BoilerDialog.boiler_profile_edit_menu
+    ),
+    SwitchTo(
         id='text_back', text=Format('💬 Обратная связь'), state=BoilerDialog.boiler_feedback
     ),
     state=BoilerDialog.boiler_main_menu,
+    parse_mode=ParseMode.HTML
+)
+
+boiler_profile_edit_menu = Window(
+    Format(
+        text="Выберите, что отредактировать: \n\n"
+             "👤 <b>Имя пользователя:</b> {user_name}\n"
+             '📞 <b>Телефон:</b> {user_phone}\n'
+             "🏢 <b>Организация:</b> {organization_name}\n"
+             "🧾 <b>ИНН:</b> {organization_itn}\n"
+
+    ),
+    Row(
+        SwitchTo(
+            id='edit_name', text=Format('Имя'), state=BoilerDialog.boiler_profile_edit_name
+        ),
+        SwitchTo(
+            id='edit_phone', text=Format('Телефон'), state=BoilerDialog.boiler_profile_edit_phone
+        )
+    ),
+    Row(
+        SwitchTo(
+            id='edit_o_name', text=Format('Организация'), state=BoilerDialog.boiler_profile_edit_organization_itn
+        ),
+        SwitchTo(
+            id='edit_itn', text=Format('ИНН'), state=BoilerDialog.boiler_profile_edit_organization_itn
+        ),
+    ),
+    getter=user_data_profile_getter,
+    state=BoilerDialog.boiler_profile_edit_menu,
     parse_mode=ParseMode.HTML
 )
 
@@ -217,7 +250,7 @@ boiler_repair_accept_request = Window(
             id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
         )
     ),
-    getter=user_data_problem_getter,
+    getter=user_data_profile_getter,
     state=BoilerDialog.boiler_repair_accept_request,
     parse_mode=ParseMode.HTML,
 )
@@ -289,7 +322,7 @@ boiler_barista_training_accept_request = Window(
             id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
         )
     ),
-    getter=user_data_barista_getter,
+    getter=user_data_profile_barista_getter,
     state=BoilerDialog.boiler_barista_training_accept_request,
     parse_mode=ParseMode.HTML
 )
