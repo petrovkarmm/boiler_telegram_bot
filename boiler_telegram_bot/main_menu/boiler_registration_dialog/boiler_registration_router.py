@@ -1,0 +1,7 @@
+from aiogram import Router
+
+from main_menu.boiler_registration_dialog.boiler_registration_dialog import boiler_registration_dialog
+
+boiler_registration_dialog_router = Router()
+
+boiler_registration_dialog_router.include_router(boiler_registration_dialog)
