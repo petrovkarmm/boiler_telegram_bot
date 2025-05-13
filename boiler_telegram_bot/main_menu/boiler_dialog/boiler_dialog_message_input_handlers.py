@@ -137,3 +137,17 @@ async def content_handler(
         await message.answer("Отправлено фото.")
     else:
         await message.answer("Пожалуйста, отправьте фото или видео, или нажмите 'Далее' для пропуска.")
+
+
+async def get_itn_and_organization_name(
+        message: Message,
+        message_input: MessageInput,
+        dialog_manager: DialogManager
+):
+    user_answer = message.text
+
+    dialog_manager.dialog_data['user_itn_and_organization_name'] = user_answer
+
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_barista_training_accept_request
+    )
