@@ -66,3 +66,22 @@ class User:
             result = cursor.fetchone()
 
             return result
+
+    @staticmethod
+    def update_user_field(telegram_id: str,
+                          key: str,
+                          new_value: str = None):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+
+            cursor.execute((f"""
+            INSERT INTO user (
+                {key}
+            ) VALUES (?)
+            
+            """),
+                           (
+                               new_value
+                           ))
+
+            conn.commit()
