@@ -69,7 +69,7 @@ boiler_accept_feedback = Window(
     ),
     Button(
         id='send_feedback',
-        text=Format('✅ Отправить'),
+        text=Format('📤 Отправить'),
         on_click=send_feedback
     ),
     Row(
@@ -243,7 +243,8 @@ boiler_technical_catalog_type_choose = Window(
         text='Выбор типа техники test'
     ),
 
-    state=BoilerDialog.boiler_technical_catalog_type_choose
+    state=BoilerDialog.boiler_technical_catalog_type_choose,
+    parse_mode=ParseMode.HTML
 )
 
 boiler_barista_training_choose_count = Window(
@@ -252,17 +253,27 @@ boiler_barista_training_choose_count = Window(
     ),
     Counter(
         id="barista_counter",
+        text=Format(
+            '{value:g}'
+        ),
         default=1,
         max_value=100,
         on_text_click=None,
+        plus=Format(
+            '➕'
+        ),
+        minus=Format(
+            '➖'
+        )
     ),
     Button(
-        id='accept_count', text=Format('Подтвердить'), on_click=get_barista_count_and_switch
+        id='accept_count', text=Format('✅ Подтвердить'), on_click=get_barista_count_and_switch
     ),
     SwitchTo(
         id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
     ),
-    state=BoilerDialog.boiler_barista_training_choose_count
+    state=BoilerDialog.boiler_barista_training_choose_count,
+    parse_mode=ParseMode.HTML
 )
 
 boiler_barista_training_get_itn_and_org_name = Window(
@@ -272,7 +283,16 @@ boiler_barista_training_get_itn_and_org_name = Window(
     MessageInput(
         get_itn_and_organization_name
     ),
-    state=BoilerDialog.boiler_barista_training_get_itn_and_org_name
+    Row(
+        SwitchTo(
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_barista_training_choose_count
+        ),
+        SwitchTo(
+            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+        )
+    ),
+    state=BoilerDialog.boiler_barista_training_get_itn_and_org_name,
+    parse_mode=ParseMode.HTML
 )
 
 boiler_barista_training_accept_request = Window(
