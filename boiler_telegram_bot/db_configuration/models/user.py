@@ -71,17 +71,24 @@ class User:
     def update_user_field(telegram_id: str,
                           key: str,
                           new_value: str = None):
+        # Проверка допустимых полей для безопасности
+        allowed_fields = {
+            "name", "phone", "organization_itn", "organization_name"
+        }
+
+        if key not in allowed_fields:
+            raise ValueError(f"Недопустимое поле: {key}")
+
         with get_connection() as conn:
             cursor = conn.cursor()
 
-            cursor.execute((f"""
-            INSERT INTO user (
-                {key}
-            ) VALUES (?)
-            
-            """),
-                           (
-                               new_value
-                           ))
+            cursor.execute(
+                f"""
+                UPDATE user
+                SET {key} = ?
+                WHERE telegram_id = ?
+                """,
+                (new_value, telegram_id)
+            )
 
             conn.commit()
