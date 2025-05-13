@@ -11,8 +11,11 @@ from main_menu.boiler_registration_dialog.boiler_registration_states import Boil
 
 boiler_registration_user_name = Window(
     Format(
-        text='Для дальнейшего использования бота необходимо провести регистрацию. \n\n'
-             '🙋 Как к вам можно обращаться? Напишите ваше имя.'
+        text=(
+            "📝 <b>Регистрация</b>\n\n"
+            "Чтобы продолжить использовать бота, необходимо пройти короткую регистрацию.\n\n"
+            "🙋‍♂️ Пожалуйста, напишите, как к вам можно обращаться (ваше имя):"
+        )
     ),
     MessageInput(
         name_handler
@@ -42,7 +45,10 @@ boiler_registration_phone = Window(
 
 boiler_registration_organization_name = Window(
     Format(
-        text='Введите Название организации:'
+        text=(
+            "🏢 <b>Название организации</b>\n\n"
+            "Введите, пожалуйста, название вашей организации:"
+        )
     ),
     MessageInput(
         organization_name_handler
@@ -52,7 +58,7 @@ boiler_registration_organization_name = Window(
             id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerRegistrationDialog.boiler_registration_itn
         ),
         SwitchTo(
-            id='start_again', text=Format('Начать сначала'),
+            id='start_again', text=Format('🔁 Начать сначала'),
             state=BoilerRegistrationDialog.boiler_registration_user_name
         )
     ),
@@ -62,7 +68,10 @@ boiler_registration_organization_name = Window(
 
 boiler_registration_organization_itn = Window(
     Format(
-        text='Введите ИНН организации:'
+        text=(
+            "🧾 <b>ИНН организации</b>\n\n"
+            "Пожалуйста, введите ИНН вашей организации:"
+        )
     ),
     MessageInput(
         organization_itn_handler
@@ -72,7 +81,7 @@ boiler_registration_organization_itn = Window(
             id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerRegistrationDialog.boiler_registration_phone
         ),
         SwitchTo(
-            id='start_again', text=Format('Начать сначала'),
+            id='start_again', text=Format('🔁 Начать сначала'),
             state=BoilerRegistrationDialog.boiler_registration_user_name
         )
     ),
@@ -82,21 +91,23 @@ boiler_registration_organization_itn = Window(
 
 boiler_registration_accepting = Window(
     Format(
-        text='Проверьте данные перед регистрацией:\n\n'
-             '{dialog_data[user_phone]}'
-             '{dialog_data[user_name]}'
-             '{dialog_data[organization_itn]}'
-             '{dialog_data[organization_name]}'
+        text=(
+            "✅ <b>Проверьте введённые данные:</b>\n\n"
+            "📞 <b>Телефон:</b> {dialog_data[user_phone]}\n"
+            "👤 <b>Имя:</b> {dialog_data[user_name]}\n"
+            "🏢 <b>Организация:</b> {dialog_data[organization_name]}\n"
+            "🧾 <b>ИНН:</b> {dialog_data[organization_itn]}"
+        )
     ),
     Button(
-        id='registration', text=Format('Зарегистрироваться'), on_click=user_registration
+        id='registration', text=Format('🚀 Зарегистрироваться'), on_click=user_registration
     ),
     Row(
         SwitchTo(
             id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerRegistrationDialog.boiler_registration_phone
         ),
         SwitchTo(
-            id='start_again', text=Format('Начать сначала'),
+            id='start_again', text=Format('🔁 Начать сначала'),
             state=BoilerRegistrationDialog.boiler_registration_user_name
         )
     ),
