@@ -5,9 +5,11 @@ from aiogram_dialog.widgets.input import MessageInput
 from aiogram_dialog.widgets.kbd import Button, SwitchTo, Back, Group, Row, ScrollingGroup, Column, Select, Counter
 from aiogram_dialog.widgets.text import Format
 
+from main_menu.global_utils.global_messages_input import get_itn_and_organization_name
+
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_message_input_handlers import feedback_handler, \
     technical_problem_handler, technical_problem_description_handler, phone_handler, name_handler, \
-    content_handler, get_itn_and_organization_name
+    content_handler
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_on_click_functions import send_feedback, \
     on_technical_problem_selected, confirm_sending_call_technician, get_barista_count_and_switch
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
