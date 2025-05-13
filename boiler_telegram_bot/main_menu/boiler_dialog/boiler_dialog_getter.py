@@ -16,15 +16,19 @@ def technical_problem_id_getter(technical_problem: TechnicalProblemDialog) -> in
 async def user_data_getter(dialog_manager: DialogManager, **_kwargs):
     event_update = _kwargs.get('event_update')
 
-    user_id = event_update.event.from_user.id
+    user_id = str(event_update.event.from_user.id)
 
     user_data = User.get_user_by_telegram_id(
         user_id
     )
 
+    print(user_data)
+
     if user_data:
-        user_phone = user_data['user_phone']
-        user_name = user_data['user_name']
+        user_phone = user_data['phone']
+        user_name = user_data['name']
+        print(user_phone)
+        print(user_name)
         return {
             'user_phone': user_phone,
             'user_name': user_name
