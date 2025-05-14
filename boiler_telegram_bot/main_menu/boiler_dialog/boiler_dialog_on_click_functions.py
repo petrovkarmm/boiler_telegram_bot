@@ -1,12 +1,12 @@
 import asyncio
 import random
+from pprint import pprint
 from typing import Any
 
 from aiogram.enums import ParseMode
 from aiogram.types import CallbackQuery
-from aiogram_dialog import DialogManager, BaseDialogManager, ShowMode
-from aiogram_dialog.widgets.kbd import Button, ManagedCounter
-from aiogram.exceptions import TelegramRetryAfter
+from aiogram_dialog import DialogManager, ShowMode
+from aiogram_dialog.widgets.kbd import Button, ManagedCounter, ManagedRadio
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from db_configuration.models.technical_problem import TechnicalProblem
@@ -24,6 +24,43 @@ async def get_barista_count_and_switch(
     dialog_manager.dialog_data['barista_value'] = barista_value
     await dialog_manager.switch_to(
         BoilerDialog.boiler_barista_training_accept_request
+    )
+
+
+async def save_rent_and_switch(
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+):
+    dialog_manager.dialog_data['button_click'] = 'Аренда'
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_rent
+    )
+
+
+async def rent_radio_set(
+        event: CallbackQuery,
+        widget: ManagedRadio,
+        dialog_manager: DialogManager,
+        item_id: Any,
+
+):
+    dialog_manager.dialog_data['radio_get_set'] = True
+
+
+async def save_tech_cat_and_switch(
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+):
+    dialog_manager.dialog_data['button_click'] = 'Подбор техники'
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_technical_catalog_type_choose
+    )
+
+
+async def save_barista_training_and_switch(
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+):
+    dialog_manager.dialog_data['button_click'] = 'Обучение бариста'
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_barista_training_choose_count
     )
 
 
@@ -91,6 +128,7 @@ async def confirm_sending_barista_training(
     )
 
     if user_data:
+        request_title = dialog_manager.dialog_data['button_click']
         barista_value = dialog_manager.dialog_data['barista_value']
         user_phone = user_data['phone']
         user_name = user_data['name']
@@ -99,7 +137,8 @@ async def confirm_sending_barista_training(
 
         await callback.message.answer(
             text=(
-                "<b>📤 Имитируем отправку в CRM систему...</b>\n"
+                "<b>📤 Имитируем отправку в CRM систему...</b>\n\n"
+                f"🔗 <b>Название секции:</b> {request_title}\n"
                 f"👤 <b>Имя пользователя:</b> {user_name}\n"
                 f'📌 <b>Кол-во человек на обучение:</b> {barista_value}\n'
                 f'📞 <b>Телефон:</b> {user_phone}\n'
