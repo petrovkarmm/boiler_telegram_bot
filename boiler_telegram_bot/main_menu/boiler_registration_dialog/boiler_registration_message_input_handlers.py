@@ -17,7 +17,7 @@ async def organization_itn_handler(
 
     if not is_valid_inn_organization(inn):
         await message.answer("❌ Неверный ИНН. Пожалуйста, введите корректный ИНН из 10 цифр.")
-        return  # Останавливаем переход к следующему окну
+        return
 
     dialog_manager.dialog_data['organization_itn'] = inn
     await dialog_manager.switch_to(
