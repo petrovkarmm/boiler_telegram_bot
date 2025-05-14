@@ -23,6 +23,9 @@ class BoilerDialog(StatesGroup):
 
     boiler_rent = State()
     boiler_ask_budget = State()
+    boiler_ask_place_format = State()
+    boiler_rent_address = State()
+    boiler_accept_rent = State()
 
     boiler_barista_training_choose_count = State()
     boiler_barista_training_accept_request = State()
