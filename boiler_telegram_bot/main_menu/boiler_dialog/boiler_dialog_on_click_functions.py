@@ -118,6 +118,55 @@ async def confirm_sending_call_technician(
         )
 
 
+async def confirm_sending_rent_request(
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+):
+    user_id = str(callback.from_user.id)
+    user_data = User.get_user_by_telegram_id(user_id)
+
+    if user_data:
+        request_title = dialog_manager.dialog_data['button_click']
+
+        user_name = user_data['name']
+        user_phone = user_data['phone']
+        organization_itn = user_data['organization_itn']
+        organization_name = user_data['organization_name']
+
+        user_address = dialog_manager.dialog_data.get('user_address', '—')
+        user_budget = dialog_manager.dialog_data.get('user_budget', '—')
+        place_format = dialog_manager.dialog_data.get('place_format', '—')
+        user_rent_type = dialog_manager.dialog_data.get('user_rent_type', '—')
+
+        # TODO: Интеграция с CRM системой.
+
+        await callback.message.answer(
+            text=(
+                "<b>📤 Имитируем отправку в CRM систему...</b>\n\n"
+                f"🔗 <b>Название секции:</b> {request_title}\n"
+                f"👤 <b>Имя пользователя:</b> {user_name}\n"
+                f"📞 <b>Телефон:</b> {user_phone}\n"
+                f"🏢 <b>Организация:</b> {organization_name}\n"
+                f"🧾 <b>ИНН:</b> {organization_itn}\n"
+                f"📍 <b>Адрес:</b> {user_address}\n"
+                f"🏷 <b>Тип аренды:</b> {user_rent_type}\n"
+                f"💰 <b>Бюджет:</b> {user_budget}\n"
+                f"🏬 <b>Формат заведения:</b> {place_format}"
+            ),
+            parse_mode=ParseMode.HTML
+        )
+
+        await callback.message.answer(
+            text="✅ <b>Заявка на аренду успешно отправлена!</b>\n📞 Мы с вами свяжемся в ближайшее время.",
+            parse_mode=ParseMode.HTML
+        )
+
+        dialog_manager.show_mode = ShowMode.DELETE_AND_SEND
+        await dialog_manager.switch_to(BoilerDialog.boiler_main_menu)
+
+    else:
+        await dialog_manager.start(BoilerRegistrationDialog.boiler_registration_user_name)
+
+
 async def confirm_sending_barista_training(
         callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ):
