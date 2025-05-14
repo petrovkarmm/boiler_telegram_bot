@@ -2,10 +2,11 @@ from pprint import pprint
 
 from aiogram.types import Update
 from aiogram_dialog import DialogManager
+from aiogram_dialog.widgets.kbd import ManagedRadio
 
 from db_configuration.models.technical_problem import TechnicalProblem
 from db_configuration.models.user import User
-from main_menu.boiler_dialog.boiler_dialog_dataclasses import TechnicalProblemDialog, TECHNICAL_PROBLEM_KEY
+from main_menu.boiler_dialog.boiler_dialog_dataclasses import TechnicalProblemDialog, TECHNICAL_PROBLEM_KEY, rent_keys
 from main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
 
 
@@ -49,6 +50,47 @@ async def get_rent_data(**kwargs):
     ]
     return {"rents": rents}
 
+
+async def get_rent_data_for_accept(dialog_manager: DialogManager, **_kwargs):
+    event_update = _kwargs.get('event_update')
+
+    user_id = str(event_update.event.from_user.id)
+
+    user_data = User.get_user_by_telegram_id(
+        user_id
+    )
+
+    if user_data:
+        radio_widget = dialog_manager.find(
+            'r_rent_pay'
+        )
+        radio_widget: ManagedRadio
+
+        user_rent_type = rent_keys.get(radio_widget.get_checked(), 'ERROR')
+        user_address = dialog_manager.dialog_data['user_address']
+        user_budget = dialog_manager.dialog_data['user_budget']
+        place_format = dialog_manager.dialog_data['place_format']
+        user_phone = user_data['phone']
+        user_name = user_data['name']
+        organization_itn = user_data['organization_itn']
+        organization_name = user_data['organization_name']
+
+        return {
+            "user_address": user_address,
+            "user_budget": user_budget,
+            "place_format": place_format,
+            "user_phone": user_phone,
+            "user_name": user_name,
+            "organization_itn": organization_itn,
+            "organization_name": organization_name,
+            "user_rent_type": user_rent_type
+        }
+
+
+    else:
+        await dialog_manager.start(
+            BoilerRegistrationDialog.boiler_registration_user_name
+        )
 
 
 async def user_data_profile_getter(dialog_manager: DialogManager, **_kwargs):
