@@ -13,15 +13,15 @@ from main_menu.global_utils.global_messages_input import get_itn_and_organizatio
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_message_input_handlers import feedback_handler, \
     technical_problem_handler, technical_problem_description_handler, \
     content_handler, address_getter, new_organization_itn_handler, new_phone_handler, new_organization_name_handler, \
-    new_name_handler
+    new_name_handler, budget_getter, place_format_getter, rent_address_getter
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_on_click_functions import send_feedback, \
     on_technical_problem_selected, confirm_sending_call_technician, get_barista_count_and_switch, \
     confirm_sending_barista_training, save_rent_and_switch, save_tech_cat_and_switch, save_barista_training_and_switch, \
-    rent_radio_set
+    rent_radio_set, confirm_sending_rent_request
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_PROBLEM_KEY
 from main_menu.boiler_dialog.boiler_dialog_getter import technical_problem_id_getter, technical_problems_getter, \
-    user_data_profile_getter, user_data_profile_barista_getter, get_rent_data
+    user_data_profile_getter, user_data_profile_barista_getter, get_rent_data, get_rent_data_for_accept
 
 boiler_main_menu = Window(
     Format(
@@ -33,7 +33,7 @@ boiler_main_menu = Window(
             id='repair', text=Format('🛠️ Вызов техника'), state=BoilerDialog.boiler_repair_problem
         ),
         Button(
-            id='rent', text=Format('🏢 Аренда'), on_click=save_rent_and_switch
+            id='rent', text=Format('🧰 Аренда'), on_click=save_rent_and_switch
         ),
     ),
     Row(
@@ -304,8 +304,11 @@ boiler_repair_boiler_video_or_photo = Window(
 boiler_repair_address = Window(
     Format(
         text=(
-            "📍 <b>Адрес</b>\n\n"
-            "Пожалуйста, укажите адрес, по которому требуется ремонт:"
+            "📍 <b>Адрес и название заведения</b>\n\n"
+            "Пожалуйста, укажите адрес, по которому требуется ремонт,\n"
+            "а также название заведения.\n\n"
+            "Пример:\n"
+            "<i>г. Москва, ул. Ленина, д. 10, кафе «Уют»</i>"
         )
     ),
     MessageInput(
@@ -426,7 +429,11 @@ boiler_barista_training_accept_request = Window(
 
 boiler_rent = Window(
     Format(
-        text='Вас интересует суточная или помесячная аренда?'
+        text=(
+            "🧰 <b>Аренда оборудования</b>\n\n"
+            "Пожалуйста, выберите интересующий вас тип аренды:\n"
+            "• <b>суточная</b> или <b>помесячная</b>?"
+        )
     ),
     Radio(
         Format("🔘 {item[0]}"),
@@ -439,7 +446,7 @@ boiler_rent = Window(
     SwitchTo(
         id='ask_budget',
         text=Format(
-            'Далее'
+            '➡️ Далее'
         ),
         when=F['dialog_data']['radio_get_set'],
         state=BoilerDialog.boiler_ask_budget
@@ -448,13 +455,114 @@ boiler_rent = Window(
         id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
     ),
     getter=get_rent_data,
-    state=BoilerDialog.boiler_rent
+    state=BoilerDialog.boiler_rent,
+    parse_mode=ParseMode.HTML
+)
+
+boiler_ask_budget = Window(
+    Format(
+        "💰 <b>Бюджет</b>\n\n"
+        "Пожалуйста, укажите, какой у вас бюджет на аренду оборудования."
+    ),
+    MessageInput(
+        budget_getter
+    ),
+    Row(
+        SwitchTo(
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_rent
+        ),
+        SwitchTo(
+            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+        )
+    ),
+    state=BoilerDialog.boiler_ask_budget,
+    parse_mode=ParseMode.HTML
+)
+
+boiler_ask_place_format = Window(
+    Format(
+        "🏪 <b>Формат заведения</b>\n\n"
+        "Расскажите, пожалуйста, какой у вас формат заведения?\n"
+        "Например: кафе, кофейня, ресторан и т.п."
+    ),
+    MessageInput(
+        place_format_getter
+    ),
+    Row(
+        SwitchTo(
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_ask_budget
+        ),
+        SwitchTo(
+            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+        )
+    ),
+    state=BoilerDialog.boiler_ask_place_format,
+    parse_mode=ParseMode.HTML
+)
+
+boiler_rent_address = Window(
+    Format(
+        text=(
+            "📍 <b>Адрес и название заведения</b>\n\n"
+            "Пожалуйста, укажите адрес, по которому требуется ремонт,\n"
+            "а также название заведения (если есть).\n\n"
+            "Пример:\n"
+            "<i>г. Москва, ул. Ленина, д. 10, кафе «Уют»</i>"
+        )
+    ),
+    MessageInput(
+        rent_address_getter
+    ),
+    Row(
+        SwitchTo(
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_ask_place_format
+        ),
+        SwitchTo(
+            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+        )
+    ),
+    state=BoilerDialog.boiler_rent_address,
+    parse_mode=ParseMode.HTML
+)
+
+boiler_accept_rent = Window(
+    Format(
+        text=(
+            '✅ <b>{user_name}</b>, пожалуйста, проверьте все данные перед отправкой заявки на аренду:\n\n'
+            '📍 <b>Адрес:</b> <i>{user_address}</i>\n\n'
+            '🏷 <b>Тип аренды:</b> <i>{user_rent_type}</i>\n\n'
+            '💰 <b>Бюджет:</b> <i>{user_budget}</i>\n\n'
+            '🏬 <b>Формат заведения:</b> <i>{place_format}</i>\n\n'
+            '📞 <b>Телефон:</b> <i>{user_phone}</i>\n\n'
+            '🏢 <b>Организация:</b> <i>{organization_name}</i>\n\n'
+            '🧾 <b>ИНН:</b> <i>{organization_itn}</i>\n\n'
+            'Если всё верно — нажмите <b>«Отправить»</b>.'
+        )
+    ),
+    Button(
+        id='accept_rent_req', text=Format('📤 Отправить'), on_click=confirm_sending_rent_request
+    ),
+    Row(
+        SwitchTo(
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_ask_place_format
+        ),
+        SwitchTo(
+            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+        )
+    ),
+    getter=get_rent_data_for_accept,
+    state=BoilerDialog.boiler_accept_rent,
+    parse_mode=ParseMode.HTML
 )
 
 boiler_dialog = Dialog(
     boiler_main_menu,
 
     boiler_rent,
+    boiler_ask_budget,
+    boiler_ask_place_format,
+    boiler_rent_address,
+    boiler_accept_rent,
 
     boiler_profile_edit_menu,
     boiler_profile_edit_itn,
