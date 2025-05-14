@@ -1,8 +1,11 @@
+import operator
+
 from aiogram import F
 from aiogram.enums import ParseMode
 from aiogram_dialog import Dialog, Window
 from aiogram_dialog.widgets.input import MessageInput
-from aiogram_dialog.widgets.kbd import Button, SwitchTo, Back, Group, Row, ScrollingGroup, Column, Select, Counter
+from aiogram_dialog.widgets.kbd import Button, SwitchTo, Back, Group, Row, ScrollingGroup, Column, Select, Counter, \
+    Radio
 from aiogram_dialog.widgets.text import Format
 
 from main_menu.global_utils.global_messages_input import get_itn_and_organization_name
@@ -13,11 +16,12 @@ from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_message_input_han
     new_name_handler
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_on_click_functions import send_feedback, \
     on_technical_problem_selected, confirm_sending_call_technician, get_barista_count_and_switch, \
-    confirm_sending_barista_training
+    confirm_sending_barista_training, save_rent_and_switch, save_tech_cat_and_switch, save_barista_training_and_switch, \
+    rent_radio_set
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_PROBLEM_KEY
 from main_menu.boiler_dialog.boiler_dialog_getter import technical_problem_id_getter, technical_problems_getter, \
-    user_data_profile_getter, user_data_profile_barista_getter
+    user_data_profile_getter, user_data_profile_barista_getter, get_rent_data
 
 boiler_main_menu = Window(
     Format(
@@ -28,17 +32,17 @@ boiler_main_menu = Window(
         SwitchTo(
             id='repair', text=Format('🛠️ Вызов техника'), state=BoilerDialog.boiler_repair_problem
         ),
-        SwitchTo(
-            id='rent', text=Format('🏢 Аренда'), state=BoilerDialog.boiler_rent
+        Button(
+            id='rent', text=Format('🏢 Аренда'), on_click=save_rent_and_switch
         ),
     ),
     Row(
-        SwitchTo(
-            id='tech_cat', text=Format('📦 Подбор техники'), state=BoilerDialog.boiler_technical_catalog_type_choose
+        Button(
+            id='tech_cat', text=Format('📦 Подбор техники'), on_click=save_tech_cat_and_switch
         ),
-        SwitchTo(
+        Button(
             id='bar_training', text=Format('☕ Обучение бариста'),
-            state=BoilerDialog.boiler_barista_training_choose_count
+            on_click=save_barista_training_and_switch
         ),
     ),
     SwitchTo(
@@ -420,8 +424,37 @@ boiler_barista_training_accept_request = Window(
     parse_mode=ParseMode.HTML
 )
 
+boiler_rent = Window(
+    Format(
+        text='Вас интересует суточная или помесячная аренда?'
+    ),
+    Radio(
+        Format("🔘 {item[0]}"),
+        Format("⚪️ {item[0]}"),
+        id="r_rent_pay",
+        item_id_getter=operator.itemgetter(1),
+        items="rents",
+        on_state_changed=rent_radio_set,
+    ),
+    SwitchTo(
+        id='ask_budget',
+        text=Format(
+            'Далее'
+        ),
+        when=F['dialog_data']['radio_get_set'],
+        state=BoilerDialog.boiler_ask_budget
+    ),
+    SwitchTo(
+        id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+    ),
+    getter=get_rent_data,
+    state=BoilerDialog.boiler_rent
+)
+
 boiler_dialog = Dialog(
     boiler_main_menu,
+
+    boiler_rent,
 
     boiler_profile_edit_menu,
     boiler_profile_edit_itn,
