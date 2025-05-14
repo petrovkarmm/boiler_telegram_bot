@@ -9,7 +9,7 @@ from main_menu.global_utils.global_messages_input import get_itn_and_organizatio
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_message_input_handlers import feedback_handler, \
     technical_problem_handler, technical_problem_description_handler, \
-    content_handler, address_getter
+    content_handler, address_getter, new_organization_itn_handler, new_phone_handler, new_organization_name_handler
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_on_click_functions import send_feedback, \
     on_technical_problem_selected, confirm_sending_call_technician, get_barista_count_and_switch, \
     confirm_sending_barista_training
@@ -77,6 +77,95 @@ boiler_profile_edit_menu = Window(
     ),
     getter=user_data_profile_getter,
     state=BoilerDialog.boiler_profile_edit_menu,
+    parse_mode=ParseMode.HTML
+)
+
+boiler_profile_edit_itn = Window(
+    Format(
+        text=(
+            "🧾 <b>ИНН организации</b>\n\n"
+            "Пожалуйста, введите новое значение ИНН вашей организации:"
+        )
+    ),
+    Row(
+        SwitchTo(
+            id='back_to_feedback', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_edit_menu
+        ),
+        SwitchTo(
+            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+        ),
+    ),
+    MessageInput(
+        new_organization_itn_handler
+    ),
+    state=BoilerDialog.boiler_profile_edit_name,
+    parse_mode=ParseMode.HTML
+)
+
+boiler_profile_edit_phone = Window(
+    Format(
+        text=(
+            "📞 <b>Номер телефона</b>\n\n"
+            "Пожалуйста, укажите новый номер для связи с вами.\n"
+            "Допустимый формат: <b>+7XXXXXXXXXX</b> или <b>8XXXXXXXXXX</b>\n\n"
+            "Убедитесь, что номер введён корректно — мы свяжемся с вами по нему."
+        )
+    ),
+    Row(
+        SwitchTo(
+            id='back_to_feedback', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_edit_menu
+        ),
+        SwitchTo(
+            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+        ),
+    ),
+    MessageInput(
+        new_phone_handler
+    ),
+    state=BoilerDialog.boiler_profile_edit_phone,
+    parse_mode=ParseMode.HTML
+)
+
+boiler_profile_edit_organization_name = Window(
+    Format(
+        text=(
+            "🏢 <b>Название организации</b>\n\n"
+            "Введите, пожалуйста, новое название вашей организации:"
+        )
+    ),
+    MessageInput(
+        new_organization_name_handler
+    ),
+    Row(
+        SwitchTo(
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_edit_menu
+        ),
+        SwitchTo(
+            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+        ),
+    ),
+    state=BoilerDialog.boiler_profile_edit_organization_name,
+    parse_mode=ParseMode.HTML
+)
+
+boiler_profile_edit_name = Window(
+    Format(
+        text=(
+            "🙋‍♂️ Пожалуйста, напишите, как к вам можно обращаться (ваше имя):"
+        )
+    ),
+    MessageInput(
+        new_`name_handler
+    ),
+    Row(
+        SwitchTo(
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_edit_menu
+        ),
+        SwitchTo(
+            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+        ),
+    ),
+    state=BoilerDialog.boiler_profile_edit_name,
     parse_mode=ParseMode.HTML
 )
 
@@ -329,6 +418,12 @@ boiler_barista_training_accept_request = Window(
 
 boiler_dialog = Dialog(
     boiler_main_menu,
+
+    boiler_profile_edit_menu,
+    boiler_profile_edit_itn,
+    boiler_profile_edit_name,
+    boiler_profile_edit_phone,
+    boiler_profile_edit_organization_name,
 
     boiler_feedback,
     boiler_accept_feedback,
