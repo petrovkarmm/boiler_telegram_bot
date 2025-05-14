@@ -9,7 +9,8 @@ from main_menu.global_utils.global_messages_input import get_itn_and_organizatio
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_message_input_handlers import feedback_handler, \
     technical_problem_handler, technical_problem_description_handler, \
-    content_handler, address_getter, new_organization_itn_handler, new_phone_handler, new_organization_name_handler
+    content_handler, address_getter, new_organization_itn_handler, new_phone_handler, new_organization_name_handler, \
+    new_name_handler
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_on_click_functions import send_feedback, \
     on_technical_problem_selected, confirm_sending_call_technician, get_barista_count_and_switch, \
     confirm_sending_barista_training
@@ -155,7 +156,7 @@ boiler_profile_edit_name = Window(
         )
     ),
     MessageInput(
-        new_`name_handler
+        new_name_handler
     ),
     Row(
         SwitchTo(
