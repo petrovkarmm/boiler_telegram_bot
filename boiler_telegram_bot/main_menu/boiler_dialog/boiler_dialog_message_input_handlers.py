@@ -127,7 +127,7 @@ async def new_organization_name_handler(
     )
 
     await dialog_manager.switch_to(
-        BoilerDialog.boiler_profile_edit_organization_name
+        BoilerDialog.boiler_profile_edit_menu
     )
 
 
@@ -146,7 +146,7 @@ async def new_name_handler(
     )
 
     await dialog_manager.switch_to(
-        BoilerDialog.boiler_profile_edit_organization_name
+        BoilerDialog.boiler_profile_edit_menu
     )
 
 

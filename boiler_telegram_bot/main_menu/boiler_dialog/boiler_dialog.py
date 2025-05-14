@@ -42,7 +42,7 @@ boiler_main_menu = Window(
         ),
     ),
     SwitchTo(
-        id='profile_edit', text=Format('Редактирование профиля'), state=BoilerDialog.boiler_profile_edit_menu
+        id='profile_edit', text=Format('📝 Редактирование профиля'), state=BoilerDialog.boiler_profile_edit_menu
     ),
     SwitchTo(
         id='text_back', text=Format('💬 Обратная связь'), state=BoilerDialog.boiler_feedback
@@ -54,27 +54,30 @@ boiler_main_menu = Window(
 boiler_profile_edit_menu = Window(
     Format(
         text="Выберите, что отредактировать: \n\n"
-             "👤 <b>Имя пользователя:</b> {user_name}\n"
-             '📞 <b>Телефон:</b> {user_phone}\n'
-             "🏢 <b>Организация:</b> {organization_name}\n"
-             "🧾 <b>ИНН:</b> {organization_itn}\n"
+             "👤 <b>Имя пользователя:</b> {user_name}\n\n"
+             '📞 <b>Телефон:</b> {user_phone}\n\n'
+             "🏢 <b>Организация:</b> {organization_name}\n\n"
+             "🧾 <b>ИНН:</b> {organization_itn}\n\n"
 
     ),
     Row(
         SwitchTo(
-            id='edit_name', text=Format('Имя'), state=BoilerDialog.boiler_profile_edit_name
+            id='edit_name', text=Format('👤 Имя'), state=BoilerDialog.boiler_profile_edit_name
         ),
         SwitchTo(
-            id='edit_phone', text=Format('Телефон'), state=BoilerDialog.boiler_profile_edit_phone
+            id='edit_phone', text=Format('📞 Телефон'), state=BoilerDialog.boiler_profile_edit_phone
         )
     ),
     Row(
         SwitchTo(
-            id='edit_o_name', text=Format('Организация'), state=BoilerDialog.boiler_profile_edit_organization_itn
+            id='edit_o_name', text=Format('🏢 Организация'), state=BoilerDialog.boiler_profile_edit_organization_name
         ),
         SwitchTo(
-            id='edit_itn', text=Format('ИНН'), state=BoilerDialog.boiler_profile_edit_organization_itn
+            id='edit_itn', text=Format('🧾 ИНН'), state=BoilerDialog.boiler_profile_edit_organization_itn
         ),
+    ),
+    SwitchTo(
+        id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
     ),
     getter=user_data_profile_getter,
     state=BoilerDialog.boiler_profile_edit_menu,
@@ -99,7 +102,7 @@ boiler_profile_edit_itn = Window(
     MessageInput(
         new_organization_itn_handler
     ),
-    state=BoilerDialog.boiler_profile_edit_name,
+    state=BoilerDialog.boiler_profile_edit_organization_itn,
     parse_mode=ParseMode.HTML
 )
 
