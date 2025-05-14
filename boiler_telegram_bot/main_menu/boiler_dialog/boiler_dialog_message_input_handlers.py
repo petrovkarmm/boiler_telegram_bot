@@ -208,3 +208,45 @@ async def address_getter(
     await dialog_manager.switch_to(
         BoilerDialog.boiler_repair_accept_request
     )
+
+
+async def rent_address_getter(
+        message: Message,
+        message_input: MessageInput,
+        dialog_manager: DialogManager,
+):
+    user_address = message.text
+
+    dialog_manager.dialog_data['user_address'] = user_address
+
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_accept_rent
+    )
+
+
+async def budget_getter(
+        message: Message,
+        message_input: MessageInput,
+        dialog_manager: DialogManager,
+):
+    user_budget = message.text
+
+    dialog_manager.dialog_data['user_budget'] = user_budget
+
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_ask_place_format
+    )
+
+
+async def place_format_getter(
+        message: Message,
+        message_input: MessageInput,
+        dialog_manager: DialogManager,
+):
+    place_format = message.text
+
+    dialog_manager.dialog_data['place_format'] = place_format
+
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_rent_address
+    )
