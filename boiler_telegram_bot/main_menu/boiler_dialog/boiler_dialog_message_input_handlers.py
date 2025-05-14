@@ -6,7 +6,9 @@ from aiogram_dialog.widgets.text import Format
 from aiogram.types import Message
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
+from db_configuration.models.user import User
 from main_menu.boiler_dialog.utils import normalize_phone_number
+from main_menu.boiler_registration_dialog.utils import is_valid_inn_organization
 
 
 async def feedback_handler(
@@ -85,6 +87,99 @@ async def technical_problem_description_handler(
     else:
         await message.answer(
             text='🤔 Похоже, вы отправили что-то не то...'
+        )
+
+
+async def new_organization_itn_handler(
+        message: Message,
+        message_input: MessageInput,
+        dialog_manager: DialogManager,
+):
+    inn = message.text.strip()
+
+    if not is_valid_inn_organization(inn):
+        await message.answer("❌ Неверный ИНН. Пожалуйста, введите корректный ИНН из 10 цифр.")
+        return
+
+    telegram_id = str(message.from_user.id)
+
+    User.update_user_field(
+        telegram_id=telegram_id, key='organization_itn', new_value=inn
+    )
+
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_profile_edit_menu
+    )
+
+
+async def new_organization_name_handler(
+        message: Message,
+        message_input: MessageInput,
+        dialog_manager: DialogManager,
+):
+    telegram_id = str(message.from_user.id)
+    new_organization_name = message.text
+
+    User.update_user_field(
+        telegram_id=telegram_id,
+        key='organization_name',
+        new_value=new_organization_name
+    )
+
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_profile_edit_organization_name
+    )
+
+
+async def new_name_handler(
+        message: Message,
+        message_input: MessageInput,
+        dialog_manager: DialogManager,
+):
+    telegram_id = str(message.from_user.id)
+    new_name = message.text
+
+    User.update_user_field(
+        telegram_id=telegram_id,
+        key='name',
+        new_value=new_name
+    )
+
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_profile_edit_organization_name
+    )
+
+
+async def new_phone_handler(
+        message: Message,
+        message_input: MessageInput,
+        dialog_manager: DialogManager,
+):
+    user_phone = message.text
+
+    validate_user_phone = await normalize_phone_number(
+        user_phone
+    )
+
+    if validate_user_phone:
+
+        telegram_id = str(message.from_user.id)
+
+        User.update_user_field(
+            telegram_id=telegram_id, key='phone', new_value=user_phone
+        )
+
+        await dialog_manager.switch_to(
+            BoilerDialog.boiler_profile_edit_menu
+        )
+
+    else:
+        await message.answer(
+            text="❌ <b>Некорректный номер телефона</b>\n\n"
+                 "Пожалуйста, введите номер в одном из следующих форматов:\n"
+                 "📱 <code>+7XXXXXXXXXX</code> или <code>8XXXXXXXXXX</code>\n\n"
+                 "Попробуйте ещё раз 👇",
+            parse_mode=ParseMode.HTML
         )
 
 
