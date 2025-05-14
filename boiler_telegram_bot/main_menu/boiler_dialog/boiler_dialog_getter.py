@@ -42,6 +42,15 @@ async def user_data_profile_barista_getter(dialog_manager: DialogManager, **_kwa
         )
 
 
+async def get_rent_data(**kwargs):
+    rents = [
+        ("Суточная", "daily"),
+        ("Помесячно", "monthly"),
+    ]
+    return {"rents": rents}
+
+
+
 async def user_data_profile_getter(dialog_manager: DialogManager, **_kwargs):
     event_update = _kwargs.get('event_update')
 
