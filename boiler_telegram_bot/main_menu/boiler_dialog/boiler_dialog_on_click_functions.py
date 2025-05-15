@@ -12,7 +12,7 @@ from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import Boi
 from db_configuration.models.technical_problem import TechnicalProblem
 from db_configuration.models.feedback import Feedback
 from db_configuration.models.user import User
-from main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_CATALOG
+from main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_CATALOG, RENT_TYPE
 from main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
 
 
@@ -192,6 +192,68 @@ async def confirm_sending_tech_catalog_request(
 
     else:
         await dialog_manager.start(BoilerRegistrationDialog.boiler_registration_user_name)
+
+
+async def confirm_rent_request_sending(
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+):
+    user_id = str(callback.from_user.id)
+
+    user_data = User.get_user_by_telegram_id(
+        user_id
+    )
+
+    if user_data:
+        request_title = dialog_manager.dialog_data['button_click']
+        user_phone = user_data['phone']
+        user_name = user_data['name']
+        organization_itn = user_data['organization_itn']
+        organization_name = user_data['organization_name']
+
+        rent_radio_rent_type_widget = dialog_manager.find(
+            'rent_type'
+        )
+        rent_radio_catalog_widget = dialog_manager.find(
+            'rent_tech_type'
+        )
+
+        rent_radio_rent_type_widget: ManagedRadio
+        rent_radio_catalog_widget: ManagedRadio
+
+        user_rent_type = RENT_TYPE.get(rent_radio_rent_type_widget.get_checked(), 'ERROR')
+        user_technical_type = TECHNICAL_CATALOG.get(rent_radio_catalog_widget.get_checked(), 'ERROR')
+
+        await callback.message.answer(
+            text=(
+                "<b>📤 Имитируем отправку в CRM систему...</b>\n\n"
+                f"🔗 <b>Название секции:</b> {request_title}\n"
+                f"☕ <b>Тип кофе машины:</b> {user_technical_type}\n"
+                f'📦 <b>Тип аренды:</b> {user_rent_type}\n'
+                f"👤 <b>Имя пользователя:</b> {user_name}\n"
+                f'📞 <b>Телефон:</b> {user_phone}\n'
+                f'🏢 <b>Организация:</b> {organization_name}\n'
+                f'🧾 <b>ИНН:</b> {organization_itn}\n'
+
+            ),
+            parse_mode=ParseMode.HTML
+        )
+
+        await callback.message.answer(
+            text="✅ <b>Заявка успешно принята!</b>\n📞 Ожидайте звонка.",
+            parse_mode=ParseMode.HTML
+        )
+
+        dialog_manager.show_mode = ShowMode.DELETE_AND_SEND
+
+        await dialog_manager.switch_to(
+            BoilerDialog.boiler_main_menu
+        )
+
+
+    else:
+        await dialog_manager.start(
+            BoilerRegistrationDialog.boiler_registration_user_name
+        )
 
 
 async def confirm_sending_barista_training(

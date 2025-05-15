@@ -1,5 +1,5 @@
 from aiogram.types import CallbackQuery
-from aiogram_dialog import DialogManager
+from aiogram_dialog import DialogManager, StartMode, ShowMode
 from aiogram_dialog.widgets.kbd import Button
 
 from db_configuration.models.user import User
@@ -45,6 +45,8 @@ async def user_registration(
         text='Вы успешно зарегиситрировались!'
     )
 
+    dialog_manager.show_mode = ShowMode.DELETE_AND_SEND
+
     await dialog_manager.start(
-        BoilerDialog.boiler_main_menu
+        BoilerDialog.boiler_main_menu,
     )

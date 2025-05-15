@@ -21,6 +21,7 @@ class BoilerDialog(StatesGroup):
 
     boiler_rent_type = State()
     boiler_rent_technical_type = State()
+    boiler_rent_accept_request = State()
 
     boiler_technical_catalog_type_choose = State()
     boiler_ask_budget = State()

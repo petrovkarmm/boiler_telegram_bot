@@ -7,7 +7,7 @@ from aiogram_dialog.widgets.kbd import ManagedRadio
 from db_configuration.models.technical_problem import TechnicalProblem
 from db_configuration.models.user import User
 from main_menu.boiler_dialog.boiler_dialog_dataclasses import TechnicalProblemDialog, TECHNICAL_PROBLEM_KEY, \
-    TECHNICAL_CATALOG
+    TECHNICAL_CATALOG, RENT_TYPE
 from main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
 
 
@@ -60,7 +60,51 @@ async def rent_type_getter(**kwargs):
     return {"rents": rents}
 
 
-async def get_rent_data_for_accept(dialog_manager: DialogManager, **_kwargs):
+async def rent_data_for_accept_request(dialog_manager: DialogManager, **_kwargs):
+    event_update = _kwargs.get('event_update')
+
+    user_id = str(event_update.event.from_user.id)
+
+    user_data = User.get_user_by_telegram_id(
+        user_id
+    )
+
+    if user_data:
+        rent_radio_rent_type_widget = dialog_manager.find(
+            'rent_type'
+        )
+        rent_radio_catalog_widget = dialog_manager.find(
+            'rent_tech_type'
+        )
+
+        rent_radio_rent_type_widget: ManagedRadio
+        rent_radio_catalog_widget: ManagedRadio
+
+        user_rent_type = RENT_TYPE.get(rent_radio_rent_type_widget.get_checked(), 'ERROR')
+        user_technical_type = TECHNICAL_CATALOG.get(rent_radio_catalog_widget.get_checked(), 'ERROR')
+
+        user_phone = user_data['phone']
+        user_name = user_data['name']
+        organization_itn = user_data['organization_itn']
+        organization_name = user_data['organization_name']
+
+        return {
+            "user_rent_type": user_rent_type,
+            "user_phone": user_phone,
+            "user_name": user_name,
+            "organization_itn": organization_itn,
+            "organization_name": organization_name,
+            "user_technical_type": user_technical_type
+        }
+
+
+    else:
+        await dialog_manager.start(
+            BoilerRegistrationDialog.boiler_registration_user_name
+        )
+
+
+async def get_technical_catalog_data_for_accept(dialog_manager: DialogManager, **_kwargs):
     event_update = _kwargs.get('event_update')
 
     user_id = str(event_update.event.from_user.id)
