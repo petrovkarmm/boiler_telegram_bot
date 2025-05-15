@@ -8,7 +8,7 @@ from aiogram.types import Message
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from db_configuration.models.user import User
 from main_menu.boiler_dialog.utils import normalize_phone_number
-from main_menu.boiler_registration_dialog.utils import is_valid_inn_organization
+from main_menu.boiler_registration_dialog.utils import is_valid_inn
 
 
 async def feedback_handler(
@@ -97,7 +97,7 @@ async def new_organization_itn_handler(
 ):
     inn = message.text.strip()
 
-    if not is_valid_inn_organization(inn):
+    if not is_valid_inn(inn):
         await message.answer("❌ Неверный ИНН. Пожалуйста, введите корректный ИНН из 10 цифр.")
         return
 
