@@ -22,6 +22,17 @@ def create_tables():
     """)
 
     cursor.execute("""
+    CREATE TABLE IF NOT EXISTS pyrus_token (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        pyrus_login TEXT,
+        pyrus_security_key TEXT UNIQUE,
+        access_token TEXT,
+        created DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    cursor.execute("""
     CREATE TABLE IF NOT EXISTS technical_problem (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
