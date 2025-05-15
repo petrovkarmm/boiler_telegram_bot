@@ -220,7 +220,7 @@ async def rent_address_getter(
     dialog_manager.dialog_data['user_address'] = user_address
 
     await dialog_manager.switch_to(
-        BoilerDialog.boiler_accept_rent
+        BoilerDialog.boiler_accept_tech_cat_request
     )
 
 
@@ -248,5 +248,5 @@ async def place_format_getter(
     dialog_manager.dialog_data['place_format'] = place_format
 
     await dialog_manager.switch_to(
-        BoilerDialog.boiler_rent_address
+        BoilerDialog.boiler_tech_cat_address
     )

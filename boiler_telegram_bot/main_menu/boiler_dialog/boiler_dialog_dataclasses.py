@@ -3,9 +3,9 @@ from datetime import datetime
 
 TECHNICAL_PROBLEM_KEY = "technical_problem"
 
-rent_keys = {
-    "daily": 'суточная',
-    "monthly": "помесячно"
+TECHNICAL_CATALOG = {
+    "horn": 'рожковая',
+    "auto": "автоматическая"
 }
 
 

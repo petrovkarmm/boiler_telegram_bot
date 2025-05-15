@@ -6,7 +6,7 @@ from aiogram_dialog.widgets.kbd import ManagedRadio
 
 from db_configuration.models.technical_problem import TechnicalProblem
 from db_configuration.models.user import User
-from main_menu.boiler_dialog.boiler_dialog_dataclasses import TechnicalProblemDialog, TECHNICAL_PROBLEM_KEY, rent_keys
+from main_menu.boiler_dialog.boiler_dialog_dataclasses import TechnicalProblemDialog, TECHNICAL_PROBLEM_KEY, TECHNICAL_CATALOG
 from main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
 
 
@@ -43,10 +43,10 @@ async def user_data_profile_barista_getter(dialog_manager: DialogManager, **_kwa
         )
 
 
-async def get_rent_data(**kwargs):
+async def technical_catalog_getter(**kwargs):
     rents = [
-        ("Суточная", "daily"),
-        ("Помесячно", "monthly"),
+        ("Рожковая", "horn"),
+        ("Автоматическая", "auto"),
     ]
     return {"rents": rents}
 
@@ -62,11 +62,11 @@ async def get_rent_data_for_accept(dialog_manager: DialogManager, **_kwargs):
 
     if user_data:
         radio_widget = dialog_manager.find(
-            'r_rent_pay'
+            'tech_catalog'
         )
         radio_widget: ManagedRadio
 
-        user_rent_type = rent_keys.get(radio_widget.get_checked(), 'ERROR')
+        user_technical_type = TECHNICAL_CATALOG.get(radio_widget.get_checked(), 'ERROR')
         user_address = dialog_manager.dialog_data['user_address']
         user_budget = dialog_manager.dialog_data['user_budget']
         place_format = dialog_manager.dialog_data['place_format']
@@ -83,7 +83,7 @@ async def get_rent_data_for_accept(dialog_manager: DialogManager, **_kwargs):
             "user_name": user_name,
             "organization_itn": organization_itn,
             "organization_name": organization_name,
-            "user_rent_type": user_rent_type
+            "user_technical_type": user_technical_type
         }
 
 

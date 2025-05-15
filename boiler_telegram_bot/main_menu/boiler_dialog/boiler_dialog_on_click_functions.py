@@ -12,6 +12,7 @@ from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import Boi
 from db_configuration.models.technical_problem import TechnicalProblem
 from db_configuration.models.feedback import Feedback
 from db_configuration.models.user import User
+from main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_CATALOG
 from main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
 
 
@@ -32,7 +33,7 @@ async def save_rent_and_switch(
 ):
     dialog_manager.dialog_data['button_click'] = 'Аренда'
     await dialog_manager.switch_to(
-        BoilerDialog.boiler_rent
+        BoilerDialog.test_boiler_rent
     )
 
 
@@ -118,13 +119,20 @@ async def confirm_sending_call_technician(
         )
 
 
-async def confirm_sending_rent_request(
+async def confirm_sending_tech_catalog_request(
         callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ):
     user_id = str(callback.from_user.id)
     user_data = User.get_user_by_telegram_id(user_id)
 
     if user_data:
+        radio_widget = dialog_manager.find(
+            'tech_catalog'
+        )
+        radio_widget: ManagedRadio
+
+        user_technical_type = TECHNICAL_CATALOG.get(radio_widget.get_checked(), 'ERROR')
+
         request_title = dialog_manager.dialog_data['button_click']
 
         user_name = user_data['name']
@@ -135,7 +143,6 @@ async def confirm_sending_rent_request(
         user_address = dialog_manager.dialog_data.get('user_address', '—')
         user_budget = dialog_manager.dialog_data.get('user_budget', '—')
         place_format = dialog_manager.dialog_data.get('place_format', '—')
-        user_rent_type = dialog_manager.dialog_data.get('user_rent_type', '—')
 
         # TODO: Интеграция с CRM системой.
 
@@ -148,7 +155,7 @@ async def confirm_sending_rent_request(
                 f"🏢 <b>Организация:</b> {organization_name}\n"
                 f"🧾 <b>ИНН:</b> {organization_itn}\n"
                 f"📍 <b>Адрес:</b> {user_address}\n"
-                f"🏷 <b>Тип аренды:</b> {user_rent_type}\n"
+                f"🏷 <b>Тип кофемашины:</b> {user_technical_type}\n"
                 f"💰 <b>Бюджет:</b> {user_budget}\n"
                 f"🏬 <b>Формат заведения:</b> {place_format}"
             ),

@@ -19,13 +19,13 @@ class BoilerDialog(StatesGroup):
     boiler_repair_address = State()
     boiler_repair_accept_request = State()
 
-    boiler_technical_catalog_type_choose = State()
+    test_boiler_rent = State()
 
-    boiler_rent = State()
+    boiler_technical_catalog_type_choose = State()
     boiler_ask_budget = State()
     boiler_ask_place_format = State()
-    boiler_rent_address = State()
-    boiler_accept_rent = State()
+    boiler_tech_cat_address = State()
+    boiler_accept_tech_cat_request = State()
 
     boiler_barista_training_choose_count = State()
     boiler_barista_training_accept_request = State()
