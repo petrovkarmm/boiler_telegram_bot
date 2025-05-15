@@ -5,7 +5,7 @@ from aiogram_dialog.widgets.input import MessageInput
 
 from main_menu.boiler_dialog.utils import normalize_phone_number
 from main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
-from main_menu.boiler_registration_dialog.utils import is_valid_inn_organization
+from main_menu.boiler_registration_dialog.utils import is_valid_inn
 
 
 async def organization_itn_handler(
@@ -15,8 +15,8 @@ async def organization_itn_handler(
 ):
     inn = message.text.strip()
 
-    if not is_valid_inn_organization(inn):
-        await message.answer("❌ Неверный ИНН. Пожалуйста, введите корректный ИНН из 10 цифр.")
+    if not is_valid_inn(inn):
+        await message.answer("❌ Неверный ИНН. Пожалуйста, введите корректный ИНН из 10 или 12 цифр.")
         return
 
     dialog_manager.dialog_data['organization_itn'] = inn
