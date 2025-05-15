@@ -105,7 +105,7 @@ async def confirm_sending_call_technician(
         user_address = dialog_manager.dialog_data['user_address']
         media_info = 'Медиа отсутствует.'
 
-        #  TODO интеграция с CRM системой.
+        #  TODO интеграция с CRM системой. Вызов техника
 
         await callback.message.answer(
             text=(
@@ -164,7 +164,7 @@ async def confirm_sending_tech_catalog_request(
         user_budget = dialog_manager.dialog_data.get('user_budget', '—')
         place_format = dialog_manager.dialog_data.get('place_format', '—')
 
-        # TODO: Интеграция с CRM системой.
+        # TODO: Интеграция с CRM системой. Подбор техники.
 
         await callback.message.answer(
             text=(
@@ -223,6 +223,8 @@ async def confirm_rent_request_sending(
         user_rent_type = RENT_TYPE.get(rent_radio_rent_type_widget.get_checked(), 'ERROR')
         user_technical_type = TECHNICAL_CATALOG.get(rent_radio_catalog_widget.get_checked(), 'ERROR')
 
+        #  TODO интеграция с CRM системой (аренда кофемашины)
+
         await callback.message.answer(
             text=(
                 "<b>📤 Имитируем отправку в CRM систему...</b>\n\n"
@@ -272,6 +274,8 @@ async def confirm_sending_barista_training(
         user_name = user_data['name']
         organization_itn = user_data['organization_itn']
         organization_name = user_data['organization_name']
+
+        #  TODO интеграция с CRM системой (бариста)
 
         await callback.message.answer(
             text=(
