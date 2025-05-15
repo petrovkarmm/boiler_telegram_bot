@@ -411,7 +411,7 @@ rent_technical_type = Window(
             '➡️ Далее'
         ),
         when=F['dialog_data']['rent_catalog_radio_get_set'],
-        state=None
+        state=None  # TODO accept last window
     ),
     Row(
         SwitchTo(
