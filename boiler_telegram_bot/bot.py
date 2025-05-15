@@ -1,4 +1,6 @@
 import asyncio
+import os
+from pprint import pprint
 
 from aiogram import Bot, Dispatcher, F
 from aiogram.enums import ParseMode
@@ -17,11 +19,11 @@ from main_menu.admin_boiler_dialog.admin_boiler_dialog_states import AdminBoiler
 from main_menu.boiler_registration_dialog.boiler_registration_router import boiler_registration_dialog_router
 from main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
 from middlewares.registration_middleware import UserInDatabaseChecker
-from settings import bot_token, DEBUG
+from pyrus_api.pyrus_client import PyrusClient
+from settings import bot_token, DEBUG, pyrus_login, pyrus_security_key
 
 
 async def bot_start():
-    # main configuration
     if DEBUG:
         bot = Bot(token=bot_token)
         dp = Dispatcher()
@@ -36,6 +38,20 @@ async def bot_start():
         await dialog_manager.start(
             AdminBoilerDialog.admin_boiler_main_menu
         )
+
+    @dp.message(F.text == 'pyrus')
+    async def pyrus_test(message: Message, state: FSMContext, dialog_manager: DialogManager):
+        response = PyrusClient.request("GET", "/forms/2306930/")
+
+        if response.status_code == 200:
+            data = response.json()
+            pprint(data)
+            await message.answer(
+                text=str(data)
+            )
+        else:
+            pprint(response.status_code)
+            pprint(response.text)
 
     @dp.message(F.text == '🏪 Перезапустить бота')
     async def repair_bot(message: Message, state: FSMContext, dialog_manager: DialogManager):
