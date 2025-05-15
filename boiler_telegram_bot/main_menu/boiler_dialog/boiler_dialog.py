@@ -630,7 +630,7 @@ boiler_accept_technical_request = Window(
     ),
     Row(
         SwitchTo(
-            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_ask_place_format
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_tech_cat_address
         ),
         SwitchTo(
             id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu

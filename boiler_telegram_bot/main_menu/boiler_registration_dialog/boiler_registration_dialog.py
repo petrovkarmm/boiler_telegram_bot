@@ -57,7 +57,7 @@ boiler_registration_organization_name = Window(
     ),
     Row(
         SwitchTo(
-            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerRegistrationDialog.boiler_registration_itn
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerRegistrationDialog.boiler_registration_phone
         ),
         SwitchTo(
             id='start_again', text=Format('🔁 Начать сначала'),
@@ -80,7 +80,8 @@ boiler_registration_organization_itn = Window(
     ),
     Row(
         SwitchTo(
-            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerRegistrationDialog.boiler_registration_phone
+            id='back_to_t_pr', text=Format('⬅️ Назад'),
+            state=BoilerRegistrationDialog.boiler_registration_organization_name
         ),
         SwitchTo(
             id='start_again', text=Format('🔁 Начать сначала'),
@@ -106,7 +107,7 @@ boiler_registration_accepting = Window(
     ),
     Row(
         SwitchTo(
-            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerRegistrationDialog.boiler_registration_phone
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerRegistrationDialog.boiler_registration_itn
         ),
         SwitchTo(
             id='start_again', text=Format('🔁 Начать сначала'),
