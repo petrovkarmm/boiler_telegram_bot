@@ -6,7 +6,8 @@ from aiogram_dialog.widgets.kbd import ManagedRadio
 
 from db_configuration.models.technical_problem import TechnicalProblem
 from db_configuration.models.user import User
-from main_menu.boiler_dialog.boiler_dialog_dataclasses import TechnicalProblemDialog, TECHNICAL_PROBLEM_KEY, TECHNICAL_CATALOG
+from main_menu.boiler_dialog.boiler_dialog_dataclasses import TechnicalProblemDialog, TECHNICAL_PROBLEM_KEY, \
+    TECHNICAL_CATALOG
 from main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
 
 
@@ -44,9 +45,17 @@ async def user_data_profile_barista_getter(dialog_manager: DialogManager, **_kwa
 
 
 async def technical_catalog_getter(**kwargs):
-    rents = [
+    catalog = [
         ("Рожковая", "horn"),
         ("Автоматическая", "auto"),
+    ]
+    return {"catalog": catalog}
+
+
+async def rent_type_getter(**kwargs):
+    rents = [
+        ("Суточная", "daily"),
+        ("Помесячная", "monthly"),
     ]
     return {"rents": rents}
 

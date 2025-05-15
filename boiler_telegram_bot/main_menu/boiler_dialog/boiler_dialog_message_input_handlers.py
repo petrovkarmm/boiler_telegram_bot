@@ -210,7 +210,7 @@ async def address_getter(
     )
 
 
-async def rent_address_getter(
+async def tech_catalog_address_getter(
         message: Message,
         message_input: MessageInput,
         dialog_manager: DialogManager,

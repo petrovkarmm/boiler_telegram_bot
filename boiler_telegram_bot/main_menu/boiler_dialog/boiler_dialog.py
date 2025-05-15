@@ -13,15 +13,16 @@ from main_menu.global_utils.global_messages_input import get_itn_and_organizatio
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_message_input_handlers import feedback_handler, \
     technical_problem_handler, technical_problem_description_handler, \
     content_handler, address_getter, new_organization_itn_handler, new_phone_handler, new_organization_name_handler, \
-    new_name_handler, budget_getter, place_format_getter, rent_address_getter
+    new_name_handler, budget_getter, place_format_getter, tech_catalog_address_getter
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_on_click_functions import send_feedback, \
     on_technical_problem_selected, confirm_sending_call_technician, get_barista_count_and_switch, \
     confirm_sending_barista_training, save_rent_and_switch, save_tech_cat_and_switch, save_barista_training_and_switch, \
-    rent_radio_set, confirm_sending_tech_catalog_request
+    technical_catalog_radio_set, confirm_sending_tech_catalog_request, rent_radio_set, rent_catalog_radio_set
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_PROBLEM_KEY
 from main_menu.boiler_dialog.boiler_dialog_getter import technical_problem_id_getter, technical_problems_getter, \
-    user_data_profile_getter, user_data_profile_barista_getter, technical_catalog_getter, get_rent_data_for_accept
+    user_data_profile_getter, user_data_profile_barista_getter, technical_catalog_getter, get_rent_data_for_accept, \
+    rent_type_getter
 
 boiler_main_menu = Window(
     Format(
@@ -355,20 +356,75 @@ boiler_repair_accept_request = Window(
     parse_mode=ParseMode.HTML,
 )
 
-boiler_technical_catalog_type_choose = Window(
+rent_catalog_radio_get_set = Window(
     Format(
-        text='Выбор типа техники test'
+        text=(
+            "🏠 <b>Аренда оборудования</b>\n\n"
+            "Пожалуйста, выберите интересующий вас тип аренды:\n"
+            "• <b>суточная</b> или <b>помесячная</b>?"
+        )
+    ),
+    Radio(
+        Format("🔘 {item[0]}"),
+        Format("⚪️ {item[0]}"),
+        id="rent_type",
+        item_id_getter=operator.itemgetter(1),
+        items="rents",
+        on_state_changed=rent_radio_set,
+    ),
+    SwitchTo(
+        id='ask_tech_type',
+        text=Format(
+            '➡️ Далее'
+        ),
+        when=F['dialog_data']['rent_type_radio_get_set'],
+        state=BoilerDialog.boiler_rent_technical_type
+    ),
+
+    SwitchTo(
+        id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+    ),
+    getter=rent_type_getter,
+    state=BoilerDialog.boiler_rent_type,
+    parse_mode=ParseMode.HTML
+)
+
+rent_technical_type = Window(
+    Format(
+        text=(
+            "🧰 <b>Подбор оборудования</b>\n\n"
+            "Пожалуйста, выберите интересующий вас тип кофемашины:\n"
+            "• <b>рожковая</b> или <b>автоматическая</b>?"
+        )
+    ),
+    Radio(
+        Format("🔘 {item[0]}"),
+        Format("⚪️ {item[0]}"),
+        id="rent_tech_type",
+        item_id_getter=operator.itemgetter(1),
+        items="catalog",
+        on_state_changed=rent_catalog_radio_set,
+    ),
+    SwitchTo(
+        id='ask_tech_type',
+        text=Format(
+            '➡️ Далее'
+        ),
+        when=F['dialog_data']['rent_catalog_radio_get_set'],
+        state=None
     ),
     Row(
         SwitchTo(
-            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_repair_video_or_photo
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_rent_type
         ),
         SwitchTo(
             id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
         )
     ),
-    state=BoilerDialog.test_boiler_rent,
+    getter=technical_catalog_getter,
+    state=BoilerDialog.boiler_rent_technical_type,
     parse_mode=ParseMode.HTML
+
 )
 
 boiler_barista_training_choose_count = Window(
@@ -440,15 +496,15 @@ boiler_tech_catalog = Window(
         Format("⚪️ {item[0]}"),
         id="tech_catalog",
         item_id_getter=operator.itemgetter(1),
-        items="rents",
-        on_state_changed=rent_radio_set,
+        items="catalog",
+        on_state_changed=technical_catalog_radio_set,
     ),
     SwitchTo(
         id='ask_budget',
         text=Format(
             '➡️ Далее'
         ),
-        when=F['dialog_data']['radio_get_set'],
+        when=F['dialog_data']['technical_catalog_radio_get_set'],
         state=BoilerDialog.boiler_ask_budget
     ),
     SwitchTo(
@@ -462,7 +518,7 @@ boiler_tech_catalog = Window(
 boiler_ask_budget = Window(
     Format(
         "💰 <b>Бюджет</b>\n\n"
-        "Пожалуйста, укажите, какой у вас бюджет на аренду оборудования."
+        "Пожалуйста, укажите, какой у вас бюджет на оборудование."
     ),
     MessageInput(
         budget_getter
@@ -500,18 +556,18 @@ boiler_ask_place_format = Window(
     parse_mode=ParseMode.HTML
 )
 
-boiler_rent_address = Window(
+boiler_technical_address = Window(
     Format(
         text=(
             "📍 <b>Адрес и название заведения</b>\n\n"
-            "Пожалуйста, укажите адрес, по которому требуется ремонт,\n"
+            "Пожалуйста, укажите адрес,\n"
             "а также название заведения (если есть).\n\n"
             "Пример:\n"
             "<i>г. Москва, ул. Ленина, д. 10, кафе «Уют»</i>"
         )
     ),
     MessageInput(
-        rent_address_getter
+        tech_catalog_address_getter
     ),
     Row(
         SwitchTo(
@@ -525,10 +581,10 @@ boiler_rent_address = Window(
     parse_mode=ParseMode.HTML
 )
 
-boiler_accept_rent = Window(
+boiler_accept_technical_request = Window(
     Format(
         text=(
-            '✅ <b>{user_name}</b>, пожалуйста, проверьте все данные перед отправкой заявки на аренду:\n\n'
+            '✅ <b>{user_name}</b>, пожалуйста, проверьте все данные перед отправкой заявки на подбор техники:\n\n'
             '📍 <b>Адрес:</b> <i>{user_address}</i>\n\n'
             '🏷 <b>Тип кофемашины:</b> <i>{user_technical_type}</i>\n\n'
             '💰 <b>Бюджет:</b> <i>{user_budget}</i>\n\n'
@@ -561,8 +617,11 @@ boiler_dialog = Dialog(
     boiler_tech_catalog,
     boiler_ask_budget,
     boiler_ask_place_format,
-    boiler_rent_address,
-    boiler_accept_rent,
+    boiler_technical_address,
+    boiler_accept_technical_request,
+
+    rent_catalog_radio_get_set,
+    rent_technical_type,
 
     boiler_profile_edit_menu,
     boiler_profile_edit_itn,

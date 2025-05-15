@@ -33,8 +33,18 @@ async def save_rent_and_switch(
 ):
     dialog_manager.dialog_data['button_click'] = 'Аренда'
     await dialog_manager.switch_to(
-        BoilerDialog.test_boiler_rent
+        BoilerDialog.boiler_rent_type
     )
+
+
+async def technical_catalog_radio_set(
+        event: CallbackQuery,
+        widget: ManagedRadio,
+        dialog_manager: DialogManager,
+        item_id: Any,
+
+):
+    dialog_manager.dialog_data['technical_catalog_radio_get_set'] = True
 
 
 async def rent_radio_set(
@@ -44,7 +54,17 @@ async def rent_radio_set(
         item_id: Any,
 
 ):
-    dialog_manager.dialog_data['radio_get_set'] = True
+    dialog_manager.dialog_data['rent_type_radio_get_set'] = True
+
+
+async def rent_catalog_radio_set(
+        event: CallbackQuery,
+        widget: ManagedRadio,
+        dialog_manager: DialogManager,
+        item_id: Any,
+
+):
+    dialog_manager.dialog_data['rent_catalog_radio_get_set'] = True
 
 
 async def save_tech_cat_and_switch(
@@ -163,7 +183,7 @@ async def confirm_sending_tech_catalog_request(
         )
 
         await callback.message.answer(
-            text="✅ <b>Заявка на аренду успешно отправлена!</b>\n📞 Мы с вами свяжемся в ближайшее время.",
+            text="✅ <b>Заявка на подбор техники успешно отправлена!</b>\n📞 Мы с вами свяжемся в ближайшее время.",
             parse_mode=ParseMode.HTML
         )
 

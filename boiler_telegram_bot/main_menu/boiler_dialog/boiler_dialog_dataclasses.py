@@ -8,6 +8,11 @@ TECHNICAL_CATALOG = {
     "auto": "автоматическая"
 }
 
+RENT_TYPE = {
+    "daily": "посуточно",
+    "monthly": "помесячно",
+}
+
 
 @dataclass
 class TechnicalProblemDialog:
