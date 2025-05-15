@@ -1,5 +1,9 @@
+import os
+
+from db_configuration.models.pyrus import PyrusToken
 from db_configuration.models.technical_problem import TechnicalProblem
 from db_configuration.models.feedback import Feedback
+from settings import pyrus_login, pyrus_security_key
 
 if __name__ == '__main__':
     problems = [
@@ -30,3 +34,5 @@ if __name__ == '__main__':
 
     for fb in feedbacks:
         Feedback.add_feedback(**fb)
+
+    PyrusToken.insert_login_data(pyrus_login=pyrus_login, pyrus_security_key=pyrus_security_key)
