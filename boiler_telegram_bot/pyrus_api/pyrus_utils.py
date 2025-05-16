@@ -63,12 +63,12 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
                     'id': pyrus_id_data.get('Адрес'),
                     'value': user_address
                 },
-                {
-                    'id': pyrus_id_data.get('Клиент'),
-                    'value': {
-                        'item_id': client  # TODO добавить запрос на поиск клиента или его добавление (просто ID)
-                    }
-                },
+                # {
+                #     'id': pyrus_id_data.get('Клиент'),
+                #     'value': {
+                #         'item_id': client  # TODO добавить запрос на поиск клиента или его добавление (просто ID)
+                #     }
+                # },
             ]
         }
 
@@ -97,7 +97,7 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
 
         else:
             print(pyrus_task_response.status_code)
-            pprint(pyrus_task_response.json())
+            print(pyrus_task_response.text)
 
             await callback.message.answer(
                 text='⚠️ Упс! Кажется, что-то пошло не так.\n'
@@ -113,7 +113,7 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
 
     else:
         print(pyrus_forms_response.status_code)
-        pprint(pyrus_forms_response.json())
+        print(pyrus_forms_response.text)
         await callback.message.answer(
             text='⚠️ Упс! Кажется, что-то пошло не так.\n'
                  'Попробуйте позже.',

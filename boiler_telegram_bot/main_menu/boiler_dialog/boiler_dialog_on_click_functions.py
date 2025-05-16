@@ -120,7 +120,7 @@ async def confirm_sending_call_technician(
             task_title=task_title,
             task_description=task_description,
             dialog_manager=dialog_manager,
-            client=168270215
+            client=168270223
         )
 
     else:
