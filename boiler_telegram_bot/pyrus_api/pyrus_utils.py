@@ -31,14 +31,14 @@ def get_client_catalog_id(pyrus_catalog_data: dict):
 
 
 async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: str, task_title: str,
-                         task_description: str, user_address: str, dialog_manager: DialogManager):
+                         task_description: str, user_address: str, client: int, dialog_manager: DialogManager):
     pyrus_forms_response = PyrusClient.request('GET', '/forms')
     if pyrus_forms_response.status_code == 200:
         forms_data = pyrus_forms_response.json()  # должен быть список
         pyrus_id_data = get_form_and_field_id_by_form_name(pyrus_forms_data=forms_data,
                                                            form_name='лиды с сайта',
                                                            fields_name=['проблема', 'описание', 'имя', 'телефон',
-                                                                        'адрес'])
+                                                                        'адрес', 'клиент'])
 
         pyrus_task_data = {
             'form_id': pyrus_id_data.get('form_id'),
@@ -63,9 +63,16 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
                     'id': pyrus_id_data.get('Адрес'),
                     'value': user_address
                 },
-
+                {
+                    'id': pyrus_id_data.get('Клиент'),
+                    'value': {
+                        'item_id': client  # TODO добавить запрос на поиск клиента или его добавление (просто ID)
+                    }
+                },
             ]
         }
+
+        pprint(pyrus_task_data)
 
         pyrus_task_response = PyrusClient.request(
             method='POST', endpoint='/tasks', json=pyrus_task_data
@@ -89,6 +96,9 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
             )
 
         else:
+            print(pyrus_task_response.status_code)
+            pprint(pyrus_task_response.json())
+
             await callback.message.answer(
                 text='⚠️ Упс! Кажется, что-то пошло не так.\n'
                      'Попробуйте позже.',
@@ -102,6 +112,8 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
             )
 
     else:
+        print(pyrus_forms_response.status_code)
+        pprint(pyrus_forms_response.json())
         await callback.message.answer(
             text='⚠️ Упс! Кажется, что-то пошло не так.\n'
                  'Попробуйте позже.',
