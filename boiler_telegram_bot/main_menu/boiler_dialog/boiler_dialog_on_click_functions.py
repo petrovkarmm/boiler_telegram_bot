@@ -1,6 +1,3 @@
-import asyncio
-import random
-from pprint import pprint
 from typing import Any
 
 from aiogram.enums import ParseMode
@@ -9,11 +6,13 @@ from aiogram_dialog import DialogManager, ShowMode
 from aiogram_dialog.widgets.kbd import Button, ManagedCounter, ManagedRadio
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
-from db_configuration.models.technical_problem import TechnicalProblem
 from db_configuration.models.feedback import Feedback
+from db_configuration.models.technical_problem import TechnicalProblem
 from db_configuration.models.user import User
 from main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_CATALOG, RENT_TYPE
 from main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
+from pyrus_api.pyrus_client import PyrusClient
+from pyrus_api.pyrus_utils import get_form_and_field_id_by_form_name, send_form_task
 
 
 async def get_barista_count_and_switch(
@@ -105,32 +104,22 @@ async def confirm_sending_call_technician(
         user_address = dialog_manager.dialog_data['user_address']
         media_info = 'Медиа отсутствует.'
 
-        #  TODO интеграция с CRM системой. Вызов техника
+        task_title = 'ТЕСТОВАЯ ЗАЯВКА'  # TODO technical_problem
+        task_description = (f"\n"
+                            f"Описание проблемы: {technical_problem_description}\n\n"
+                            f"Организация: {organization_name}\n\n"
+                            f"ИНН: {organization_itn}\n\n")
 
-        await callback.message.answer(
-            text=(
-                "<b>📤 Имитируем отправку в CRM систему...</b>\n\n"
-                f"👤 <b>Имя пользователя:</b> {user_name}\n"
-                f"📞 <b>Телефон:</b> {user_phone}\n"
-                f"🛠 <b>Описание проблемы:</b> {technical_problem_description}\n"
-                f"⚙️ <b>Тип проблемы:</b> {technical_problem}\n"
-                f'🏘 <b>Адрес:</b> {user_address}\n'
-                f"🏢 <b>Организация:</b> {organization_name}\n"
-                f"🧾 <b>ИНН:</b> {organization_itn}\n"
-                f"🖼 <b>Медиа:</b> {media_info}"
-            ),
-            parse_mode=ParseMode.HTML
-        )
+        # TODO получение ID клиента из каталога
 
-        await callback.message.answer(
-            text="✅ <b>Заявка успешно принята!</b>\n📞 Ожидайте звонка.",
-            parse_mode=ParseMode.HTML
-        )
-
-        dialog_manager.show_mode = ShowMode.DELETE_AND_SEND
-
-        await dialog_manager.switch_to(
-            BoilerDialog.boiler_main_menu
+        await send_form_task(
+            callback=callback,
+            user_name=user_name,
+            user_phone=user_phone,
+            user_address=user_address,
+            task_title=task_title,
+            task_description=task_description,
+            dialog_manager=dialog_manager
         )
 
     else:

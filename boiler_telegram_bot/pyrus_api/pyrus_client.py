@@ -33,11 +33,12 @@ class PyrusClient:
         response = requests.request(method.upper(), url, **kwargs)
 
         if response.status_code == 401:
-            # токен устарел — обновим
             new_token = PyrusClient.get_new_token_by_login()
             if new_token:
                 PyrusToken.update_token(old_token=token, new_token=new_token)
                 headers["Authorization"] = f"Bearer {new_token}"
+                kwargs["headers"] = headers
                 response = requests.request(method.upper(), url, **kwargs)
 
         return response
+

@@ -20,6 +20,7 @@ from main_menu.boiler_registration_dialog.boiler_registration_router import boil
 from main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
 from middlewares.registration_middleware import UserInDatabaseChecker
 from pyrus_api.pyrus_client import PyrusClient
+from pyrus_api.pyrus_utils import get_form_and_field_id_by_form_name
 from settings import bot_token, DEBUG, pyrus_login, pyrus_security_key
 
 
@@ -38,20 +39,6 @@ async def bot_start():
         await dialog_manager.start(
             AdminBoilerDialog.admin_boiler_main_menu
         )
-
-    @dp.message(F.text == 'pyrus')
-    async def pyrus_test(message: Message, state: FSMContext, dialog_manager: DialogManager):
-        response = PyrusClient.request("GET", "/forms/2306930/")
-
-        if response.status_code == 200:
-            data = response.json()
-            pprint(data)
-            await message.answer(
-                text=str(data)
-            )
-        else:
-            pprint(response.status_code)
-            pprint(response.text)
 
     @dp.message(F.text == '🏪 Перезапустить бота')
     async def repair_bot(message: Message, state: FSMContext, dialog_manager: DialogManager):
@@ -106,7 +93,7 @@ async def bot_start():
             return print(f"{event.exception}")
 
     # error handler
-    dp.errors.register(error_unknown_intent_handler)
+    # dp.errors.register(error_unknown_intent_handler)
 
     # dialogs
     dp.include_router(
