@@ -110,7 +110,7 @@ async def confirm_sending_call_technician(
                             f"Организация: {organization_name}\n\n"
                             f"ИНН: {organization_itn}\n\n")
 
-        # TODO получение ID клиента из каталога
+        #  TODO добавить запрос на поиск клиента или его добавление (client (ID))
 
         await send_form_task(
             callback=callback,
@@ -119,7 +119,8 @@ async def confirm_sending_call_technician(
             user_address=user_address,
             task_title=task_title,
             task_description=task_description,
-            dialog_manager=dialog_manager
+            dialog_manager=dialog_manager,
+            client=168270215
         )
 
     else:
