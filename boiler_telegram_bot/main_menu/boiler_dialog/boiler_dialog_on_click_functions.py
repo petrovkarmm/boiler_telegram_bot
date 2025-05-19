@@ -155,7 +155,7 @@ async def confirm_sending_tech_catalog_request(
 
         task_description = (f"\n"
                             f"Бюджет: {user_budget}\n\n"
-                            f"Формат заведения: {place_format}"
+                            f"Формат заведения: {place_format}\n\n"
                             f"Организация: {organization_name}\n\n"
                             f"ИНН: {organization_itn}\n\n")
 
