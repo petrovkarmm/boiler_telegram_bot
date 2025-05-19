@@ -63,16 +63,14 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
                     'id': pyrus_id_data.get('Адрес'),
                     'value': user_address
                 },
-                {
-                    'id': pyrus_id_data.get('Клиент'),
-                    'value': {
-                        'item_id': client  # TODO добавить запрос на поиск клиента или его добавление (просто ID)
-                    }
-                },
+                # {
+                #     'id': pyrus_id_data.get('Клиент'),
+                #     'value': {
+                #         'item_id': client  # TODO добавить запрос на поиск клиента или его добавление (просто ID)
+                #     }
+                # },
             ]
         }
-
-        pprint(pyrus_task_data)
 
         pyrus_task_response = PyrusClient.request(
             method='POST', endpoint='/tasks', json=pyrus_task_data
