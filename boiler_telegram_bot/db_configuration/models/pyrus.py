@@ -1,6 +1,7 @@
 from db_configuration.db import get_connection
 
 
+#  TODO rename
 class PyrusToken:
     @staticmethod
     def get_token() -> str | None:
@@ -27,6 +28,7 @@ class PyrusToken:
                 (new_token, old_token)
             )
 
+    @staticmethod
     def insert_login_data(pyrus_login: str, pyrus_security_key: str):
         with get_connection() as conn:
             cursor = conn.cursor()

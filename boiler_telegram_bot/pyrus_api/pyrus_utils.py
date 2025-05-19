@@ -72,8 +72,6 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
             ]
         }
 
-        pprint(pyrus_task_data)
-
         pyrus_task_response = PyrusClient.request(
             method='POST', endpoint='/tasks', json=pyrus_task_data
         )
