@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from aiogram.enums import ParseMode
 from aiogram_dialog import Window, DialogManager, ShowMode
 from aiogram_dialog.widgets.input import MessageInput
@@ -188,6 +190,8 @@ async def content_handler(
         message_input: MessageInput,
         dialog_manager: DialogManager,
 ):
+    pprint(message.video)
+    pprint(message.photo)
     if message.video:
         await message.answer("Отправлено видео.")
     elif message.photo:
