@@ -104,20 +104,19 @@ async def confirm_sending_call_technician(
         user_address = dialog_manager.dialog_data['user_address']
         media_info = 'Медиа отсутствует.'
 
-        task_title = 'ТЕСТОВАЯ ЗАЯВКА'  # TODO technical_problem
         task_description = (f"\n"
                             f"Описание проблемы: {technical_problem_description}\n\n"
                             f"Организация: {organization_name}\n\n"
                             f"ИНН: {organization_itn}\n\n")
 
-        #  TODO добавить запрос на поиск клиента или его добавление (client (ID))
+        #  TODO добавить client_id
 
         await send_form_task(
             callback=callback,
             user_name=user_name,
             user_phone=user_phone,
             user_address=user_address,
-            task_title=task_title,
+            task_title=technical_problem,
             task_description=task_description,
             dialog_manager=dialog_manager,
             client=168270215
@@ -154,31 +153,22 @@ async def confirm_sending_tech_catalog_request(
         user_budget = dialog_manager.dialog_data.get('user_budget', '—')
         place_format = dialog_manager.dialog_data.get('place_format', '—')
 
-        # TODO: Интеграция с CRM системой. Подбор техники.
+        task_description = (f"\n"
+                            f"Бюджет: {user_budget}\n\n"
+                            f"Формат заведения: {place_format}"
+                            f"Организация: {organization_name}\n\n"
+                            f"ИНН: {organization_itn}\n\n")
 
-        await callback.message.answer(
-            text=(
-                "<b>📤 Имитируем отправку в CRM систему...</b>\n\n"
-                f"🔗 <b>Название секции:</b> {request_title}\n"
-                f"👤 <b>Имя пользователя:</b> {user_name}\n"
-                f"📞 <b>Телефон:</b> {user_phone}\n"
-                f"🏢 <b>Организация:</b> {organization_name}\n"
-                f"🧾 <b>ИНН:</b> {organization_itn}\n"
-                f"📍 <b>Адрес:</b> {user_address}\n"
-                f"🏷 <b>Тип кофемашины:</b> {user_technical_type}\n"
-                f"💰 <b>Бюджет:</b> {user_budget}\n"
-                f"🏬 <b>Формат заведения:</b> {place_format}"
-            ),
-            parse_mode=ParseMode.HTML
+        await send_form_task(
+            callback=callback,
+            user_name=user_name,
+            user_phone=user_phone,
+            user_address=user_address,
+            task_title=request_title,
+            task_description=task_description,
+            dialog_manager=dialog_manager,
+            client=168270215
         )
-
-        await callback.message.answer(
-            text="✅ <b>Заявка на подбор техники успешно отправлена!</b>\n📞 Мы с вами свяжемся в ближайшее время.",
-            parse_mode=ParseMode.HTML
-        )
-
-        dialog_manager.show_mode = ShowMode.DELETE_AND_SEND
-        await dialog_manager.switch_to(BoilerDialog.boiler_main_menu)
 
     else:
         await dialog_manager.start(BoilerRegistrationDialog.boiler_registration_user_name)
@@ -213,32 +203,25 @@ async def confirm_rent_request_sending(
         user_rent_type = RENT_TYPE.get(rent_radio_rent_type_widget.get_checked(), 'ERROR')
         user_technical_type = TECHNICAL_CATALOG.get(rent_radio_catalog_widget.get_checked(), 'ERROR')
 
-        #  TODO интеграция с CRM системой (аренда кофемашины)
+        user_address = 'Отсутствует'
 
-        await callback.message.answer(
-            text=(
-                "<b>📤 Имитируем отправку в CRM систему...</b>\n\n"
-                f"🔗 <b>Название секции:</b> {request_title}\n"
-                f"☕ <b>Тип кофе машины:</b> {user_technical_type}\n"
-                f'📦 <b>Тип аренды:</b> {user_rent_type}\n'
-                f"👤 <b>Имя пользователя:</b> {user_name}\n"
-                f'📞 <b>Телефон:</b> {user_phone}\n'
-                f'🏢 <b>Организация:</b> {organization_name}\n'
-                f'🧾 <b>ИНН:</b> {organization_itn}\n'
+        #  TODO добавить client_id
 
-            ),
-            parse_mode=ParseMode.HTML
-        )
+        task_description = (f"\n"
+                            f"Тип аренды: {user_rent_type}\n\n"
+                            f"Тип кофемашины: {user_technical_type}"
+                            f"Организация: {organization_name}\n\n"
+                            f"ИНН: {organization_itn}\n\n")
 
-        await callback.message.answer(
-            text="✅ <b>Заявка успешно принята!</b>\n📞 Ожидайте звонка.",
-            parse_mode=ParseMode.HTML
-        )
-
-        dialog_manager.show_mode = ShowMode.DELETE_AND_SEND
-
-        await dialog_manager.switch_to(
-            BoilerDialog.boiler_main_menu
+        await send_form_task(
+            callback=callback,
+            user_name=user_name,
+            user_phone=user_phone,
+            user_address=user_address,
+            task_title=request_title,
+            task_description=task_description,
+            dialog_manager=dialog_manager,
+            client=168270215
         )
 
 
@@ -264,32 +247,24 @@ async def confirm_sending_barista_training(
         user_name = user_data['name']
         organization_itn = user_data['organization_itn']
         organization_name = user_data['organization_name']
+        user_address = 'Отсутствует'
 
-        #  TODO интеграция с CRM системой (бариста)
+        #  TODO Добавить client_id
 
-        await callback.message.answer(
-            text=(
-                "<b>📤 Имитируем отправку в CRM систему...</b>\n\n"
-                f"🔗 <b>Название секции:</b> {request_title}\n"
-                f"👤 <b>Имя пользователя:</b> {user_name}\n"
-                f'📌 <b>Кол-во человек на обучение:</b> {barista_value}\n'
-                f'📞 <b>Телефон:</b> {user_phone}\n'
-                f"🏢 <b>Организация:</b> {organization_name}\n"
-                f"🧾 <b>ИНН:</b> {organization_itn}\n"
+        task_description = (f"\n"
+                            f"Количество человек на обучение: {barista_value}\n\n"
+                            f"Организация: {organization_name}\n\n"
+                            f"ИНН: {organization_itn}\n\n")
 
-            ),
-            parse_mode=ParseMode.HTML
-        )
-
-        await callback.message.answer(
-            text="✅ <b>Заявка успешно принята!</b>\n📞 Ожидайте звонка.",
-            parse_mode=ParseMode.HTML
-        )
-
-        dialog_manager.show_mode = ShowMode.DELETE_AND_SEND
-
-        await dialog_manager.switch_to(
-            BoilerDialog.boiler_main_menu
+        await send_form_task(
+            callback=callback,
+            user_name=user_name,
+            user_phone=user_phone,
+            user_address=user_address,
+            task_title=request_title,
+            task_description=task_description,
+            dialog_manager=dialog_manager,
+            client=168270215
         )
 
 
