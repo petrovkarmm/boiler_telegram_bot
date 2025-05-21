@@ -1,10 +1,11 @@
 import requests
 
 from db_configuration.models.pyrus import PyrusToken
+from settings import pyrus_standard_url
 
 
 class PyrusClient:
-    BASE_URL = "https://api.pyrus.com/v4"
+    BASE_URL = pyrus_standard_url
 
     @staticmethod
     def get_new_token_by_login() -> str | None:

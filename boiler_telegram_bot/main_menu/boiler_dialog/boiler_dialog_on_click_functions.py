@@ -119,7 +119,7 @@ async def confirm_sending_call_technician(
             task_title=technical_problem,
             task_description=task_description,
             dialog_manager=dialog_manager,
-            client=168270215
+            client=168270223
         )
 
     else:
@@ -155,7 +155,7 @@ async def confirm_sending_tech_catalog_request(
 
         task_description = (f"\n"
                             f"Бюджет: {user_budget}\n\n"
-                            f"Формат заведения: {place_format}"
+                            f"Формат заведения: {place_format}\n\n"
                             f"Организация: {organization_name}\n\n"
                             f"ИНН: {organization_itn}\n\n")
 
@@ -209,7 +209,7 @@ async def confirm_rent_request_sending(
 
         task_description = (f"\n"
                             f"Тип аренды: {user_rent_type}\n\n"
-                            f"Тип кофемашины: {user_technical_type}"
+                            f"Тип кофемашины: {user_technical_type}\n\n"
                             f"Организация: {organization_name}\n\n"
                             f"ИНН: {organization_itn}\n\n")
 
@@ -223,7 +223,6 @@ async def confirm_rent_request_sending(
             dialog_manager=dialog_manager,
             client=168270215
         )
-
 
     else:
         await dialog_manager.start(
@@ -266,7 +265,6 @@ async def confirm_sending_barista_training(
             dialog_manager=dialog_manager,
             client=168270215
         )
-
 
     else:
         await dialog_manager.start(
