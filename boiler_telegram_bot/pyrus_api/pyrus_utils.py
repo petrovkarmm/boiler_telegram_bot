@@ -31,7 +31,8 @@ def get_client_catalog_id(pyrus_catalog_data: dict):
 
 
 async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: str, task_title: str,
-                         task_description: str, user_address: str, client: int, dialog_manager: DialogManager):
+                         task_description: str, user_address: str, client: int, dialog_manager: DialogManager,
+                         tmp_file_path: str = None, filename: str = None):
     await dialog_manager.switch_to(
         BoilerDialog.boiler_send_task_waiting_status
     )
@@ -42,7 +43,8 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
         pyrus_id_data = get_form_and_field_id_by_form_name(pyrus_forms_data=forms_data,
                                                            form_name='лиды с сайта',
                                                            fields_name=['проблема', 'описание', 'имя', 'телефон',
-                                                                        'адрес', 'клиент'])
+                                                                        'адрес', 'клиент', 'приложения'])
+        # 'Приложения': 3,
 
         pyrus_task_data = {
             'form_id': pyrus_id_data.get('form_id'),
@@ -83,6 +85,22 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
         if pyrus_task_response.status_code == 200:
             pyrus_task_data = pyrus_task_response.json()
             pyrus_task_id = pyrus_task_data['task']['id']
+
+            print(tmp_file_path)
+            print(filename)
+
+            if tmp_file_path and filename:
+                print('good')
+                pyrus_files_data = PyrusClient.upload_file(
+                    file_path=tmp_file_path, filename=filename
+                )
+
+                if pyrus_files_data:
+                    pyrus_guid = pyrus_files_data['guid']
+                    await send_task_comment(
+                        task_id=pyrus_task_id,
+                        file_guid=pyrus_guid
+                    )
 
             await callback.message.answer(
                 text="✅ <b>Заявка успешно принята!</b>\n\n"
@@ -127,3 +145,12 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
         await dialog_manager.switch_to(
             BoilerDialog.boiler_main_menu
         )
+
+
+async def send_task_comment(task_id: int, file_guid: str):
+    data = {
+        "text": 'Пользователь загрузил файл.',
+        "attachments": [file_guid],
+    }
+    response = PyrusClient.request("POST", f"/tasks/{task_id}/comments", json=data)
+    return response.json()

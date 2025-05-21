@@ -104,6 +104,9 @@ async def confirm_sending_call_technician(
         user_address = dialog_manager.dialog_data['user_address']
         media_info = 'Медиа отсутствует.'
 
+        filename = dialog_manager.dialog_data['filename']
+        tmp_file_path = dialog_manager.dialog_data['tmp_file_path']
+
         task_description = (f"\n"
                             f"Описание проблемы: {technical_problem_description}\n\n"
                             f"Организация: {organization_name}\n\n"
@@ -119,7 +122,9 @@ async def confirm_sending_call_technician(
             task_title=technical_problem,
             task_description=task_description,
             dialog_manager=dialog_manager,
-            client=168270223
+            client=168270223,
+            filename=filename,
+            tmp_file_path=tmp_file_path
         )
 
     else:

@@ -1,3 +1,5 @@
+import hashlib
+
 import requests
 
 from db_configuration.models.pyrus import PyrusToken
@@ -43,3 +45,13 @@ class PyrusClient:
 
         return response
 
+    @staticmethod
+    def upload_file(file_path: str, filename: str) -> dict:
+        with open(file_path, "rb") as f:
+            file_bytes = f.read()
+            md5_hash = hashlib.md5(file_bytes).hexdigest()
+            files = {"file": (filename, file_bytes, "application/octet-stream")}
+            response = PyrusClient.request("POST", "/files/upload", files=files)
+            if response.status_code == 200:
+                return response.json()  # {'guid': ..., 'md5': ...}
+            raise Exception(f"Upload failed: {response.text}")

@@ -344,7 +344,7 @@ boiler_repair_accept_request = Window(
             'Если всё верно — нажмите <b>«Отправить»</b>.'
         )
     ),
-    StaticMedia(path=Format("{dialog_data[tmp_file_path]}")),
+    StaticMedia(path=Format("{dialog_data[tmp_file_path]}"), when=F['dialog_data']['tmp_file_path']),
     Button(
         id='accept_rp_rq', text=Format('📤 Отправить'), on_click=confirm_sending_call_technician
     ),
