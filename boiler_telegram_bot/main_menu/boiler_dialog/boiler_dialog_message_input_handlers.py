@@ -193,11 +193,24 @@ async def content_handler(
     pprint(message.video)
     pprint(message.photo)
     if message.video:
+        file_id = message.video.file_id
+        file_info = await message.bot.get_file(
+            file_id
+        )
         await message.answer("Отправлено видео.")
     elif message.photo:
+        file_id = message.photo[0].file_id
+        file_info = await message.bot.get_file(
+            file_id
+        )
         await message.answer("Отправлено фото.")
     else:
         await message.answer("Пожалуйста, отправьте фото или видео, или нажмите 'Далее' для пропуска.")
+        return
+
+    await message.answer(
+        text=str(file_info)
+    )
 
 
 async def address_getter(
