@@ -32,6 +32,10 @@ def get_client_catalog_id(pyrus_catalog_data: dict):
 
 async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: str, task_title: str,
                          task_description: str, user_address: str, client: int, dialog_manager: DialogManager):
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_waiting_status
+    )
+
     pyrus_forms_response = PyrusClient.request('GET', '/forms')
     if pyrus_forms_response.status_code == 200:
         forms_data = pyrus_forms_response.json()  # должен быть список

@@ -641,6 +641,13 @@ boiler_accept_technical_request = Window(
     parse_mode=ParseMode.HTML
 )
 
+waiting_window = Window(
+    Format(
+        'Идёт создание заявки. Пожалуйста, ожидайте.'
+    ),
+    state=BoilerDialog.boiler_waiting_status
+)
+
 boiler_dialog = Dialog(
     boiler_main_menu,
 
