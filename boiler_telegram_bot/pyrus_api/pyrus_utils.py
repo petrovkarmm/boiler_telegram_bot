@@ -44,39 +44,57 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
                                                            form_name='лиды с сайта',
                                                            fields_name=['проблема', 'описание', 'имя', 'телефон',
                                                                         'адрес', 'клиент', 'приложения'])
-        # 'Приложения': 3,
+
+        fields = [
+            {
+                'id': pyrus_id_data.get('Проблема'),
+                'value': task_title
+            },
+            {
+                'id': pyrus_id_data.get('Описание'),
+                'value': task_description
+            },
+            {
+                'id': pyrus_id_data.get('Имя'),
+                'value': user_name
+            },
+            {
+                'id': pyrus_id_data.get('Телефон'),
+                'value': user_phone
+            },
+            {
+                'id': pyrus_id_data.get('Адрес'),
+                'value': user_address
+            },
+            # {
+            #     'id': pyrus_id_data.get('Клиент'),
+            #     'value': {
+            #         'item_id': client  # TODO добавить запрос на поиск клиента или его добавление (просто ID)
+            #     }
+            # },
+        ]
+
+        if tmp_file_path and filename:
+            pyrus_files_data = PyrusClient.upload_file(
+                file_path=tmp_file_path, filename=filename
+            )
+
+            if pyrus_files_data:
+                pyrus_guid = pyrus_files_data['guid']
+                fields.append(
+                    {
+                        'id': pyrus_id_data.get('Приложения'),
+                        'value':
+                            {'attachments': pyrus_guid}
+                    }
+                )
 
         pyrus_task_data = {
             'form_id': pyrus_id_data.get('form_id'),
-            'fields': [
-                {
-                    'id': pyrus_id_data.get('Проблема'),
-                    'value': task_title
-                },
-                {
-                    'id': pyrus_id_data.get('Описание'),
-                    'value': task_description
-                },
-                {
-                    'id': pyrus_id_data.get('Имя'),
-                    'value': user_name
-                },
-                {
-                    'id': pyrus_id_data.get('Телефон'),
-                    'value': user_phone
-                },
-                {
-                    'id': pyrus_id_data.get('Адрес'),
-                    'value': user_address
-                },
-                # {
-                #     'id': pyrus_id_data.get('Клиент'),
-                #     'value': {
-                #         'item_id': client  # TODO добавить запрос на поиск клиента или его добавление (просто ID)
-                #     }
-                # },
-            ]
+            'fields': fields
         }
+
+        print(pyrus_task_data)
 
         pyrus_task_response = PyrusClient.request(
             method='POST', endpoint='/tasks', json=pyrus_task_data
@@ -85,22 +103,6 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
         if pyrus_task_response.status_code == 200:
             pyrus_task_data = pyrus_task_response.json()
             pyrus_task_id = pyrus_task_data['task']['id']
-
-            print(tmp_file_path)
-            print(filename)
-
-            if tmp_file_path and filename:
-                print('good')
-                pyrus_files_data = PyrusClient.upload_file(
-                    file_path=tmp_file_path, filename=filename
-                )
-
-                if pyrus_files_data:
-                    pyrus_guid = pyrus_files_data['guid']
-                    await send_task_comment(
-                        task_id=pyrus_task_id,
-                        file_guid=pyrus_guid
-                    )
 
             await callback.message.answer(
                 text="✅ <b>Заявка успешно принята!</b>\n\n"
