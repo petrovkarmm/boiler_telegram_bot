@@ -32,4 +32,5 @@ class BoilerDialog(StatesGroup):
     boiler_barista_training_choose_count = State()
     boiler_barista_training_accept_request = State()
 
-    boiler_waiting_status = State()
+    boiler_send_task_waiting_status = State()
+    boiler_upload_file_waiting_status = State()

@@ -1,4 +1,35 @@
 import re
+import aiohttp
+from aiogram import Bot
+from aiogram.exceptions import TelegramBadRequest
+from aiogram.types import Message
+from aiogram_dialog import DialogManager
+
+MAX_FILE_SIZE = 20 * 1024 * 1024  # 20 MB
+
+
+async def download_file(bot: Bot, file_id: str, message: Message) -> bytes | None:
+    try:
+        file_info = await bot.get_file(file_id)
+    except TelegramBadRequest as e:
+        if "file is too big" in str(e).lower():
+            await message.answer("Файл слишком большой. Telegram не позволяет его скачать.")
+        else:
+            await message.answer(f"Произошла ошибка: {str(e)}")
+        return None
+
+    if file_info.file_size > MAX_FILE_SIZE:
+        await message.answer("Файл слишком большой. Максимальный размер — 20 МБ.")
+        return None
+
+    file_url = f"https://api.telegram.org/file/bot{bot.token}/{file_info.file_path}"
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(file_url) as resp:
+            if resp.status == 200:
+                return await resp.read()
+            await message.answer("Не удалось скачать файл. Попробуйте позже.")
+            return None
 
 
 async def normalize_phone_number(phone: str) -> str | None:

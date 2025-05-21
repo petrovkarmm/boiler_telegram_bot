@@ -6,13 +6,14 @@ from aiogram_dialog import Dialog, Window
 from aiogram_dialog.widgets.input import MessageInput
 from aiogram_dialog.widgets.kbd import Button, SwitchTo, Back, Group, Row, ScrollingGroup, Column, Select, Counter, \
     Radio
+from aiogram_dialog.widgets.media import StaticMedia
 from aiogram_dialog.widgets.text import Format
 
 from main_menu.global_utils.global_messages_input import get_itn_and_organization_name
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_message_input_handlers import feedback_handler, \
     technical_problem_handler, technical_problem_description_handler, \
-    content_handler, address_getter, new_organization_itn_handler, new_phone_handler, new_organization_name_handler, \
+    handle_upload, address_getter, new_organization_itn_handler, new_phone_handler, new_organization_name_handler, \
     new_name_handler, budget_getter, place_format_getter, tech_catalog_address_getter
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_on_click_functions import send_feedback, \
     on_technical_problem_selected, confirm_sending_call_technician, get_barista_count_and_switch, \
@@ -24,7 +25,7 @@ from main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_PROBLEM_
 from main_menu.boiler_dialog.boiler_dialog_getter import technical_problem_id_getter, technical_problems_getter, \
     user_data_profile_getter, user_data_profile_barista_getter, technical_catalog_getter, \
     get_technical_catalog_data_for_accept, \
-    rent_type_getter, rent_data_for_accept_request
+    rent_type_getter, rent_data_for_accept_request, video_or_photo_format_data
 
 boiler_main_menu = Window(
     Format(
@@ -298,8 +299,9 @@ boiler_repair_boiler_video_or_photo = Window(
         )
     ),
     MessageInput(
-        content_handler
+        handle_upload
     ),
+    getter=video_or_photo_format_data,
     state=BoilerDialog.boiler_repair_video_or_photo,
     parse_mode=ParseMode.HTML,
 )
@@ -342,6 +344,7 @@ boiler_repair_accept_request = Window(
             'Если всё верно — нажмите <b>«Отправить»</b>.'
         )
     ),
+    StaticMedia(path=Format("{dialog_data[tmp_file_path]}")),
     Button(
         id='accept_rp_rq', text=Format('📤 Отправить'), on_click=confirm_sending_call_technician
     ),
@@ -641,11 +644,18 @@ boiler_accept_technical_request = Window(
     parse_mode=ParseMode.HTML
 )
 
-waiting_window = Window(
+task_waiting_window = Window(
     Format(
         'Идёт создание заявки. Пожалуйста, ожидайте.'
     ),
-    state=BoilerDialog.boiler_waiting_status
+    state=BoilerDialog.boiler_send_task_waiting_status
+)
+
+upload_file_window = Window(
+    Format(
+        'Происходит отправка файла на сервер. Пожалуйста, подождите.'
+    ),
+    state=BoilerDialog.boiler_upload_file_waiting_status
 )
 
 boiler_dialog = Dialog(
@@ -677,5 +687,8 @@ boiler_dialog = Dialog(
     boiler_repair_accept_request,
 
     boiler_barista_training_choose_count,
-    boiler_barista_training_accept_request
+    boiler_barista_training_accept_request,
+
+    task_waiting_window,
+    upload_file_window
 )

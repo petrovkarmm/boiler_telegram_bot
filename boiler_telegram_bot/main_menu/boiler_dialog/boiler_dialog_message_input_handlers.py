@@ -1,4 +1,6 @@
-from pprint import pprint
+import tempfile
+import uuid
+import os
 
 from aiogram.enums import ParseMode
 from aiogram_dialog import Window, DialogManager, ShowMode
@@ -7,9 +9,11 @@ from aiogram_dialog.widgets.kbd import SwitchTo
 from aiogram_dialog.widgets.text import Format
 from aiogram.types import Message
 
+from pprint import pprint
+
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from db_configuration.models.user import User
-from main_menu.boiler_dialog.utils import normalize_phone_number
+from main_menu.boiler_dialog.utils import normalize_phone_number, download_file
 from main_menu.boiler_registration_dialog.utils import is_valid_inn
 
 
@@ -185,31 +189,58 @@ async def new_phone_handler(
         )
 
 
-async def content_handler(
-        message: Message,
-        message_input: MessageInput,
-        dialog_manager: DialogManager,
-):
-    pprint(message.video)
-    pprint(message.photo)
-    if message.video:
-        file_id = message.video.file_id
-        file_info = await message.bot.get_file(
-            file_id
-        )
-        await message.answer("Отправлено видео.")
-    elif message.photo:
-        file_id = message.photo[0].file_id
-        file_info = await message.bot.get_file(
-            file_id
-        )
-        await message.answer("Отправлено фото.")
-    else:
-        await message.answer("Пожалуйста, отправьте фото или видео, или нажмите 'Далее' для пропуска.")
-        return
+async def handle_upload(message: Message, message_input: MessageInput, dialog_manager: DialogManager):
+    media = message.video or (message.photo[-1] if message.photo else None)
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_upload_file_waiting_status
+    )
+    try:
+        if not media:
+            await message.answer("Нет файла для загрузки.")
+            return
 
-    await message.answer(
-        text=str(file_info)
+        file_id = media.file_id
+        file_bytes = await download_file(message.bot, file_id, message)
+        if not file_bytes:
+            return
+
+        # Определим расширение файла
+        if hasattr(media, "file_name") and media.file_name:
+            ext = os.path.splitext(media.file_name)[1] or ".dat"
+        elif message.video:
+            ext = ".mp4"
+        elif message.photo:
+            ext = ".jpg"
+        else:
+            ext = ".dat"
+
+        # Генерируем уникальное имя и путь
+        unique_filename = f"{uuid.uuid4().hex}{ext}"
+        tmp_dir = tempfile.gettempdir()  # кросс-платформенный tmp путь
+        tmp_file_path = os.path.join(tmp_dir, unique_filename)
+
+        # Сохраняем файл
+        with open(tmp_file_path, "wb") as tmp_file:
+            tmp_file.write(file_bytes)
+
+        dialog_manager.dialog_data["tmp_file_path"] = tmp_file_path
+        dialog_manager.dialog_data["filename"] = unique_filename
+    except Exception as e:
+        await message.answer(
+            text=(
+                "❌ <b>Кажется, что-то пошло не так...</b>\n\n"
+                "Пожалуйста, попробуйте ещё раз 🔄\n"
+                "Если проблема не исчезнет, сообщите нам! 💬"
+            ),
+            parse_mode=ParseMode.HTML
+        )
+        await dialog_manager.switch_to(
+            BoilerDialog.boiler_repair_video_or_photo
+        )
+        print(e)
+
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_repair_address
     )
 
 

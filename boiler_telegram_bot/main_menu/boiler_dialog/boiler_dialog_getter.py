@@ -60,6 +60,15 @@ async def rent_type_getter(**kwargs):
     return {"rents": rents}
 
 
+async def video_or_photo_format_data(dialog_manager: DialogManager, **_kwargs):
+    dialog_manager.dialog_data['filename'] = None
+    dialog_manager.dialog_data['tmp_file_path'] = None
+
+    return {
+
+    }
+
+
 async def rent_data_for_accept_request(dialog_manager: DialogManager, **_kwargs):
     event_update = _kwargs.get('event_update')
 
@@ -148,6 +157,8 @@ async def get_technical_catalog_data_for_accept(dialog_manager: DialogManager, *
 
 async def user_data_profile_getter(dialog_manager: DialogManager, **_kwargs):
     event_update = _kwargs.get('event_update')
+
+    pprint(dialog_manager.dialog_data)
 
     user_id = str(event_update.event.from_user.id)
 
