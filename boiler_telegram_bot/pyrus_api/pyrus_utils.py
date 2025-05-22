@@ -84,8 +84,8 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
                 fields.append(
                     {
                         'id': pyrus_id_data.get('Приложения'),
-                        'value':
-                            {'attachments': pyrus_guid}
+                        'value': [f'{pyrus_guid}']
+
                     }
                 )
 
