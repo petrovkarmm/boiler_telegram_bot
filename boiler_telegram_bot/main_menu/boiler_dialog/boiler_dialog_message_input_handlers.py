@@ -3,13 +3,9 @@ import uuid
 import os
 
 from aiogram.enums import ParseMode
-from aiogram_dialog import Window, DialogManager, ShowMode
+from aiogram_dialog import DialogManager
 from aiogram_dialog.widgets.input import MessageInput
-from aiogram_dialog.widgets.kbd import SwitchTo
-from aiogram_dialog.widgets.text import Format
 from aiogram.types import Message
-
-from pprint import pprint
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from db_configuration.models.user import User
@@ -104,7 +100,7 @@ async def new_organization_itn_handler(
     inn = message.text.strip()
 
     if not is_valid_inn(inn):
-        await message.answer("❌ Неверный ИНН. Пожалуйста, введите корректный ИНН из 10 цифр.")
+        await message.answer("❌ Неверный ИНН. Пожалуйста, введите корректный ИНН из 10 или 12 цифр.")
         return
 
     telegram_id = str(message.from_user.id)
@@ -237,7 +233,6 @@ async def handle_upload(message: Message, message_input: MessageInput, dialog_ma
         await dialog_manager.switch_to(
             BoilerDialog.boiler_repair_video_or_photo
         )
-        print(e)
 
     await dialog_manager.switch_to(
         BoilerDialog.boiler_repair_address

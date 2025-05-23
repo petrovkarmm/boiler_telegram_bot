@@ -1,6 +1,3 @@
-from pprint import pprint
-
-from aiogram.types import Update
 from aiogram_dialog import DialogManager
 from aiogram_dialog.widgets.kbd import ManagedRadio
 
@@ -157,8 +154,6 @@ async def get_technical_catalog_data_for_accept(dialog_manager: DialogManager, *
 
 async def user_data_profile_getter(dialog_manager: DialogManager, **_kwargs):
     event_update = _kwargs.get('event_update')
-
-    pprint(dialog_manager.dialog_data)
 
     user_id = str(event_update.event.from_user.id)
 
