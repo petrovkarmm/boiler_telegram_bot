@@ -1,4 +1,5 @@
 import hashlib
+import os
 import time
 
 import requests
@@ -61,12 +62,17 @@ class PyrusClient:
         return response
 
     @staticmethod
-    def upload_file(file_path: str, filename: str) -> dict:
+    def upload_file(file_path: str, filename: str) -> dict | None:
+        if not os.path.isfile(file_path):
+            bot_logger.warning(f"Файл {file_path} не найден. Возможно, он был автоматически удалён.")
+            return None
+
         with open(file_path, "rb") as f:
             file_bytes = f.read()
             md5_hash = hashlib.md5(file_bytes).hexdigest()
             files = {"file": (filename, file_bytes, "application/octet-stream")}
             response = PyrusClient.request("POST", "/files/upload", files=files)
             if response.status_code == 200:
-                return response.json()  # {'guid': ..., 'md5': ...}
-            raise Exception(f"Upload failed: {response.text}")
+                return response.json()
+            bot_logger.warning(f"Upload failed: {response.text}")
+            return None
