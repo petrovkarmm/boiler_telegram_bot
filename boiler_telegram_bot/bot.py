@@ -1,8 +1,11 @@
 import asyncio
+import os
 
 from aiogram import Bot, Dispatcher, F
 from aiogram.enums import ParseMode
 from aiogram.fsm.context import FSMContext
+from aiogram.fsm.storage.base import DefaultKeyBuilder
+from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.types import ErrorEvent, Message, ReplyKeyboardRemove
 from aiogram_dialog import setup_dialogs, DialogManager
 from aiogram_dialog.api.exceptions import UnknownIntent, OutdatedIntent
@@ -23,13 +26,18 @@ from tg_logs.logger import bot_logger
 
 async def bot_start():
     if DEBUG:
-        bot = Bot(token=bot_token)
-        dp = Dispatcher()
-        setup_dialogs(dp)
+        redis_connect = os.getenv("REDIS_TEST_CONNECT_URL")
+        storage = RedisStorage.from_url(
+            redis_connect, key_builder=DefaultKeyBuilder(with_destiny=True)
+        )
     else:
-        bot = Bot(token=bot_token)
-        dp = Dispatcher()
-        setup_dialogs(dp)
+        redis_connect = os.getenv("REDIS_CONNECT_URL")
+        storage = RedisStorage.from_url(
+            redis_connect, key_builder=DefaultKeyBuilder(with_destiny=True)
+        )
+
+    bot = Bot(token=bot_token)
+    dp = Dispatcher(storage=storage)
 
     @dp.message(F.text == 'admin')  # TODO Придумать нормальный вход для админов.
     async def admin_panel_start(message: Message, state: FSMContext, dialog_manager: DialogManager):
