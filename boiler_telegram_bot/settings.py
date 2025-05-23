@@ -10,3 +10,4 @@ bot_token = os.getenv("BOT_TOKEN")
 pyrus_login = os.getenv('PYRUS_LOGIN')
 pyrus_security_key = os.getenv('PYRUS_SECURITY_KEY')
 pyrus_standard_url = 'https://api.pyrus.com/v4'
+BOT_BASE_DIR = os.getcwd()
