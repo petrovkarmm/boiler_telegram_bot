@@ -1,5 +1,4 @@
 import re
-from pprint import pprint
 from typing import Dict
 
 from aiogram.enums import ParseMode
@@ -33,7 +32,6 @@ async def get_client_catalog_id():
     catalogs_data: Dict
     for catalog in catalogs_data:
         if catalog.get('name') == 'Клиенты' and catalog.get('deleted') is False:
-            print(catalog.get('catalog_id'))
             return catalog.get('catalog_id')
 
 
@@ -65,12 +63,17 @@ async def find_client_by_organization(callback: CallbackQuery, organization_itn:
             if has_itn and has_name:
                 return client.get('item_id')
 
+        if len(organization_itn) == 12:
+            organization_name = 'ИП ' + organization_name
+        else:
+            organization_name = 'ООО ' + organization_name
+
         new_client_data = {
             "upsert": [
                 {
                     "values": [
                         organization_name,
-                        organization_itn
+                        f'ИНН {organization_itn}'
                     ]
                 }]
         }
@@ -88,9 +91,6 @@ async def find_client_by_organization(callback: CallbackQuery, organization_itn:
         return None
 
     else:
-
-        print(catalog_id)
-
         await callback.message.answer(
             text='⚠️ Упс! Кажется, что-то пошло не так.\n'
                  'Попробуйте позже.',
@@ -174,9 +174,6 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
             'form_id': pyrus_id_data.get('form_id'),
             'fields': fields
         }
-
-        print(pyrus_task_data)
-
         pyrus_task_response = PyrusClient.request(
             method='POST', endpoint='/tasks', json=pyrus_task_data
         )
@@ -199,9 +196,6 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
             )
 
         else:
-            print(pyrus_task_response.status_code)
-            print(pyrus_task_response.text)
-
             await callback.message.answer(
                 text='⚠️ Упс! Кажется, что-то пошло не так.\n'
                      'Попробуйте позже.',
@@ -215,8 +209,6 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
             )
 
     else:
-        print(pyrus_forms_response.status_code)
-        print(pyrus_forms_response.text)
         await callback.message.answer(
             text='⚠️ Упс! Кажется, что-то пошло не так.\n'
                  'Попробуйте позже.',
