@@ -1,6 +1,4 @@
 import asyncio
-import os
-from pprint import pprint
 
 from aiogram import Bot, Dispatcher, F
 from aiogram.enums import ParseMode
@@ -18,10 +16,9 @@ from main_menu.admin_boiler_dialog.admin_boiler_dialog_router import admin_boile
 from main_menu.admin_boiler_dialog.admin_boiler_dialog_states import AdminBoilerDialog
 from main_menu.boiler_registration_dialog.boiler_registration_router import boiler_registration_dialog_router
 from main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
-from middlewares.registration_middleware import UserInDatabaseChecker
-from pyrus_api.pyrus_client import PyrusClient
-from pyrus_api.pyrus_utils import get_form_and_field_id_by_form_name
-from settings import bot_token, DEBUG, pyrus_login, pyrus_security_key
+from middlewares.logger_middleware import GlobalLogger
+from settings import bot_token, DEBUG
+from tg_logs.logger import bot_logger
 
 
 async def bot_start():
@@ -85,15 +82,18 @@ async def bot_start():
                     parse_mode=ParseMode.HTML
                 )
             except AttributeError as exception:
-                print(f'Отбилась в закрытый диалог.', exception)
+                bot_logger.warning(f'Отбилась в закрытый диалог.', exception)
             except Exception as exception:
-                print(exception)
+                bot_logger.warning(exception)
 
         else:
-            return print(f"{event.exception}")
+            return bot_logger(f"{event.exception}")
 
     # error handler
-    # dp.errors.register(error_unknown_intent_handler)
+    dp.errors.register(error_unknown_intent_handler)
+
+    # logger mw
+    dp.callback_query.middleware.register(GlobalLogger())
 
     # dialogs
     dp.include_router(
@@ -119,4 +119,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(bot_start())
     except Exception as e:
-        print(e)
+        bot_logger.warning(e)
