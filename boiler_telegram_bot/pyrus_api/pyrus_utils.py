@@ -1,3 +1,4 @@
+import re
 from pprint import pprint
 from typing import Dict
 
@@ -9,7 +10,7 @@ from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import Boi
 from pyrus_api.pyrus_client import PyrusClient
 
 
-def get_form_and_field_id_by_form_name(pyrus_forms_data: dict, form_name: str, fields_name: list):
+async def get_form_and_field_id_by_form_name(pyrus_forms_data: dict, form_name: str, fields_name: list):
     pyrus_id_data = {
     }
     for form_data in pyrus_forms_data.get('forms'):
@@ -22,16 +23,90 @@ def get_form_and_field_id_by_form_name(pyrus_forms_data: dict, form_name: str, f
             return pyrus_id_data
 
 
-def get_client_catalog_id(pyrus_catalog_data: dict):
+async def get_client_catalog_id():
+    pyrus_catalog_request = PyrusClient.request(
+        method='GET', endpoint='/catalogs'
+    )
+
+    pyrus_catalog_data = pyrus_catalog_request.json()
     catalogs_data = pyrus_catalog_data.get('catalogs')
     catalogs_data: Dict
     for catalog in catalogs_data:
-        if catalog.get('name') == 'Клиенты':
-            return catalog.get('id')
+        if catalog.get('name') == 'Клиенты' and catalog.get('deleted') is False:
+            print(catalog.get('catalog_id'))
+            return catalog.get('catalog_id')
+
+
+async def find_client_by_organization(callback: CallbackQuery, organization_itn: str, organization_name: str,
+                                      dialog_manager: DialogManager):
+    catalog_id = await get_client_catalog_id()
+
+    if catalog_id:
+
+        clients_catalog_request = PyrusClient.request(
+            method='GET', endpoint=f'/catalogs/{catalog_id}'
+        )
+
+        clients_catalog_data = clients_catalog_request.json()
+        clients_catalog_data: Dict
+
+        clients = clients_catalog_data.get('items', [])
+        normalized_itn = re.sub(r'\D', '', organization_itn)
+        normalized_name = re.sub(r'\s+', ' ', organization_name.strip().lower())
+
+        for client in clients:
+            values = client.get('values', [])
+            combined = ' '.join(values).lower()
+            combined = re.sub(r'\s+', ' ', combined)
+
+            has_itn = re.search(rf'\b{re.escape(normalized_itn)}\b', combined)
+            has_name = re.search(rf'\b{re.escape(normalized_name)}\b', combined)
+
+            if has_itn and has_name:
+                return client.get('item_id')
+
+        new_client_data = {
+            "upsert": [
+                {
+                    "values": [
+                        organization_name,
+                        organization_itn
+                    ]
+                }]
+        }
+
+        adding_new_client_request = PyrusClient.request(
+            method='POST', endpoint=f'/catalogs/{catalog_id}/diff', json=new_client_data
+        )
+
+        new_pyrus_client_data = adding_new_client_request.json()
+        new_pyrus_client_data: True
+
+        if new_pyrus_client_data.get('apply', False) is True:
+            return new_pyrus_client_data.get('added')[0].get('item_id')
+
+        return None
+
+    else:
+
+        print(catalog_id)
+
+        await callback.message.answer(
+            text='⚠️ Упс! Кажется, что-то пошло не так.\n'
+                 'Попробуйте позже.',
+            parse_mode=ParseMode.HTML
+        )
+
+        dialog_manager.show_mode = ShowMode.DELETE_AND_SEND
+
+        await dialog_manager.switch_to(
+            BoilerDialog.boiler_main_menu
+        )
 
 
 async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: str, task_title: str,
-                         task_description: str, user_address: str, client: int, dialog_manager: DialogManager,
+                         task_description: str, user_address: str, organization_name: str, organization_itn: str,
+                         dialog_manager: DialogManager,
                          tmp_file_path: str = None, filename: str = None):
     await dialog_manager.switch_to(
         BoilerDialog.boiler_send_task_waiting_status
@@ -39,11 +114,15 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
 
     pyrus_forms_response = PyrusClient.request('GET', '/forms')
     if pyrus_forms_response.status_code == 200:
-        forms_data = pyrus_forms_response.json()  # должен быть список
-        pyrus_id_data = get_form_and_field_id_by_form_name(pyrus_forms_data=forms_data,
-                                                           form_name='лиды с сайта',
-                                                           fields_name=['проблема', 'описание', 'имя', 'телефон',
-                                                                        'адрес', 'клиент', 'приложения'])
+        forms_data = pyrus_forms_response.json()
+        pyrus_id_data = await get_form_and_field_id_by_form_name(pyrus_forms_data=forms_data,
+                                                                 form_name='лиды с сайта',
+                                                                 fields_name=['проблема', 'описание', 'имя', 'телефон',
+                                                                              'адрес', 'клиенты', 'приложения'])
+
+        client_id = await find_client_by_organization(callback=callback, dialog_manager=dialog_manager,
+                                                      organization_name=organization_name,
+                                                      organization_itn=organization_itn)
 
         fields = [
             {
@@ -66,13 +145,15 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
                 'id': pyrus_id_data.get('Адрес'),
                 'value': user_address
             },
-            # {
-            #     'id': pyrus_id_data.get('Клиент'),
-            #     'value': {
-            #         'item_id': client  # TODO добавить запрос на поиск клиента или его добавление (просто ID)
-            #     }
-            # },
         ]
+
+        if client_id:
+            fields.append({
+                'id': pyrus_id_data.get('Клиенты'),
+                'value': {
+                    'item_id': client_id
+                }
+            })
 
         if tmp_file_path and filename:
             pyrus_files_data = PyrusClient.upload_file(

@@ -122,9 +122,10 @@ async def confirm_sending_call_technician(
             task_title=technical_problem,
             task_description=task_description,
             dialog_manager=dialog_manager,
-            client=168270223,
             filename=filename,
-            tmp_file_path=tmp_file_path
+            tmp_file_path=tmp_file_path,
+            organization_name=organization_name,
+            organization_itn=organization_itn
         )
 
     else:
@@ -172,7 +173,8 @@ async def confirm_sending_tech_catalog_request(
             task_title=request_title,
             task_description=task_description,
             dialog_manager=dialog_manager,
-            client=168270215
+            organization_name=organization_name,
+            organization_itn=organization_itn
         )
 
     else:
@@ -226,7 +228,8 @@ async def confirm_rent_request_sending(
             task_title=request_title,
             task_description=task_description,
             dialog_manager=dialog_manager,
-            client=168270215
+            organization_name=organization_name,
+            organization_itn=organization_itn
         )
 
     else:
@@ -268,7 +271,8 @@ async def confirm_sending_barista_training(
             task_title=request_title,
             task_description=task_description,
             dialog_manager=dialog_manager,
-            client=168270215
+            organization_name=organization_name,
+            organization_itn=organization_itn
         )
 
     else:
