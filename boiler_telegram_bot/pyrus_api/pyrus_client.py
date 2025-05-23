@@ -1,9 +1,11 @@
 import hashlib
+import time
 
 import requests
 
 from db_configuration.models.pyrus import PyrusToken
-from settings import pyrus_standard_url
+from settings import pyrus_standard_url, pyrus_login
+from tg_logs.logger import bot_logger
 
 
 class PyrusClient:
@@ -27,21 +29,34 @@ class PyrusClient:
 
     @staticmethod
     def request(method: str, endpoint: str, **kwargs):
+        start_time = time.time()
+
         token = PyrusToken.get_token()
+        print(token)
         headers = kwargs.get("headers", {})
         headers["Authorization"] = f"Bearer {token}"
         kwargs["headers"] = headers
 
         url = f"{PyrusClient.BASE_URL}/{endpoint.lstrip('/')}"
-        response = requests.request(method.upper(), url, **kwargs)
+        try:
+            response = requests.request(method.upper(), url, **kwargs)
+            if response.status_code == 401:
+                bot_logger.warning(f"401 Unauthorized. Refreshing token and retrying: {method.upper()} {url}")
+                new_token = PyrusClient.get_new_token_by_login()
+                if new_token:
+                    PyrusToken.update_token(pyrus_login=pyrus_login, new_token=new_token)
+                    headers["Authorization"] = f"Bearer {new_token}"
+                    kwargs["headers"] = headers
+                    response = requests.request(method.upper(), url, **kwargs)
+        except Exception as e:
+            bot_logger.exception(f"[PYRUS REQUEST ERROR] {method.upper()} {url} | Exception: {e}")
+            raise
 
-        if response.status_code == 401:
-            new_token = PyrusClient.get_new_token_by_login()
-            if new_token:
-                PyrusToken.update_token(old_token=token, new_token=new_token)
-                headers["Authorization"] = f"Bearer {new_token}"
-                kwargs["headers"] = headers
-                response = requests.request(method.upper(), url, **kwargs)
+        duration = round(time.time() - start_time, 2)
+        bot_logger.info(
+            f"[PYRUS] {method.upper()} {url} | Status: {response.status_code} | "
+            f"Time: {duration}s | Request kwargs: {kwargs} | Response: {response.text[:300]}"
+        )
 
         return response
 
