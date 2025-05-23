@@ -9,11 +9,13 @@ from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.types import ErrorEvent, Message, ReplyKeyboardRemove
 from aiogram_dialog import setup_dialogs, DialogManager
 from aiogram_dialog.api.exceptions import UnknownIntent, OutdatedIntent
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from boiler_telegram_bot.keyboards import repair_bot_keyboard
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_router import boiler_dialog_router
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from boiler_telegram_bot.main_menu.main_menu_router import main_menu_router
+from cleanup_tmp import cleanup_tmp_files, TMP_DIR
 from db_configuration.models.user import User
 from main_menu.admin_boiler_dialog.admin_boiler_dialog_router import admin_boiler_dialog_router
 from main_menu.admin_boiler_dialog.admin_boiler_dialog_states import AdminBoilerDialog
@@ -36,8 +38,14 @@ async def bot_start():
             redis_connect, key_builder=DefaultKeyBuilder(with_destiny=True)
         )
 
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(cleanup_tmp_files, trigger="cron", hour=3)
+    scheduler.start()
+
     bot = Bot(token=bot_token)
     dp = Dispatcher(storage=storage)
+
+    setup_dialogs(dp)
 
     @dp.message(F.text == 'admin')  # TODO Придумать нормальный вход для админов.
     async def admin_panel_start(message: Message, state: FSMContext, dialog_manager: DialogManager):
@@ -125,6 +133,9 @@ async def bot_start():
 
 if __name__ == "__main__":
     try:
+        bot_logger.info(
+            'Старт бота.'
+        )
         asyncio.run(bot_start())
     except Exception as e:
         bot_logger.warning(e)
