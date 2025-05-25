@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  bot:
+    container_name: boiler_bot
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - ./boiler_telegram_bot/db:/app/boiler_telegram_bot/db
+    depends_on:
+      - redis
+
+  redis:
+    container_name: boiler_redis
+    image: redis:7.4
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: redis-server --requirepass ${REDIS_PASSWORD}
