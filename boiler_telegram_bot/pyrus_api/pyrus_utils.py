@@ -69,11 +69,6 @@ async def find_client_by_organization(callback: CallbackQuery, organization_itn:
             if has_itn and has_name:
                 return client.get('item_id')
 
-        if len(organization_itn) == 12:
-            organization_name = 'ИП ' + organization_name
-        else:
-            organization_name = 'ООО ' + organization_name
-
         new_client_data = {
             "upsert": [
                 {
