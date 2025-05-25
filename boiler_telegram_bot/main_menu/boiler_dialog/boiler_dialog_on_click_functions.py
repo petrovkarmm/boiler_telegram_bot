@@ -19,7 +19,7 @@ async def get_barista_count_and_switch(
 ):
     barista_counter: ManagedCounter = dialog_manager.find('barista_counter')
 
-    barista_value = barista_counter.get_value()  # int число от 1 до 24
+    barista_value = barista_counter.get_value()
     dialog_manager.dialog_data['barista_value'] = barista_value
     await dialog_manager.switch_to(
         BoilerDialog.boiler_barista_training_accept_request
@@ -111,7 +111,6 @@ async def confirm_sending_call_technician(
                             f"Организация: {organization_name}\n\n"
                             f"ИНН: {organization_itn}\n\n")
 
-        #  TODO добавить client_id
 
         await send_form_task(
             callback=callback,
@@ -210,7 +209,6 @@ async def confirm_rent_request_sending(
 
         user_address = 'Отсутствует'
 
-        #  TODO добавить client_id
 
         task_description = (f"\n"
                             f"Тип аренды: {user_rent_type}\n\n"
@@ -254,7 +252,6 @@ async def confirm_sending_barista_training(
         organization_name = user_data['organization_name']
         user_address = 'Отсутствует'
 
-        #  TODO Добавить client_id
 
         task_description = (f"\n"
                             f"Количество человек на обучение: {barista_value}\n\n"

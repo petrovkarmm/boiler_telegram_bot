@@ -2,7 +2,6 @@ from boiler_telegram_bot.db_configuration.db_connection import get_connection
 from boiler_telegram_bot.tg_logs.logger import bot_logger
 
 
-#  TODO rename
 class PyrusToken:
     @staticmethod
     def get_token() -> str | None:

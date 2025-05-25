@@ -5,9 +5,11 @@ from aiogram_dialog.widgets.input import MessageInput
 from aiogram_dialog.widgets.kbd import Button, SwitchTo, Back, Group, Row, ScrollingGroup, Column, Select
 from aiogram_dialog.widgets.text import Format
 
-from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog_getter import feedbacks_count_getter, feedback_getter, \
+from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog_getter import feedbacks_count_getter, \
+    feedback_getter, \
     technical_problem_id_getter, technical_problems_getter, technical_problem_getter
-from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog_message_input_handlers import new_technical_problem_name_handler
+from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog_message_input_handlers import \
+    new_technical_problem_name_handler
 from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog_on_click_functions import go_to_boiler_bot, \
     on_feedback_selected, go_to_new_feedbacks, go_to_old_feedbacks, mark_feedback, on_technical_problem_selected, \
     toggle_technical_problem_hidden_status, deleting_technical_problem
@@ -187,7 +189,8 @@ admin_boiler_technical_problem_view = Window(
     ),
     Row(
         SwitchTo(
-            id='back_to_new_fb_menu', text=Format('⬅️ Назад'), state=AdminBoilerDialog.admin_boiler_technical_problems_list
+            id='back_to_new_fb_menu', text=Format('⬅️ Назад'),
+            state=AdminBoilerDialog.admin_boiler_technical_problems_list
         ),
         SwitchTo(
             id='back_to_menu', text=Format('🏠 В меню'), state=AdminBoilerDialog.admin_boiler_main_menu
@@ -214,7 +217,6 @@ admin_boiler_technical_problem_create = Window(
     state=AdminBoilerDialog.admin_boiler_technical_problem_create_new,
     parse_mode=ParseMode.HTML
 )
-
 
 admin_boiler_dialog = Dialog(
     admin_boiler_main_menu,

@@ -40,6 +40,8 @@ async def user_data_profile_barista_getter(dialog_manager: DialogManager, **_kwa
             BoilerRegistrationDialog.boiler_registration_user_name
         )
 
+        return None
+
 
 async def technical_catalog_getter(**kwargs):
     catalog = [
@@ -109,6 +111,8 @@ async def rent_data_for_accept_request(dialog_manager: DialogManager, **_kwargs)
             BoilerRegistrationDialog.boiler_registration_user_name
         )
 
+        return None
+
 
 async def get_technical_catalog_data_for_accept(dialog_manager: DialogManager, **_kwargs):
     event_update = _kwargs.get('event_update')
@@ -151,6 +155,8 @@ async def get_technical_catalog_data_for_accept(dialog_manager: DialogManager, *
             BoilerRegistrationDialog.boiler_registration_user_name
         )
 
+        return None
+
 
 async def user_data_profile_getter(dialog_manager: DialogManager, **_kwargs):
     event_update = _kwargs.get('event_update')
@@ -177,6 +183,8 @@ async def user_data_profile_getter(dialog_manager: DialogManager, **_kwargs):
         await dialog_manager.start(
             BoilerRegistrationDialog.boiler_registration_user_name
         )
+
+        return None
 
 
 async def technical_problems_getter(**_kwargs):

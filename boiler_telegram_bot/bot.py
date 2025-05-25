@@ -53,6 +53,12 @@ async def bot_start():
             AdminBoilerDialog.admin_boiler_main_menu
         )
 
+    @dp.message(Command('restart'))
+    async def full_restart(message: Message, state: FSMContext, dialog_manager: DialogManager):
+        await state.set_state(
+            None
+        )
+
     @dp.message(F.text == '🏪 Перезапустить бота')
     async def repair_bot(message: Message, state: FSMContext, dialog_manager: DialogManager):
         user_id = message.from_user.id
