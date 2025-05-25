@@ -2,9 +2,9 @@ from datetime import datetime
 
 from aiogram_dialog import DialogManager
 
-from db_configuration.models.technical_problem import TechnicalProblem
-from db_configuration.models.feedback import Feedback
-from main_menu.admin_boiler_dialog.admin_boiler_dialog_dataclasses import AdminFeedbackDialog, ADMIN_FEEDBACK_KEY, \
+from boiler_telegram_bot.db_configuration.models.technical_problem import TechnicalProblem
+from boiler_telegram_bot.db_configuration.models.feedback import Feedback
+from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog_dataclasses import AdminFeedbackDialog, ADMIN_FEEDBACK_KEY, \
     ADMIN_TECHNICAL_PROBLEM_KEY, AdminTechnicalProblemDialog
 
 

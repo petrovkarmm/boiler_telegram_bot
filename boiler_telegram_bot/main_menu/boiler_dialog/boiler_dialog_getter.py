@@ -1,11 +1,11 @@
 from aiogram_dialog import DialogManager
 from aiogram_dialog.widgets.kbd import ManagedRadio
 
-from db_configuration.models.technical_problem import TechnicalProblem
-from db_configuration.models.user import User
-from main_menu.boiler_dialog.boiler_dialog_dataclasses import TechnicalProblemDialog, TECHNICAL_PROBLEM_KEY, \
+from boiler_telegram_bot.db_configuration.models.technical_problem import TechnicalProblem
+from boiler_telegram_bot.db_configuration.models.user import User
+from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_dataclasses import TechnicalProblemDialog, TECHNICAL_PROBLEM_KEY, \
     TECHNICAL_CATALOG, RENT_TYPE
-from main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
+from boiler_telegram_bot.main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
 
 
 def technical_problem_id_getter(technical_problem: TechnicalProblemDialog) -> int:

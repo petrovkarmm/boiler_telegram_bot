@@ -1,6 +1,6 @@
 from aiogram import Router
 
-from main_menu.admin_boiler_dialog.admin_boiler_dialog import admin_boiler_dialog
+from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog import admin_boiler_dialog
 
 admin_boiler_dialog_router = Router()
 

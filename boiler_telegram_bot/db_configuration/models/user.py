@@ -1,6 +1,6 @@
 import sqlite3
 
-from db_configuration.db import get_connection
+from boiler_telegram_bot.db_configuration.db_connection import get_connection
 
 
 class User:

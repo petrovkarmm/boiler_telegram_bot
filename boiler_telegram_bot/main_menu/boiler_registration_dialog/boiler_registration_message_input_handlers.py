@@ -3,9 +3,9 @@ from aiogram.types import Message
 from aiogram_dialog import DialogManager
 from aiogram_dialog.widgets.input import MessageInput
 
-from main_menu.boiler_dialog.utils import normalize_phone_number
-from main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
-from main_menu.boiler_registration_dialog.utils import is_valid_inn
+from boiler_telegram_bot.main_menu.boiler_dialog.utils import normalize_phone_number
+from boiler_telegram_bot.main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
+from boiler_telegram_bot.main_menu.boiler_registration_dialog.utils import is_valid_inn
 
 
 async def organization_itn_handler(

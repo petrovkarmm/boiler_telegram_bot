@@ -8,9 +8,9 @@ from aiogram_dialog.widgets.input import MessageInput
 from aiogram.types import Message
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
-from db_configuration.models.user import User
-from main_menu.boiler_dialog.utils import normalize_phone_number, download_file
-from main_menu.boiler_registration_dialog.utils import is_valid_inn
+from boiler_telegram_bot.db_configuration.models.user import User
+from boiler_telegram_bot.main_menu.boiler_dialog.utils import normalize_phone_number, download_file
+from boiler_telegram_bot.main_menu.boiler_registration_dialog.utils import is_valid_inn
 
 
 async def feedback_handler(

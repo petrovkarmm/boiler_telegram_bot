@@ -5,17 +5,17 @@ from aiogram_dialog.widgets.input import MessageInput
 from aiogram_dialog.widgets.kbd import Button, SwitchTo, Back, Group, Row, ScrollingGroup, Column, Select
 from aiogram_dialog.widgets.text import Format
 
-from main_menu.admin_boiler_dialog.admin_boiler_dialog_getter import feedbacks_count_getter, feedback_getter, \
+from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog_getter import feedbacks_count_getter, feedback_getter, \
     technical_problem_id_getter, technical_problems_getter, technical_problem_getter
-from main_menu.admin_boiler_dialog.admin_boiler_dialog_message_input_handlers import new_technical_problem_name_handler
-from main_menu.admin_boiler_dialog.admin_boiler_dialog_on_click_functions import go_to_boiler_bot, \
+from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog_message_input_handlers import new_technical_problem_name_handler
+from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog_on_click_functions import go_to_boiler_bot, \
     on_feedback_selected, go_to_new_feedbacks, go_to_old_feedbacks, mark_feedback, on_technical_problem_selected, \
     toggle_technical_problem_hidden_status, deleting_technical_problem
-from main_menu.admin_boiler_dialog.admin_boiler_dialog_states import AdminBoilerDialog
+from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog_states import AdminBoilerDialog
 
-from main_menu.admin_boiler_dialog.admin_boiler_dialog_dataclasses import ADMIN_FEEDBACK_KEY, \
+from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog_dataclasses import ADMIN_FEEDBACK_KEY, \
     ADMIN_TECHNICAL_PROBLEM_KEY
-from main_menu.admin_boiler_dialog.admin_boiler_dialog_getter import feedbacks_getter, \
+from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog_getter import feedbacks_getter, \
     feedback_id_getter
 
 admin_boiler_main_menu = Window(

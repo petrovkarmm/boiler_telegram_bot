@@ -3,7 +3,7 @@ import time
 from functools import wraps
 from logging.handlers import TimedRotatingFileHandler
 
-from settings import BOT_BASE_DIR
+from boiler_telegram_bot.settings import BOT_BASE_DIR
 
 bot_logger = logging.getLogger('bot_logger')
 bot_logger.setLevel(logging.INFO)

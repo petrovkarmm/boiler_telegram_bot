@@ -1,4 +1,4 @@
-from db_configuration.db import get_connection
+from boiler_telegram_bot.db_configuration.db_connection import get_connection
 
 
 def create_tables():

@@ -1,11 +1,11 @@
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from aiogram.types import Message
 from aiogram_dialog import DialogManager
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
-from middlewares.registration_middleware import UserInDatabaseChecker
+from boiler_telegram_bot.middlewares.registration_middleware import UserInDatabaseChecker
 
 main_menu_router = Router()
 

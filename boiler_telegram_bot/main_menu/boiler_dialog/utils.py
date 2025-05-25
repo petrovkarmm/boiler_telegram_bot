@@ -3,7 +3,6 @@ import aiohttp
 from aiogram import Bot
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import Message
-from aiogram_dialog import DialogManager
 
 MAX_FILE_SIZE = 20 * 1024 * 1024  # 20 MB
 

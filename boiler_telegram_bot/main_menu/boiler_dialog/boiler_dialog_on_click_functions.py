@@ -6,13 +6,12 @@ from aiogram_dialog import DialogManager, ShowMode
 from aiogram_dialog.widgets.kbd import Button, ManagedCounter, ManagedRadio
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
-from db_configuration.models.feedback import Feedback
-from db_configuration.models.technical_problem import TechnicalProblem
-from db_configuration.models.user import User
-from main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_CATALOG, RENT_TYPE
-from main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
-from pyrus_api.pyrus_client import PyrusClient
-from pyrus_api.pyrus_utils import get_form_and_field_id_by_form_name, send_form_task
+from boiler_telegram_bot.db_configuration.models.feedback import Feedback
+from boiler_telegram_bot.db_configuration.models.technical_problem import TechnicalProblem
+from boiler_telegram_bot.db_configuration.models.user import User
+from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_CATALOG, RENT_TYPE
+from boiler_telegram_bot.main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
+from boiler_telegram_bot.pyrus_api.pyrus_utils import send_form_task
 
 
 async def get_barista_count_and_switch(

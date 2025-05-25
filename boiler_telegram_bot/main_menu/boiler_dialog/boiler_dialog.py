@@ -4,12 +4,10 @@ from aiogram import F
 from aiogram.enums import ParseMode
 from aiogram_dialog import Dialog, Window
 from aiogram_dialog.widgets.input import MessageInput
-from aiogram_dialog.widgets.kbd import Button, SwitchTo, Back, Group, Row, ScrollingGroup, Column, Select, Counter, \
+from aiogram_dialog.widgets.kbd import Button, SwitchTo, Row, ScrollingGroup, Column, Select, Counter, \
     Radio
 from aiogram_dialog.widgets.media import StaticMedia
 from aiogram_dialog.widgets.text import Format
-
-from main_menu.global_utils.global_messages_input import get_itn_and_organization_name
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_message_input_handlers import feedback_handler, \
     technical_problem_handler, technical_problem_description_handler, \
@@ -21,8 +19,8 @@ from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_on_click_function
     technical_catalog_radio_set, confirm_sending_tech_catalog_request, rent_radio_set, rent_catalog_radio_set, \
     confirm_rent_request_sending
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
-from main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_PROBLEM_KEY
-from main_menu.boiler_dialog.boiler_dialog_getter import technical_problem_id_getter, technical_problems_getter, \
+from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_PROBLEM_KEY
+from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_getter import technical_problem_id_getter, technical_problems_getter, \
     user_data_profile_getter, user_data_profile_barista_getter, technical_catalog_getter, \
     get_technical_catalog_data_for_accept, \
     rent_type_getter, rent_data_for_accept_request, video_or_photo_format_data

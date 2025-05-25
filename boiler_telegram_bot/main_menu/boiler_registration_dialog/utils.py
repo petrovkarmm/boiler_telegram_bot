@@ -1,7 +1,5 @@
 import re
 
-import re
-
 
 def is_valid_inn(inn: str) -> bool:
     """Проверка корректности ИНН:

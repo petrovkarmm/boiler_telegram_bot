@@ -15,35 +15,34 @@ from boiler_telegram_bot.keyboards import repair_bot_keyboard
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_router import boiler_dialog_router
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from boiler_telegram_bot.main_menu.main_menu_router import main_menu_router
-from cleanup_tmp import cleanup_tmp_files, TMP_DIR
-from db_configuration.models.user import User
-from main_menu.admin_boiler_dialog.admin_boiler_dialog_router import admin_boiler_dialog_router
-from main_menu.admin_boiler_dialog.admin_boiler_dialog_states import AdminBoilerDialog
-from main_menu.boiler_registration_dialog.boiler_registration_router import boiler_registration_dialog_router
-from main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
-from middlewares.logger_middleware import GlobalLogger
-from settings import bot_token, DEBUG
-from tg_logs.logger import bot_logger
+from boiler_telegram_bot.cleanup_tmp import cleanup_tmp_files
+from boiler_telegram_bot.db_configuration.create_tables import create_tables
+from boiler_telegram_bot.db_configuration.models.user import User
+from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog_router import admin_boiler_dialog_router
+from boiler_telegram_bot.main_menu.admin_boiler_dialog.admin_boiler_dialog_states import AdminBoilerDialog
+from boiler_telegram_bot.main_menu.boiler_registration_dialog.boiler_registration_router import \
+    boiler_registration_dialog_router
+from boiler_telegram_bot.main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
+from boiler_telegram_bot.middlewares.logger_middleware import GlobalLogger
+from boiler_telegram_bot.settings import bot_token, DEBUG, redis_connect_url
+from boiler_telegram_bot.tg_logs.logger import bot_logger
+from boiler_telegram_bot.db_configuration.insert_values_in_db import insert_values
 
 
 async def bot_start():
     if DEBUG:
-        redis_connect = os.getenv("REDIS_TEST_CONNECT_URL")
-        storage = RedisStorage.from_url(
-            redis_connect, key_builder=DefaultKeyBuilder(with_destiny=True)
-        )
+        dp = Dispatcher()
     else:
-        redis_connect = os.getenv("REDIS_CONNECT_URL")
         storage = RedisStorage.from_url(
-            redis_connect, key_builder=DefaultKeyBuilder(with_destiny=True)
+            redis_connect_url, key_builder=DefaultKeyBuilder(with_destiny=True)
         )
+        dp = Dispatcher(storage=storage)
 
     scheduler = AsyncIOScheduler()
     scheduler.add_job(cleanup_tmp_files, trigger="cron", hour=3)
     scheduler.start()
 
     bot = Bot(token=bot_token)
-    dp = Dispatcher(storage=storage)
 
     setup_dialogs(dp)
 
@@ -101,9 +100,8 @@ async def bot_start():
                 bot_logger.warning(f'Отбилась в закрытый диалог.', exception)
             except Exception as exception:
                 bot_logger.warning(exception)
-
         else:
-            return bot_logger(f"{event.exception}")
+            bot_logger(f"{event.exception}")
 
     # error handler
     dp.errors.register(error_unknown_intent_handler)
@@ -136,6 +134,8 @@ if __name__ == "__main__":
         bot_logger.info(
             'Старт бота.'
         )
+        create_tables()
+        insert_values()
         asyncio.run(bot_start())
     except Exception as e:
         bot_logger.warning(e)

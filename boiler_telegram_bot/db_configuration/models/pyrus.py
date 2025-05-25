@@ -1,5 +1,5 @@
-from db_configuration.db import get_connection
-from tg_logs.logger import bot_logger
+from boiler_telegram_bot.db_configuration.db_connection import get_connection
+from boiler_telegram_bot.tg_logs.logger import bot_logger
 
 
 #  TODO rename
@@ -34,7 +34,6 @@ class PyrusToken:
         with get_connection() as conn:
             cursor = conn.cursor()
 
-            # Проверка на существование
             cursor.execute("""
                 SELECT id FROM pyrus_token WHERE pyrus_security_key = ?
             """, (pyrus_security_key,))

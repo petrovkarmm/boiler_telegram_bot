@@ -3,7 +3,7 @@ from typing import Any, Callable, Dict, Awaitable
 from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
 
-from tg_logs.logger import handler_log
+from boiler_telegram_bot.tg_logs.logger import handler_log
 
 
 class GlobalLogger(BaseMiddleware):

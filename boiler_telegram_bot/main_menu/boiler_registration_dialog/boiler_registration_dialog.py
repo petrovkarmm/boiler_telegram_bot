@@ -4,10 +4,10 @@ from aiogram_dialog.widgets.input import MessageInput
 from aiogram_dialog.widgets.kbd import Row, SwitchTo, Button
 from aiogram_dialog.widgets.text import Format
 
-from main_menu.boiler_registration_dialog.boiler_registration_message_input_handlers import name_handler, phone_handler, \
+from boiler_telegram_bot.main_menu.boiler_registration_dialog.boiler_registration_message_input_handlers import name_handler, phone_handler, \
     organization_itn_handler, organization_name_handler
-from main_menu.boiler_registration_dialog.boiler_registration_on_click_functions import user_registration
-from main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
+from boiler_telegram_bot.main_menu.boiler_registration_dialog.boiler_registration_on_click_functions import user_registration
+from boiler_telegram_bot.main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
 
 boiler_registration_user_name = Window(
     Format(

@@ -1,10 +1,10 @@
 from typing import Any, Callable, Dict, Awaitable
 from aiogram import BaseMiddleware
-from aiogram.types import TelegramObject, Update
+from aiogram.types import TelegramObject
 from aiogram_dialog import DialogManager
 
-from db_configuration.models.user import User
-from main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
+from boiler_telegram_bot.db_configuration.models.user import User
+from boiler_telegram_bot.main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
 
 
 class UserInDatabaseChecker(BaseMiddleware):

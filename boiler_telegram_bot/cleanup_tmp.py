@@ -1,9 +1,8 @@
-# Конфигурация
 import os
 import tempfile
 import time
 
-from tg_logs.logger import bot_logger
+from boiler_telegram_bot.tg_logs.logger import bot_logger
 
 TMP_DIR = tempfile.gettempdir()
 EXPIRATION_DAYS = 30
