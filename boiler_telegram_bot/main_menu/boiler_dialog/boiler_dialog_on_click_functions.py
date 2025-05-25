@@ -146,7 +146,6 @@ async def confirm_sending_tech_catalog_request(
         )
         radio_widget: ManagedRadio
 
-        user_technical_type = TECHNICAL_CATALOG.get(radio_widget.get_checked(), 'ERROR')
 
         request_title = dialog_manager.dialog_data['button_click']
 
