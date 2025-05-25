@@ -3,6 +3,7 @@ import os
 
 from aiogram import Bot, Dispatcher, F
 from aiogram.enums import ParseMode
+from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import DefaultKeyBuilder
 from aiogram.fsm.storage.redis import RedisStorage
@@ -24,7 +25,7 @@ from boiler_telegram_bot.main_menu.boiler_registration_dialog.boiler_registratio
     boiler_registration_dialog_router
 from boiler_telegram_bot.main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
 from boiler_telegram_bot.middlewares.logger_middleware import GlobalLogger
-from boiler_telegram_bot.settings import bot_token, DEBUG, redis_connect_url
+from boiler_telegram_bot.settings import bot_token, DEBUG, redis_connect_url, admin_panel_password
 from boiler_telegram_bot.tg_logs.logger import bot_logger
 from boiler_telegram_bot.db_configuration.insert_values_in_db import insert_values
 
@@ -46,7 +47,7 @@ async def bot_start():
 
     setup_dialogs(dp)
 
-    @dp.message(F.text == 'admin')  # TODO Придумать нормальный вход для админов.
+    @dp.message(Command(admin_panel_password))
     async def admin_panel_start(message: Message, state: FSMContext, dialog_manager: DialogManager):
         await dialog_manager.start(
             AdminBoilerDialog.admin_boiler_main_menu
