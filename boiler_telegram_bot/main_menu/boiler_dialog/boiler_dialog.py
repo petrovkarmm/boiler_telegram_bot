@@ -62,7 +62,7 @@ boiler_profile_edit_menu = Window(
         text="Выберите, что отредактировать: \n\n"
              "👤 <b>Имя пользователя:</b> {user_name}\n\n"
              '📞 <b>Телефон:</b> {user_phone}\n\n'
-             "🏢 <b>Организация:</b> {organization_name}\n\n"
+             "🏢 <b>Юр. лицо:</b> {organization_name}\n\n"
              "🧾 <b>ИНН:</b> {organization_itn}\n\n"
 
     ),
@@ -76,7 +76,7 @@ boiler_profile_edit_menu = Window(
     ),
     Row(
         SwitchTo(
-            id='edit_o_name', text=Format('🏢 Организация'), state=BoilerDialog.boiler_profile_edit_organization_name
+            id='edit_o_name', text=Format('🏢 Юр. лицо'), state=BoilerDialog.boiler_profile_edit_organization_name
         ),
         SwitchTo(
             id='edit_itn', text=Format('🧾 ИНН'), state=BoilerDialog.boiler_profile_edit_organization_itn
@@ -93,8 +93,8 @@ boiler_profile_edit_menu = Window(
 boiler_profile_edit_itn = Window(
     Format(
         text=(
-            "🧾 <b>ИНН организации</b>\n\n"
-            "Пожалуйста, введите новое значение ИНН вашей организации:"
+            "🧾 <b>ИНН юр. лица</b>\n\n"
+            "Пожалуйста, введите новое значение ИНН вашего юр. лица:"
         )
     ),
     Row(
@@ -139,8 +139,8 @@ boiler_profile_edit_phone = Window(
 boiler_profile_edit_organization_name = Window(
     Format(
         text=(
-            "🏢 <b>Название организации</b>\n\n"
-            "Введите, пожалуйста, новое название вашей организации:"
+            "🏢 <b>Название юр. лица</b>\n\n"
+            "Введите, пожалуйста, новое название вашего юр. лица:"
         )
     ),
     MessageInput(
@@ -337,7 +337,7 @@ boiler_repair_accept_request = Window(
             '📝 <b>Описание:</b> <i>{dialog_data[technical_problem_description]}</i>\n\n'
             '🏘 <b>Адрес:</b> <i>{dialog_data[user_address]}</i>\n\n'
             '📞 <b>Телефон:</b> <i>{user_phone}</i>\n\n'
-            "🏢 <b>Организация:</b> {organization_name}\n\n"
+            "🏢 <b>Юр. лицо:</b> {organization_name}\n\n"
             "🧾 <b>ИНН:</b> {organization_itn}\n\n"
             'Если всё верно — нажмите <b>«Отправить»</b>.'
         )
@@ -436,7 +436,7 @@ boiler_rent_accept_request = Window(
             '☕ <b>Тип кофемашины:</b> {user_technical_type}\n\n'
             '📦 <b>Тип аренды:</b> {user_rent_type}\n\n'
             '📞 <b>Телефон:</b> <i>{user_phone}</i>\n\n'
-            '🏢 <b>Организация:</b> {organization_name}\n\n'
+            '🏢 <b>Юр. лицо:</b> {organization_name}\n\n'
             '🧾 <b>ИНН:</b> {organization_itn}\n\n'
             'Если всё верно — нажмите <b>«Отправить»</b>.'
         )
@@ -493,7 +493,7 @@ boiler_barista_training_accept_request = Window(
             '✅ <b>{user_name}</b>, пожалуйста, проверьте все данные перед отправкой заявки:\n\n'
             '📌 <b>Кол-во человек на обучение:</b> <i>{barista_value}</i>\n\n'
             '📞 <b>Телефон:</b> <i>{user_phone}</i>\n\n'
-            "🏢 <b>Организация:</b> {organization_name}\n\n"
+            "🏢 <b>Юр. лицо:</b> {organization_name}\n\n"
             "🧾 <b>ИНН:</b> {organization_itn}\n\n"
             'Если всё верно — нажмите <b>«Отправить»</b>.'
         )
@@ -621,7 +621,7 @@ boiler_accept_technical_request = Window(
             '💰 <b>Бюджет:</b> <i>{user_budget}</i>\n\n'
             '🏬 <b>Формат заведения:</b> <i>{place_format}</i>\n\n'
             '📞 <b>Телефон:</b> <i>{user_phone}</i>\n\n'
-            '🏢 <b>Организация:</b> <i>{organization_name}</i>\n\n'
+            '🏢 <b>Юр. лицо:</b> <i>{organization_name}</i>\n\n'
             '🧾 <b>ИНН:</b> <i>{organization_itn}</i>\n\n'
             'Если всё верно — нажмите <b>«Отправить»</b>.'
         )

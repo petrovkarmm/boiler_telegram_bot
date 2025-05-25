@@ -48,8 +48,8 @@ boiler_registration_phone = Window(
 boiler_registration_organization_name = Window(
     Format(
         text=(
-            "🏢 <b>Название организации</b>\n\n"
-            "Введите, пожалуйста, название вашей организации:"
+            "🏢 <b>Название юр. лица</b>\n\n"
+            "Введите, пожалуйста, название вашего юр. лица:"
         )
     ),
     MessageInput(
@@ -71,8 +71,8 @@ boiler_registration_organization_name = Window(
 boiler_registration_organization_itn = Window(
     Format(
         text=(
-            "🧾 <b>ИНН организации</b>\n\n"
-            "Пожалуйста, введите ИНН вашей организации:"
+            "🧾 <b>ИНН юр. лица</b>\n\n"
+            "Пожалуйста, введите ИНН вашего юр. лица:"
         )
     ),
     MessageInput(
@@ -98,7 +98,7 @@ boiler_registration_accepting = Window(
             "✅ <b>Проверьте введённые данные:</b>\n\n"
             "📞 <b>Телефон:</b> {dialog_data[user_phone]}\n"
             "👤 <b>Имя:</b> {dialog_data[user_name]}\n"
-            "🏢 <b>Организация:</b> {dialog_data[organization_name]}\n"
+            "🏢 <b>Юр. лицо:</b> {dialog_data[organization_name]}\n"
             "🧾 <b>ИНН:</b> {dialog_data[organization_itn]}"
         )
     ),

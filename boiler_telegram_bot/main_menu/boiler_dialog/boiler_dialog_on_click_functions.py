@@ -107,10 +107,7 @@ async def confirm_sending_call_technician(
         tmp_file_path = dialog_manager.dialog_data['tmp_file_path']
 
         task_description = (f"\n"
-                            f"Описание проблемы: {technical_problem_description}\n\n"
-                            f"Организация: {organization_name}\n\n"
-                            f"ИНН: {organization_itn}\n\n")
-
+                            f"Описание проблемы: {technical_problem_description}\n\n")
 
         await send_form_task(
             callback=callback,
@@ -158,9 +155,7 @@ async def confirm_sending_tech_catalog_request(
 
         task_description = (f"\n"
                             f"Бюджет: {user_budget}\n\n"
-                            f"Формат заведения: {place_format}\n\n"
-                            f"Организация: {organization_name}\n\n"
-                            f"ИНН: {organization_itn}\n\n")
+                            f"Формат заведения: {place_format}\n\n")
 
         await send_form_task(
             callback=callback,
@@ -212,9 +207,7 @@ async def confirm_rent_request_sending(
 
         task_description = (f"\n"
                             f"Тип аренды: {user_rent_type}\n\n"
-                            f"Тип кофемашины: {user_technical_type}\n\n"
-                            f"Организация: {organization_name}\n\n"
-                            f"ИНН: {organization_itn}\n\n")
+                            f"Тип кофемашины: {user_technical_type}\n\n")
 
         await send_form_task(
             callback=callback,
@@ -254,9 +247,7 @@ async def confirm_sending_barista_training(
 
 
         task_description = (f"\n"
-                            f"Количество человек на обучение: {barista_value}\n\n"
-                            f"Организация: {organization_name}\n\n"
-                            f"ИНН: {organization_itn}\n\n")
+                            f"Количество человек на обучение: {barista_value}\n\n")
 
         await send_form_task(
             callback=callback,
