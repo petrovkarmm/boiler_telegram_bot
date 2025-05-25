@@ -6,12 +6,14 @@ from aiogram.types import CallbackQuery
 from aiogram_dialog import DialogManager, ShowMode
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
-from pyrus_api.pyrus_client import PyrusClient
+from boiler_telegram_bot.pyrus_api.pyrus_client import PyrusClient
 
 
 async def get_form_and_field_id_by_form_name(pyrus_forms_data: dict, form_name: str, fields_name: list):
     pyrus_id_data = {
+
     }
+
     for form_data in pyrus_forms_data.get('forms'):
         if form_data.get('name').lower() == form_name.lower():
             pyrus_id_data['form_id'] = form_data.get('id')
@@ -20,6 +22,8 @@ async def get_form_and_field_id_by_form_name(pyrus_forms_data: dict, form_name: 
                 if field.get('name').lower() in fields_name:
                     pyrus_id_data[field.get('name')] = field.get('id')
             return pyrus_id_data
+
+    return None
 
 
 async def get_client_catalog_id():
@@ -33,6 +37,8 @@ async def get_client_catalog_id():
     for catalog in catalogs_data:
         if catalog.get('name') == 'Клиенты' and catalog.get('deleted') is False:
             return catalog.get('catalog_id')
+
+    return None
 
 
 async def find_client_by_organization(callback: CallbackQuery, organization_itn: str, organization_name: str,
@@ -103,6 +109,8 @@ async def find_client_by_organization(callback: CallbackQuery, organization_itn:
             BoilerDialog.boiler_main_menu
         )
 
+        return None
+
 
 async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: str, task_title: str,
                          task_description: str, user_address: str, organization_name: str, organization_itn: str,
@@ -119,6 +127,18 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
                                                                  form_name='лиды с сайта',
                                                                  fields_name=['проблема', 'описание', 'имя', 'телефон',
                                                                               'адрес', 'клиенты', 'приложения'])
+        if not pyrus_id_data:
+            await callback.message.answer(
+                text='⚠️ Упс! Кажется, что-то пошло не так.\n'
+                     'Попробуйте позже.',
+                parse_mode=ParseMode.HTML
+            )
+
+            dialog_manager.show_mode = ShowMode.DELETE_AND_SEND
+
+            await dialog_manager.switch_to(
+                BoilerDialog.boiler_main_menu
+            )
 
         client_id = await find_client_by_organization(callback=callback, dialog_manager=dialog_manager,
                                                       organization_name=organization_name,

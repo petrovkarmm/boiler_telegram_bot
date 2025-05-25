@@ -4,9 +4,9 @@ import time
 
 import requests
 
-from db_configuration.models.pyrus import PyrusToken
-from settings import pyrus_standard_url, pyrus_login
-from tg_logs.logger import bot_logger
+from boiler_telegram_bot.db_configuration.models.pyrus import PyrusToken
+from boiler_telegram_bot.settings import pyrus_standard_url, pyrus_login
+from boiler_telegram_bot.tg_logs.logger import bot_logger
 
 
 class PyrusClient:
@@ -16,6 +16,9 @@ class PyrusClient:
     def get_new_token_by_login() -> str | None:
         login_data = PyrusToken.get_login_data()
         if not login_data:
+            bot_logger.warning(
+                'Отсутствуют данные по токену.'
+            )
             return None
 
         login, security_key = login_data
@@ -33,7 +36,6 @@ class PyrusClient:
         start_time = time.time()
 
         token = PyrusToken.get_token()
-        print(token)
         headers = kwargs.get("headers", {})
         headers["Authorization"] = f"Bearer {token}"
         kwargs["headers"] = headers
