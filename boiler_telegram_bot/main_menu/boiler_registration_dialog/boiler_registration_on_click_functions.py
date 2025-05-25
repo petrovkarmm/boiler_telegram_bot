@@ -42,7 +42,7 @@ async def user_registration(
     )
 
     await callback.message.answer(
-        text='Вы успешно зарегиситрировались!'
+        text='🎉 Вы успешно зарегистрировались! 🚀'
     )
 
     dialog_manager.show_mode = ShowMode.DELETE_AND_SEND
