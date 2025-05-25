@@ -102,7 +102,7 @@ async def bot_start():
             except Exception as exception:
                 bot_logger.warning(exception)
         else:
-            bot_logger(f"{event.exception}")
+            bot_logger.warning(f"{event.exception}")
 
     # error handler
     dp.errors.register(error_unknown_intent_handler)
