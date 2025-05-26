@@ -25,7 +25,7 @@ from boiler_telegram_bot.main_menu.boiler_registration_dialog.boiler_registratio
     boiler_registration_dialog_router
 from boiler_telegram_bot.main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
 from boiler_telegram_bot.middlewares.logger_middleware import GlobalLogger
-from boiler_telegram_bot.settings import bot_token, DEBUG, redis_connect_url, admin_panel_password
+from boiler_telegram_bot.settings import bot_token, DEBUG, redis_connect_url, admin_panel_password, bot_test_token
 from boiler_telegram_bot.tg_logs.logger import bot_logger
 from boiler_telegram_bot.db_configuration.insert_values_in_db import insert_values
 
@@ -33,17 +33,18 @@ from boiler_telegram_bot.db_configuration.insert_values_in_db import insert_valu
 async def bot_start():
     if DEBUG:
         dp = Dispatcher()
+        bot = Bot(token=bot_test_token)
     else:
         storage = RedisStorage.from_url(
             redis_connect_url, key_builder=DefaultKeyBuilder(with_destiny=True)
         )
         dp = Dispatcher(storage=storage)
+        bot = Bot(token=bot_token)
 
     scheduler = AsyncIOScheduler()
     scheduler.add_job(cleanup_tmp_files, trigger="cron", hour=3)
     scheduler.start()
 
-    bot = Bot(token=bot_token)
 
     setup_dialogs(dp)
 
