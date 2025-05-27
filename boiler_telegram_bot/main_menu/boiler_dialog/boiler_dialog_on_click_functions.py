@@ -26,15 +26,6 @@ async def get_barista_count_and_switch(
     )
 
 
-async def save_rent_and_switch(
-        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
-):
-    dialog_manager.dialog_data['button_click'] = 'Аренда'
-    await dialog_manager.switch_to(
-        BoilerDialog.boiler_rent_type
-    )
-
-
 async def technical_catalog_radio_set(
         event: CallbackQuery,
         widget: ManagedRadio,
@@ -80,6 +71,24 @@ async def save_barista_training_and_switch(
     dialog_manager.dialog_data['button_click'] = 'Обучение бариста'
     await dialog_manager.switch_to(
         BoilerDialog.boiler_barista_training_choose_count
+    )
+
+
+async def save_repair_request_and_save(
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+):
+    dialog_manager.dialog_data['button_click'] = 'Вызов техника'
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_barista_training_choose_count
+    )
+
+
+async def save_rent_and_switch(
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+):
+    dialog_manager.dialog_data['button_click'] = 'Аренда'
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_rent_type
     )
 
 
@@ -140,7 +149,6 @@ async def confirm_sending_tech_catalog_request(
             'tech_catalog'
         )
         radio_widget: ManagedRadio
-
 
         request_title = dialog_manager.dialog_data['button_click']
 
@@ -204,7 +212,6 @@ async def confirm_rent_request_sending(
 
         user_address = 'Отсутствует'
 
-
         task_description = (f"\n"
                             f"Тип аренды: {user_rent_type}\n\n"
                             f"Тип кофемашины: {user_technical_type}\n\n")
@@ -244,7 +251,6 @@ async def confirm_sending_barista_training(
         organization_itn = user_data['organization_itn']
         organization_name = user_data['organization_name']
         user_address = 'Отсутствует'
-
 
         task_description = (f"\n"
                             f"Количество человек на обучение: {barista_value}\n\n")
