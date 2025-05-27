@@ -8,7 +8,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import DefaultKeyBuilder
 from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.types import ErrorEvent, Message, ReplyKeyboardRemove
-from aiogram_dialog import setup_dialogs, DialogManager
+from aiogram_dialog import setup_dialogs, DialogManager, ShowMode
 from aiogram_dialog.api.exceptions import UnknownIntent, OutdatedIntent
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
@@ -82,6 +82,8 @@ async def bot_start():
                 reply_markup=ReplyKeyboardRemove(),
                 parse_mode=ParseMode.HTML
             )
+
+            dialog_manager.show_mode = ShowMode.DELETE_AND_SEND
 
             await dialog_manager.start(
                 BoilerRegistrationDialog.boiler_registration_user_name
