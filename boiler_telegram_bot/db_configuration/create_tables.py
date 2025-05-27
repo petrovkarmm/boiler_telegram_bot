@@ -5,6 +5,7 @@ def create_tables():
     conn = get_connection()
     cursor = conn.cursor()
 
+    # name, phone, org_itn, org_name deleting
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS user (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -12,12 +13,40 @@ def create_tables():
         telegram_first_name TEXT,
         telegram_last_name TEXT,
         telegram_username TEXT,
-        name TEXT,
-        phone TEXT,
-        organization_itn TEXT,
-        organization_name TEXT,
         created DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS firm (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        firm_type TEXT NOT NULL CHECK (firm_type IN ('legal_entity', 'individual')),
+        is_main BOOLEAN,
+        created DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES user(id)
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS firm_info_legal_entity (
+        firm_id INTEGER PRIMARY KEY,
+        organization_name TEXT,
+        organization_representative_name TEXT,
+        organization_itn TEXT,
+        phone TEXT,
+        FOREIGN KEY (firm_id) REFERENCES firm(id)
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS firm_info_individual (
+        firm_id INTEGER PRIMARY KEY,
+        name TEXT,
+        phone TEXT,
+        FOREIGN KEY (firm_id) REFERENCES firm(id)
     )
     """)
 
