@@ -7,17 +7,11 @@ class Firm:
         with get_connection() as conn:
             cursor = conn.cursor()
 
-            # Проверяем, есть ли у пользователя хотя бы одна фирма
-            cursor.execute("SELECT COUNT(*) FROM firm WHERE user_id = ?", (user_id,))
-            firm_count = cursor.fetchone()[0]
-
-            is_main = 1 if firm_count == 0 else 0
-
             # Добавляем новую фирму
             cursor.execute("""
-                INSERT INTO firm (user_id, firm_type, is_main)
+                INSERT INTO firm (user_id, firm_type)
                 VALUES (?, ?, ?)
-            """, (user_id, firm_type, is_main))
+            """, (user_id, firm_type))
 
             conn.commit()
             return cursor.lastrowid
