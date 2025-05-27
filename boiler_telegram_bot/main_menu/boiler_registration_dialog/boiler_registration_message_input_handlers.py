@@ -61,7 +61,7 @@ async def phone_handler(
     if validate_user_phone:
         dialog_manager.dialog_data['user_phone'] = validate_user_phone
         await dialog_manager.switch_to(
-            BoilerRegistrationDialog.boiler_registration_organization_name
+            BoilerRegistrationDialog.boiler_registration_firm_type
         )
 
     else:
