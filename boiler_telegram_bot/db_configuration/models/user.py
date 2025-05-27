@@ -8,52 +8,29 @@ class User:
     def check_user_in_database(telegram_id: int):
         with get_connection() as conn:
             cursor = conn.cursor()
-
             cursor.execute("SELECT id FROM user WHERE telegram_id = ?", (telegram_id,))
-            user = cursor.fetchone()
-
-            if user is None:
-                return False
-
-            return True
+            return cursor.fetchone() is not None
 
     @staticmethod
-    def add_user(
-            telegram_id: str,
-            telegram_first_name: str = None,
-            telegram_last_name: str = None,
-            telegram_username: str = None,
-            name: str = None,
-            organization_itn: str = None,
-            organization_name: str = None,
-            phone: str = None
-    ):
+    def add_user(telegram_id: str, telegram_first_name: str = None,
+                 telegram_last_name: str = None, telegram_username: str = None) -> int:
         with get_connection() as conn:
             cursor = conn.cursor()
-
             cursor.execute("""
                 INSERT INTO user (
                     telegram_id,
                     telegram_first_name,
                     telegram_last_name,
-                    telegram_username,
-                    name,
-                    organization_itn,
-                    organization_name,
-                    phone
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    telegram_username
+                ) VALUES (?, ?, ?, ?)
             """, (
                 telegram_id,
                 telegram_first_name,
                 telegram_last_name,
-                telegram_username,
-                name,
-                organization_itn,
-                organization_name,
-                phone
+                telegram_username
             ))
-
             conn.commit()
+            return cursor.lastrowid
 
     @staticmethod
     def get_user_by_telegram_id(telegram_id: str):
