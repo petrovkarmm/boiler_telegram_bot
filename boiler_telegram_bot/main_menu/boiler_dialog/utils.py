@@ -4,6 +4,8 @@ from aiogram import Bot
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import Message
 
+from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
+
 MAX_FILE_SIZE = 20 * 1024 * 1024  # 20 MB
 
 
@@ -43,3 +45,10 @@ async def normalize_phone_number(phone: str) -> str | None:
         return "+7" + digits
     else:
         return None
+
+
+end_states_title = {'Подбор техники': BoilerDialog.boiler_accept_tech_cat_request,
+                    'Обучение бариста': BoilerDialog.boiler_barista_training_accept_request,
+                    'Аренда': BoilerDialog.boiler_rent_accept_request,
+                    'Вызов техника': BoilerDialog.boiler_repair_accept_request
+                    }
