@@ -23,7 +23,7 @@ def create_tables():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
         firm_type TEXT NOT NULL CHECK (firm_type IN ('legal_entity', 'individual')),
-        is_main BOOLEAN,
+        last_selected BOOLEAN,
         created DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES user(id)
