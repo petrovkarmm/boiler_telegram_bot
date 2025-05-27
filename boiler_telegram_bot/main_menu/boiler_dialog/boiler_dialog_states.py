@@ -34,3 +34,5 @@ class BoilerDialog(StatesGroup):
 
     boiler_send_task_waiting_status = State()
     boiler_upload_file_waiting_status = State()
+
+    boiler_profile_choose = State()
