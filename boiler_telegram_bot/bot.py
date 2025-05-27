@@ -45,7 +45,6 @@ async def bot_start():
     scheduler.add_job(cleanup_tmp_files, trigger="cron", hour=3)
     scheduler.start()
 
-
     setup_dialogs(dp)
 
     @dp.message(Command(admin_panel_password))
