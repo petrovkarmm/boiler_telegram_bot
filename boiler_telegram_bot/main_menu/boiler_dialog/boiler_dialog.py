@@ -17,13 +17,15 @@ from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_on_click_function
     on_technical_problem_selected, confirm_sending_call_technician, get_barista_count_and_switch, \
     confirm_sending_barista_training, save_rent_and_switch, save_tech_cat_and_switch, save_barista_training_and_switch, \
     technical_catalog_radio_set, confirm_sending_tech_catalog_request, rent_radio_set, rent_catalog_radio_set, \
-    confirm_rent_request_sending
+    confirm_rent_request_sending, save_repair_and_switch, on_profile_selected, \
+    go_to_previous_state_from_profile_choosing, go_to_profile_rent_accepting_request
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
-from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_PROBLEM_KEY
-from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_getter import technical_problem_id_getter, technical_problems_getter, \
-    user_data_profile_getter, user_data_profile_barista_getter, technical_catalog_getter, \
+from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_PROBLEM_KEY, PROFILE_KEY
+from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_getter import technical_problem_id_getter, \
+    technical_problems_getter, \
+    user_data_profile_getter, technical_catalog_getter, \
     get_technical_catalog_data_for_accept, \
-    rent_type_getter, rent_data_for_accept_request, video_or_photo_format_data
+    rent_type_getter, video_or_photo_format_data, profile_id_getter, profiles_getter
 
 boiler_main_menu = Window(
     Format(
@@ -31,8 +33,8 @@ boiler_main_menu = Window(
              '🧭 - В какой раздел сервиса вы хотите обратиться?'
     ),
     Row(
-        SwitchTo(
-            id='repair', text=Format('🛠️ Вызов техника'), state=BoilerDialog.boiler_repair_problem
+        Button(
+            id='repair', text=Format('🛠️ Вызов техника'), on_click=save_repair_and_switch
         ),
         Button(
             id='rent', text=Format('📦 Аренда'), on_click=save_rent_and_switch
@@ -408,13 +410,13 @@ boiler_rent_technical_type = Window(
         items="catalog",
         on_state_changed=rent_catalog_radio_set,
     ),
-    SwitchTo(
+    Button(
         id='ask_tech_type',
         text=Format(
             '➡️ Далее'
         ),
         when=F['dialog_data']['rent_catalog_radio_get_set'],
-        state=BoilerDialog.boiler_rent_accept_request
+        on_click=go_to_profile_rent_accepting_request
     ),
     Row(
         SwitchTo(
@@ -432,16 +434,26 @@ boiler_rent_technical_type = Window(
 boiler_rent_accept_request = Window(
     Format(
         text=(
-            '✅ <b>{user_name}</b>, пожалуйста, проверьте все данные перед отправкой заявки:\n\n'
-            '☕ <b>Тип кофемашины:</b> {user_technical_type}\n\n'
-            '📦 <b>Тип аренды:</b> {user_rent_type}\n\n'
-            '📞 <b>Телефон:</b> <i>{user_phone}</i>\n\n'
-            '🏢 <b>Юр. лицо:</b> {organization_name}\n\n'
-            '🧾 <b>ИНН:</b> {organization_itn}\n\n'
+            '✅ <b>{dialog_data[user_name]}</b>, пожалуйста, проверьте все данные перед отправкой заявки:\n\n'
+            '☕ <b>Тип кофемашины:</b> {dialog_data[user_technical_type]}\n\n'
+            '📦 <b>Тип аренды:</b> {dialog_data[user_rent_type]}\n\n'
+            '📞 <b>Телефон:</b> <i>{dialog_data[user_phone]}</i>\n\n'
+            '🏢 <b>Юр. лицо:</b> {dialog_data[organization_name]}\n\n'
+            '🧾 <b>ИНН:</b> {dialog_data[organization_itn]}\n\n'
             'Если всё верно — нажмите <b>«Отправить»</b>.'
-        )
+        ),
+        when=F['dialog_data']['firm_type'] == 'legal_entity'
     ),
-
+    Format(
+        text=(
+            '✅ <b>{dialog_data[user_name]}</b>, пожалуйста, проверьте все данные перед отправкой заявки:\n\n'
+            '☕ <b>Тип кофемашины:</b> {dialog_data[user_technical_type]}\n\n'
+            '📦 <b>Тип аренды:</b> {dialog_data[user_rent_type]}\n\n'
+            '📞 <b>Телефон:</b> <i>{dialog_data[user_phone]}</i>\n\n'
+            'Если всё верно — нажмите <b>«Отправить»</b>.'
+        ),
+        when=F['dialog_data']['firm_type'] == 'individual'
+    ),
     Button(
         id='send_rent_req', text=Format('📤 Отправить'), on_click=confirm_rent_request_sending
     ),
@@ -453,7 +465,6 @@ boiler_rent_accept_request = Window(
             id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
         )
     ),
-    getter=rent_data_for_accept_request,
     state=BoilerDialog.boiler_rent_accept_request,
     parse_mode=ParseMode.HTML
 )
@@ -490,13 +501,23 @@ boiler_barista_training_choose_count = Window(
 boiler_barista_training_accept_request = Window(
     Format(
         text=(
-            '✅ <b>{user_name}</b>, пожалуйста, проверьте все данные перед отправкой заявки:\n\n'
-            '📌 <b>Кол-во человек на обучение:</b> <i>{barista_value}</i>\n\n'
-            '📞 <b>Телефон:</b> <i>{user_phone}</i>\n\n'
-            "🏢 <b>Юр. лицо:</b> {organization_name}\n\n"
-            "🧾 <b>ИНН:</b> {organization_itn}\n\n"
+            '✅ <b>{dialog_data[user_name]}</b>, пожалуйста, проверьте все данные перед отправкой заявки:\n\n'
+            '📌 <b>Кол-во человек на обучение:</b> <i>{dialog_data[barista_value]}</i>\n\n'
+            '📞 <b>Телефон:</b> <i>{dialog_data[user_phone]}</i>\n\n'
+            "🏢 <b>Юр. лицо:</b> {dialog_data[organization_name]}\n\n"
+            "🧾 <b>ИНН:</b> {dialog_data[organization_itn]}\n\n"
             'Если всё верно — нажмите <b>«Отправить»</b>.'
-        )
+        ),
+        when=F['dialog_data']['firm_type'] == 'legal_entity'
+    ),
+    Format(
+        text=(
+            '✅ <b>{dialog_data[user_name]}</b>, пожалуйста, проверьте все данные перед отправкой заявки:\n\n'
+            '📌 <b>Кол-во человек на обучение:</b> <i>{dialog_data[barista_value]}</i>\n\n'
+            '📞 <b>Телефон:</b> <i>{dialog_data[user_phone]}</i>\n\n'
+            'Если всё верно — нажмите <b>«Отправить»</b>.'
+        ),
+        when=F['dialog_data']['firm_type'] == 'individual'
     ),
     Button(
         id='accept_br_req', text=Format('📤 Отправить'), on_click=confirm_sending_barista_training
@@ -509,7 +530,6 @@ boiler_barista_training_accept_request = Window(
             id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
         )
     ),
-    getter=user_data_profile_barista_getter,
     state=BoilerDialog.boiler_barista_training_accept_request,
     parse_mode=ParseMode.HTML
 )
@@ -642,6 +662,38 @@ boiler_accept_technical_request = Window(
     parse_mode=ParseMode.HTML
 )
 
+boiler_choose_profile = Window(
+    Format(
+        text='Выберите профиль от которого будет создана заявка:'
+    ),
+    ScrollingGroup(
+        Column(
+            Select(
+                text=Format("{item.name}"),
+                id="profile_selected",
+                items=PROFILE_KEY,
+                item_id_getter=profile_id_getter,
+                on_click=on_profile_selected,
+            ),
+        ),
+        width=1,
+        height=5,
+        id="scroll_profiles",
+        hide_on_single_page=True,
+    ),
+    Row(
+        Button(
+            id='back_to_previous', text=Format('⬅️ Назад'), on_click=go_to_previous_state_from_profile_choosing
+        ),
+        SwitchTo(
+            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+        )
+    ),
+    getter=profiles_getter,
+    state=BoilerDialog.boiler_profile_choose,
+    parse_mode=ParseMode.HTML
+)
+
 task_waiting_window = Window(
     Format(
         'Идёт создание заявки. Пожалуйста, ожидайте.'
@@ -688,5 +740,7 @@ boiler_dialog = Dialog(
     boiler_barista_training_accept_request,
 
     task_waiting_window,
-    upload_file_window
+    upload_file_window,
+
+    boiler_choose_profile
 )
