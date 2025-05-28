@@ -1,4 +1,5 @@
 import re
+from pprint import pprint
 from typing import Dict
 
 from aiogram.enums import ParseMode
@@ -7,6 +8,7 @@ from aiogram_dialog import DialogManager, ShowMode
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from boiler_telegram_bot.pyrus_api.pyrus_client import PyrusClient
+from boiler_telegram_bot.main_menu.boiler_dialog.utils import normalize_phone_number
 
 
 async def get_form_and_field_id_by_form_name(pyrus_forms_data: dict, form_name: str, fields_name: list):
@@ -41,8 +43,10 @@ async def get_client_catalog_id():
     return None
 
 
-async def find_client_by_organization(callback: CallbackQuery, organization_itn: str, organization_name: str,
-                                      dialog_manager: DialogManager):
+async def find_legal_entity_client_by_organization(callback: CallbackQuery,
+                                                   organization_itn: str,
+                                                   organization_name: str,
+                                                   dialog_manager: DialogManager):
     catalog_id = await get_client_catalog_id()
 
     if catalog_id:
@@ -107,10 +111,88 @@ async def find_client_by_organization(callback: CallbackQuery, organization_itn:
         return None
 
 
-async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: str, task_title: str,
-                         task_description: str, user_address: str, organization_name: str, organization_itn: str,
+async def find_individual_client_by_phone(callback: CallbackQuery,
+                                          user_phone: str,
+                                          user_name: str,
+                                          dialog_manager: DialogManager):
+    catalog_id = await get_client_catalog_id()
+
+    if catalog_id:
+
+        clients_catalog_request = PyrusClient.request(
+            method='GET', endpoint=f'/catalogs/{catalog_id}'
+        )
+
+        clients_catalog_data = clients_catalog_request.json()
+        clients_catalog_data: Dict
+
+        clients = clients_catalog_data.get('items', [])
+        normalized_phone = await normalize_phone_number(user_phone)
+        normalized_name = re.sub(r'\s+', ' ', user_name.strip().lower())
+
+        for client in clients:
+            values = client.get('values', [])
+            combined = ' '.join(values).lower()
+            combined = re.sub(r'\s+', ' ', combined)
+
+            has_phone = re.search(re.escape(normalized_phone), combined)
+            has_name = re.search(rf'\b{re.escape(normalized_name)}\b', combined)
+
+            if has_phone and has_name:
+                return client.get('item_id')
+
+        new_client_data = {
+            "upsert": [
+                {
+                    "values": [
+                        normalized_name,
+                        normalized_phone
+                    ]
+                }]
+        }
+
+        adding_new_client_request = PyrusClient.request(
+            method='POST', endpoint=f'/catalogs/{catalog_id}/diff', json=new_client_data
+        )
+
+        new_pyrus_client_data = adding_new_client_request.json()
+
+        new_pyrus_client_data: True
+
+        if new_pyrus_client_data.get('apply', False) is True:
+            return new_pyrus_client_data.get('added')[0].get('item_id')
+
+
+        return None
+
+    else:
+        await callback.message.answer(
+            text='⚠️ Упс! Кажется, что-то пошло не так.\n'
+                 'Попробуйте позже.',
+            parse_mode=ParseMode.HTML
+        )
+
+        dialog_manager.show_mode = ShowMode.DELETE_AND_SEND
+
+        await dialog_manager.switch_to(
+            BoilerDialog.boiler_main_menu
+        )
+
+        return None
+
+
+async def send_form_task(callback: CallbackQuery,
+                         user_name: str,
+                         user_phone: str,
+                         task_title: str,
+                         task_description: str,
+                         user_address: str,
+                         firm_type: str,
                          dialog_manager: DialogManager,
-                         tmp_file_path: str = None, filename: str = None):
+                         tmp_file_path: str = None,
+                         filename: str = None,
+                         organization_name: str = None,
+                         organization_itn: str = None):
     await dialog_manager.switch_to(
         BoilerDialog.boiler_send_task_waiting_status
     )
@@ -135,9 +217,20 @@ async def send_form_task(callback: CallbackQuery, user_name: str, user_phone: st
                 BoilerDialog.boiler_main_menu
             )
 
-        client_id = await find_client_by_organization(callback=callback, dialog_manager=dialog_manager,
-                                                      organization_name=organization_name,
-                                                      organization_itn=organization_itn)
+        if firm_type == 'legal_entity':
+            client_id = await find_legal_entity_client_by_organization(
+                callback=callback,
+                dialog_manager=dialog_manager,
+                organization_name=organization_name,
+                organization_itn=organization_itn
+            )
+        else:
+            client_id = await find_individual_client_by_phone(
+                callback=callback,
+                dialog_manager=dialog_manager,
+                user_name=user_name,
+                user_phone=user_phone
+            )
 
         fields = [
             {
