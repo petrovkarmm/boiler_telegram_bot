@@ -12,6 +12,8 @@ from boiler_telegram_bot.db_configuration.models.user import User
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_CATALOG, RENT_TYPE
 from boiler_telegram_bot.main_menu.boiler_registration_dialog.boiler_registration_states import BoilerRegistrationDialog
 from boiler_telegram_bot.pyrus_api.pyrus_utils import send_form_task
+from boiler_telegram_bot.main_menu.boiler_dialog.utils import end_states_title, previous_states_title
+from boiler_telegram_bot.db_configuration.models.firm import Firm
 
 
 async def get_barista_count_and_switch(
@@ -22,8 +24,81 @@ async def get_barista_count_and_switch(
     barista_value = barista_counter.get_value()
     dialog_manager.dialog_data['barista_value'] = barista_value
     await dialog_manager.switch_to(
-        BoilerDialog.boiler_barista_training_accept_request
+        BoilerDialog.boiler_profile_choose
     )
+
+
+async def go_to_previous_state_from_profile_choosing(
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+):
+    button_click = dialog_manager.dialog_data['button_click']
+
+    previous = previous_states_title.get(button_click)
+
+    await dialog_manager.switch_to(
+        previous
+    )
+
+
+async def go_to_profile_rent_accepting_request(
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+):
+    rent_radio_rent_type_widget = dialog_manager.find(
+        'rent_type'
+    )
+    rent_radio_catalog_widget = dialog_manager.find(
+        'rent_tech_type'
+    )
+
+    rent_radio_rent_type_widget: ManagedRadio
+    rent_radio_catalog_widget: ManagedRadio
+
+    user_rent_type = RENT_TYPE.get(rent_radio_rent_type_widget.get_checked(), 'ERROR')
+    user_technical_type = TECHNICAL_CATALOG.get(rent_radio_catalog_widget.get_checked(), 'ERROR')
+
+    dialog_manager.dialog_data['user_rent_type'] = user_rent_type
+    dialog_manager.dialog_data['user_technical_type'] = user_technical_type
+
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_profile_choose
+    )
+
+
+async def on_profile_selected(
+        callback: CallbackQuery,
+        widget: Any,
+        dialog_manager: DialogManager,
+        profile_id: int,
+):
+    button_click = dialog_manager.dialog_data['button_click']
+
+    firm_data = Firm.get_firm_info_by_id(profile_id)
+
+    if firm_data:
+
+        if firm_data['firm_type'] == 'legal_entity':
+            dialog_manager.dialog_data['firm_type'] = firm_data['firm_type']
+            dialog_manager.dialog_data['user_name'] = firm_data['representative_name']
+            dialog_manager.dialog_data['organization_itn'] = firm_data['itn']
+            dialog_manager.dialog_data['organization_name'] = firm_data['organization_name']
+            dialog_manager.dialog_data['user_phone'] = firm_data['phone']
+
+        if firm_data['firm_type'] == 'individual':
+            dialog_manager.dialog_data['firm_type'] = firm_data['firm_type']
+            dialog_manager.dialog_data['user_name'] = firm_data['name']
+            dialog_manager.dialog_data['user_phone'] = firm_data['phone']
+
+        next_state = end_states_title.get(button_click)
+
+        await dialog_manager.switch_to(
+            next_state
+        )
+
+    else:
+
+        await dialog_manager.start(
+            BoilerRegistrationDialog.boiler_registration_user_name
+        )
 
 
 async def technical_catalog_radio_set(
@@ -74,12 +149,12 @@ async def save_barista_training_and_switch(
     )
 
 
-async def save_repair_request_and_save(
+async def save_repair_and_switch(
         callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ):
     dialog_manager.dialog_data['button_click'] = 'Вызов техника'
     await dialog_manager.switch_to(
-        BoilerDialog.boiler_barista_training_choose_count
+        BoilerDialog.boiler_repair_problem
     )
 
 
@@ -191,11 +266,6 @@ async def confirm_rent_request_sending(
     )
 
     if user_data:
-        request_title = dialog_manager.dialog_data['button_click']
-        user_phone = user_data['phone']
-        user_name = user_data['name']
-        organization_itn = user_data['organization_itn']
-        organization_name = user_data['organization_name']
 
         rent_radio_rent_type_widget = dialog_manager.find(
             'rent_type'
@@ -210,23 +280,43 @@ async def confirm_rent_request_sending(
         user_rent_type = RENT_TYPE.get(rent_radio_rent_type_widget.get_checked(), 'ERROR')
         user_technical_type = TECHNICAL_CATALOG.get(rent_radio_catalog_widget.get_checked(), 'ERROR')
 
+        request_title = dialog_manager.dialog_data['button_click']
+        user_phone = dialog_manager.dialog_data['user_phone']
+        user_name = dialog_manager.dialog_data['user_name']
+        firm_type = dialog_manager.dialog_data['firm_type']
+
         user_address = 'Отсутствует'
 
         task_description = (f"\n"
                             f"Тип аренды: {user_rent_type}\n\n"
                             f"Тип кофемашины: {user_technical_type}\n\n")
 
-        await send_form_task(
-            callback=callback,
-            user_name=user_name,
-            user_phone=user_phone,
-            user_address=user_address,
-            task_title=request_title,
-            task_description=task_description,
-            dialog_manager=dialog_manager,
-            organization_name=organization_name,
-            organization_itn=organization_itn
-        )
+        if firm_type == 'legal_entity':
+            organization_itn = user_data['organization_itn']
+            organization_name = user_data['organization_name']
+            await send_form_task(
+                callback=callback,
+                user_name=user_name,
+                user_phone=user_phone,
+                user_address=user_address,
+                task_title=request_title,
+                task_description=task_description,
+                dialog_manager=dialog_manager,
+                organization_name=organization_name,
+                organization_itn=organization_itn,
+                firm_type=firm_type
+            )
+        else:
+            await send_form_task(
+                callback=callback,
+                user_name=user_name,
+                user_phone=user_phone,
+                user_address=user_address,
+                task_title=request_title,
+                task_description=task_description,
+                dialog_manager=dialog_manager,
+                firm_type=firm_type
+            )
 
     else:
         await dialog_manager.start(
@@ -244,28 +334,44 @@ async def confirm_sending_barista_training(
     )
 
     if user_data:
+
         request_title = dialog_manager.dialog_data['button_click']
         barista_value = dialog_manager.dialog_data['barista_value']
-        user_phone = user_data['phone']
-        user_name = user_data['name']
-        organization_itn = user_data['organization_itn']
-        organization_name = user_data['organization_name']
+        user_phone = dialog_manager.dialog_data['user_phone']
+        user_name = dialog_manager.dialog_data['user_name']
+        firm_type = dialog_manager.dialog_data['firm_type']
+
         user_address = 'Отсутствует'
 
         task_description = (f"\n"
                             f"Количество человек на обучение: {barista_value}\n\n")
 
-        await send_form_task(
-            callback=callback,
-            user_name=user_name,
-            user_phone=user_phone,
-            user_address=user_address,
-            task_title=request_title,
-            task_description=task_description,
-            dialog_manager=dialog_manager,
-            organization_name=organization_name,
-            organization_itn=organization_itn
-        )
+        if firm_type == 'legal_entity':
+            organization_itn = user_data['organization_itn']
+            organization_name = user_data['organization_name']
+            await send_form_task(
+                callback=callback,
+                user_name=user_name,
+                user_phone=user_phone,
+                user_address=user_address,
+                task_title=request_title,
+                task_description=task_description,
+                dialog_manager=dialog_manager,
+                organization_name=organization_name,
+                organization_itn=organization_itn,
+                firm_type=firm_type
+            )
+        else:
+            await send_form_task(
+                callback=callback,
+                user_name=user_name,
+                user_phone=user_phone,
+                user_address=user_address,
+                task_title=request_title,
+                task_description=task_description,
+                dialog_manager=dialog_manager,
+                firm_type=firm_type
+            )
 
     else:
         await dialog_manager.start(
