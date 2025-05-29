@@ -60,49 +60,6 @@ async def video_or_photo_format_data(dialog_manager: DialogManager, **_kwargs):
     }
 
 
-async def get_technical_catalog_data_for_accept(dialog_manager: DialogManager, **_kwargs):
-    event_update = _kwargs.get('event_update')
-
-    user_id = str(event_update.event.from_user.id)
-
-    user_data = User.get_user_by_telegram_id(
-        user_id
-    )
-
-    if user_data:
-        radio_widget = dialog_manager.find(
-            'tech_catalog'
-        )
-        radio_widget: ManagedRadio
-
-        user_technical_type = TECHNICAL_CATALOG.get(radio_widget.get_checked(), 'ERROR')
-        user_address = dialog_manager.dialog_data['user_address']
-        user_budget = dialog_manager.dialog_data['user_budget']
-        place_format = dialog_manager.dialog_data['place_format']
-        user_phone = user_data['phone']
-        user_name = user_data['name']
-        organization_itn = user_data['organization_itn']
-        organization_name = user_data['organization_name']
-
-        return {
-            "user_address": user_address,
-            "user_budget": user_budget,
-            "place_format": place_format,
-            "user_phone": user_phone,
-            "user_name": user_name,
-            "organization_itn": organization_itn,
-            "organization_name": organization_name,
-            "user_technical_type": user_technical_type
-        }
-
-
-    else:
-        bot_logger.warning(
-            f'Незарегистрированный пользователь в меню. | {user_id}'
-        )
-        return None
-
-
 async def user_data_profile_getter(dialog_manager: DialogManager, **_kwargs):
     event_update = _kwargs.get('event_update')
 
