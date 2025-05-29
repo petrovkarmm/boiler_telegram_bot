@@ -631,8 +631,6 @@ boiler_technical_address = Window(
     parse_mode=ParseMode.HTML
 )
 
-#  TODO заменить на dialog_manager
-
 boiler_accept_technical_request = Window(
     Format(
         text=(
