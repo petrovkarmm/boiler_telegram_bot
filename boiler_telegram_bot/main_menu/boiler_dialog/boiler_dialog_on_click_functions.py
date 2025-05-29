@@ -220,17 +220,17 @@ async def confirm_sending_tech_catalog_request(
     user_data = User.get_user_by_telegram_id(user_id)
 
     if user_data:
-        radio_widget = dialog_manager.find(
+        radio_catalog_widget = dialog_manager.find(
             'tech_catalog'
         )
-        radio_widget: ManagedRadio
+        radio_catalog_widget: ManagedRadio
+
+        user_technical_type = TECHNICAL_CATALOG.get(radio_catalog_widget.get_checked(), 'ERROR')
 
         request_title = dialog_manager.dialog_data['button_click']
-
-        user_name = user_data['name']
-        user_phone = user_data['phone']
-        organization_itn = user_data['organization_itn']
-        organization_name = user_data['organization_name']
+        user_phone = dialog_manager.dialog_data['user_phone']
+        user_name = dialog_manager.dialog_data['user_name']
+        firm_type = dialog_manager.dialog_data['firm_type']
 
         user_address = dialog_manager.dialog_data.get('user_address', '—')
         user_budget = dialog_manager.dialog_data.get('user_budget', '—')
@@ -238,19 +238,35 @@ async def confirm_sending_tech_catalog_request(
 
         task_description = (f"\n"
                             f"Бюджет: {user_budget}\n\n"
-                            f"Формат заведения: {place_format}\n\n")
+                            f"Формат заведения: {place_format}\n\n"
+                            f"Тип кофемашины: {user_technical_type}\n\n")
 
-        await send_form_task(
-            callback=callback,
-            user_name=user_name,
-            user_phone=user_phone,
-            user_address=user_address,
-            task_title=request_title,
-            task_description=task_description,
-            dialog_manager=dialog_manager,
-            organization_name=organization_name,
-            organization_itn=organization_itn
-        )
+        if firm_type == 'legal_entity':
+            organization_itn = user_data['organization_itn']
+            organization_name = user_data['organization_name']
+            await send_form_task(
+                callback=callback,
+                user_name=user_name,
+                user_phone=user_phone,
+                user_address=user_address,
+                task_title=request_title,
+                task_description=task_description,
+                dialog_manager=dialog_manager,
+                organization_name=organization_name,
+                organization_itn=organization_itn,
+                firm_type=firm_type
+            )
+        else:
+            await send_form_task(
+                callback=callback,
+                user_name=user_name,
+                user_phone=user_phone,
+                user_address=user_address,
+                task_title=request_title,
+                task_description=task_description,
+                dialog_manager=dialog_manager,
+                firm_type=firm_type
+            )
 
     else:
         await dialog_manager.start(BoilerRegistrationDialog.boiler_registration_user_name)
