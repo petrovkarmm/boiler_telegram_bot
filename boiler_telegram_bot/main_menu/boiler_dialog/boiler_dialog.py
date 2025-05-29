@@ -24,7 +24,6 @@ from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_dataclasses impor
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_getter import technical_problem_id_getter, \
     technical_problems_getter, \
     user_data_profile_getter, technical_catalog_getter, \
-    get_technical_catalog_data_for_accept, \
     rent_type_getter, video_or_photo_format_data, profile_id_getter, profiles_getter
 
 boiler_main_menu = Window(
@@ -632,19 +631,35 @@ boiler_technical_address = Window(
     parse_mode=ParseMode.HTML
 )
 
+#  TODO заменить на dialog_manager
+
 boiler_accept_technical_request = Window(
     Format(
         text=(
-            '✅ <b>{user_name}</b>, пожалуйста, проверьте все данные перед отправкой заявки на подбор техники:\n\n'
-            '📍 <b>Адрес:</b> <i>{user_address}</i>\n\n'
-            '🏷 <b>Тип кофемашины:</b> <i>{user_technical_type}</i>\n\n'
-            '💰 <b>Бюджет:</b> <i>{user_budget}</i>\n\n'
-            '🏬 <b>Формат заведения:</b> <i>{place_format}</i>\n\n'
-            '📞 <b>Телефон:</b> <i>{user_phone}</i>\n\n'
-            '🏢 <b>Юр. лицо:</b> <i>{organization_name}</i>\n\n'
-            '🧾 <b>ИНН:</b> <i>{organization_itn}</i>\n\n'
+            '✅ <b>{dialog_manager[user_name]}</b>, пожалуйста, '
+            'проверьте все данные перед отправкой заявки на подбор техники:\n\n'
+            '📍 <b>Адрес:</b> <i>{dialog_manager[user_address]}</i>\n\n'
+            '🏷 <b>Тип кофемашины:</b> <i>{dialog_manager[user_technical_type]}</i>\n\n'
+            '💰 <b>Бюджет:</b> <i>{dialog_manager[user_budget]}</i>\n\n'
+            '🏬 <b>Формат заведения:</b> <i>{dialog_manager[place_format]}</i>\n\n'
+            '📞 <b>Телефон:</b> <i>{dialog_manager[user_phone]}</i>\n\n'
+            '🏢 <b>Юр. лицо:</b> <i>{dialog_manager[organization_name]}</i>\n\n'
+            '🧾 <b>ИНН:</b> <i>{dialog_manager[organization_itn]}</i>\n\n'
             'Если всё верно — нажмите <b>«Отправить»</b>.'
-        )
+        ),
+        when=F['dialog_data']['firm_type'] == 'legal_entity'
+    ),
+    Format(
+        text=(
+            '✅ <b>{dialog_data[user_name]}</b>, пожалуйста, проверьте все данные перед отправкой заявки:\n\n'
+            '📍 <b>Адрес:</b> <i>{dialog_manager[user_address]}</i>\n\n'
+            '🏷 <b>Тип кофемашины:</b> <i>{dialog_manager[user_technical_type]}</i>\n\n'
+            '💰 <b>Бюджет:</b> <i>{dialog_manager[user_budget]}</i>\n\n'
+            '🏬 <b>Формат заведения:</b> <i>{dialog_manager[place_format]}</i>\n\n'
+            '📞 <b>Телефон:</b> <i>{dialog_data[user_phone]}</i>\n\n'
+            'Если всё верно — нажмите <b>«Отправить»</b>.'
+        ),
+        when=F['dialog_data']['firm_type'] == 'individual'
     ),
     Button(
         id='accept_rent_req', text=Format('📤 Отправить'), on_click=confirm_sending_tech_catalog_request
@@ -657,7 +672,6 @@ boiler_accept_technical_request = Window(
             id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
         )
     ),
-    getter=get_technical_catalog_data_for_accept,
     state=BoilerDialog.boiler_accept_tech_cat_request,
     parse_mode=ParseMode.HTML
 )
