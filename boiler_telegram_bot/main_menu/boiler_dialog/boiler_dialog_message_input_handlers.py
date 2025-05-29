@@ -6,11 +6,13 @@ from aiogram.enums import ParseMode
 from aiogram_dialog import DialogManager
 from aiogram_dialog.widgets.input import MessageInput
 from aiogram.types import Message
+from aiogram_dialog.widgets.kbd import ManagedRadio
 
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from boiler_telegram_bot.db_configuration.models.user import User
 from boiler_telegram_bot.main_menu.boiler_dialog.utils import normalize_phone_number, download_file
 from boiler_telegram_bot.main_menu.boiler_registration_dialog.utils import is_valid_inn
+from main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_CATALOG
 
 
 async def feedback_handler(
@@ -262,8 +264,17 @@ async def tech_catalog_address_getter(
 
     dialog_manager.dialog_data['user_address'] = user_address
 
+    radio_widget = dialog_manager.find(
+        'tech_catalog'
+    )
+    radio_widget: ManagedRadio
+
+    user_technical_type = TECHNICAL_CATALOG.get(radio_widget.get_checked(), 'ERROR')
+
+    dialog_manager.dialog_data['user_technical_type'] = user_technical_type
+
     await dialog_manager.switch_to(
-        BoilerDialog.boiler_accept_tech_cat_request
+        BoilerDialog.boiler_profile_choose
     )
 
 
