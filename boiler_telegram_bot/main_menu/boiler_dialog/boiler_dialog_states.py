@@ -10,6 +10,10 @@ class BoilerDialog(StatesGroup):
     boiler_profile_edit_organization_itn = State()
     boiler_profile_edit_organization_name = State()
 
+    boiler_profile_create_new_individual_name = State()
+    boiler_profile_create_new_individual_phone = State()
+    boiler_profile_accept_new_individual_profile = State()
+
     boiler_feedback = State()
     boiler_accept_feedback = State()
 
@@ -36,3 +40,4 @@ class BoilerDialog(StatesGroup):
     boiler_upload_file_waiting_status = State()
 
     boiler_profile_choose = State()
+    boiler_profile_choose_for_change = State()
