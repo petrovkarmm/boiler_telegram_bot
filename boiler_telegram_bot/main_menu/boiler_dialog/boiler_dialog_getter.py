@@ -60,34 +60,6 @@ async def video_or_photo_format_data(dialog_manager: DialogManager, **_kwargs):
     }
 
 
-async def user_data_profile_getter(dialog_manager: DialogManager, **_kwargs):
-    event_update = _kwargs.get('event_update')
-
-    user_id = str(event_update.event.from_user.id)
-
-    user_data = User.get_user_by_telegram_id(
-        user_id
-    )
-
-    if user_data:
-        user_phone = user_data['phone']
-        user_name = user_data['name']
-        organization_itn = user_data['organization_itn']
-        organization_name = user_data['organization_name']
-
-        return {
-            'user_phone': user_phone,
-            'user_name': user_name,
-            'organization_name': organization_name,
-            'organization_itn': organization_itn,
-        }
-    else:
-        bot_logger.warning(
-            f'Незарегистрированный пользователь в меню. | {user_id}'
-        )
-        return None
-
-
 async def technical_problems_getter(**_kwargs):
     technical_problems = TechnicalProblem.get_all_unhidden_technical_problem()
 
