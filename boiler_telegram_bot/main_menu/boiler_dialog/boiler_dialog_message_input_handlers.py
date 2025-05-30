@@ -255,6 +255,49 @@ async def address_getter(
     )
 
 
+async def new_profile_individual_name_getter(
+        message: Message,
+        message_input: MessageInput,
+        dialog_manager: DialogManager,
+):
+    new_profile_user_name = message.text
+
+    dialog_manager.dialog_data['new_profile_user_name'] = new_profile_user_name
+
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_profile_create_new_individual_phone
+    )
+
+
+async def new_profile_individual_phone_getter(
+        message: Message,
+        message_input: MessageInput,
+        dialog_manager: DialogManager,
+):
+    user_phone = message.text
+
+    validate_user_phone = await normalize_phone_number(
+        user_phone
+    )
+
+    # TODO window for accept new_individual_profile
+
+    if validate_user_phone:
+        dialog_manager.dialog_data['user_phone'] = validate_user_phone
+        await dialog_manager.switch_to(
+            BoilerDialog.boiler_profile_accept_new_individual_profile
+        )
+
+    else:
+        await message.answer(
+            text="❌ <b>Некорректный номер телефона</b>\n\n"
+                 "Пожалуйста, введите номер в одном из следующих форматов:\n"
+                 "📱 <code>+7XXXXXXXXXX</code> или <code>8XXXXXXXXXX</code>\n\n"
+                 "Попробуйте ещё раз 👇",
+            parse_mode=ParseMode.HTML
+        )
+
+
 async def tech_catalog_address_getter(
         message: Message,
         message_input: MessageInput,
