@@ -23,7 +23,7 @@ from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import Boi
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_PROBLEM_KEY, PROFILE_KEY
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_getter import technical_problem_id_getter, \
     technical_problems_getter, \
-    user_data_profile_getter, technical_catalog_getter, \
+    technical_catalog_getter, \
     rent_type_getter, video_or_photo_format_data, profile_id_getter, profiles_getter
 
 boiler_main_menu = Window(
@@ -362,7 +362,7 @@ boiler_repair_accept_request = Window(
     ),
     Row(
         SwitchTo(
-            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_repair_address
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_choose
         ),
         SwitchTo(
             id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
@@ -470,7 +470,7 @@ boiler_rent_accept_request = Window(
     ),
     Row(
         SwitchTo(
-            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_rent_technical_type
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_choose
         ),
         SwitchTo(
             id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
@@ -535,7 +535,7 @@ boiler_barista_training_accept_request = Window(
     ),
     Row(
         SwitchTo(
-            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_barista_training_choose_count
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_choose
         ),
         SwitchTo(
             id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
@@ -676,7 +676,7 @@ boiler_accept_technical_request = Window(
     ),
     Row(
         SwitchTo(
-            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_tech_cat_address
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_choose
         ),
         SwitchTo(
             id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
