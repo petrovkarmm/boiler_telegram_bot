@@ -12,7 +12,8 @@ from aiogram_dialog.widgets.text import Format
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_message_input_handlers import feedback_handler, \
     technical_problem_handler, technical_problem_description_handler, \
     handle_upload, address_getter, new_organization_itn_handler, new_phone_handler, new_organization_name_handler, \
-    new_name_handler, budget_getter, place_format_getter, tech_catalog_address_getter
+    new_name_handler, budget_getter, place_format_getter, tech_catalog_address_getter, \
+    new_profile_individual_name_getter, new_profile_individual_phone_getter
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_on_click_functions import send_feedback, \
     on_technical_problem_selected, confirm_sending_call_technician, get_barista_count_and_switch, \
     confirm_sending_barista_training, save_rent_and_switch, save_tech_cat_and_switch, save_barista_training_and_switch, \
@@ -49,7 +50,7 @@ boiler_main_menu = Window(
         ),
     ),
     SwitchTo(
-        id='profile_edit', text=Format('📝 Редактирование профиля'), state=BoilerDialog.boiler_profile_edit_menu
+        id='profile_edit', text=Format('📝 Редактирование профиля'), state=BoilerDialog.boiler_profile_choose_for_change
     ),
     SwitchTo(
         id='text_back', text=Format('💬 Обратная связь'), state=BoilerDialog.boiler_feedback
@@ -86,7 +87,6 @@ boiler_profile_edit_menu = Window(
     SwitchTo(
         id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
     ),
-    getter=user_data_profile_getter,
     state=BoilerDialog.boiler_profile_edit_menu,
     parse_mode=ParseMode.HTML
 )
@@ -717,6 +717,89 @@ boiler_choose_profile = Window(
     parse_mode=ParseMode.HTML
 )
 
+boiler_choose_profile_for_change = Window(
+    Format(
+        text='Выберите профиль, который хотите изменить:'
+    ),
+    ScrollingGroup(
+        Column(
+            Select(
+                text=Format("{item.name}"),
+                id="profile_selected",
+                items=PROFILE_KEY,
+                item_id_getter=profile_id_getter,
+                on_click=on_profile_selected,
+            ),
+        ),
+        width=1,
+        height=5,
+        id="scroll_profiles",
+        hide_on_single_page=True,
+    ),
+    Row(
+        SwitchTo(
+            id='create_new_ind',
+            text=Format('Новое физ. лицо'),
+            state=BoilerDialog.boiler_profile_create_new_individual_name
+        ),
+        SwitchTo(
+            id='create_new_l_e',
+            text=Format('Новое юр. лицо'),
+            state=None
+        )
+    ),
+    Row(
+        SwitchTo(
+            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+        )
+    ),
+    getter=profiles_getter,
+    state=BoilerDialog.boiler_profile_choose_for_change,
+    parse_mode=ParseMode.HTML
+)
+
+boiler_profile_create_new_individual_name = Window(
+    Format(
+        text='🙋‍♂️ Пожалуйста, напишите, как к вам можно обращаться (ваше имя):'
+    ),
+    MessageInput(
+        new_profile_individual_name_getter
+    ),
+    Row(
+        SwitchTo(
+            id='back_to_profiles', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_choose_for_change
+        ),
+        SwitchTo(
+            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+        )
+    ),
+    state=BoilerDialog.boiler_profile_create_new_individual_name,
+    parse_mode=ParseMode.HTML
+)
+
+boiler_profile_create_new_individual_phone = Window(
+    Format(
+        text=(
+            "📞 <b>Номер телефона</b>\n\n"
+            "Пожалуйста, укажите номер для связи с вами.\n"
+            "Допустимый формат: <b>+7XXXXXXXXXX</b> или <b>8XXXXXXXXXX</b>\n\n"
+            "Убедитесь, что номер введён корректно — мы свяжемся с вами по нему.")
+    ),
+    MessageInput(
+        new_profile_individual_phone_getter
+    ),
+    Row(
+        SwitchTo(
+            id='back_to_profiles', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_create_new_individual_name
+        ),
+        SwitchTo(
+            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+        )
+    ),
+    state=BoilerDialog.boiler_profile_create_new_individual_phone,
+    parse_mode=ParseMode.HTML
+)
+
 task_waiting_window = Window(
     Format(
         'Идёт создание заявки. Пожалуйста, ожидайте.'
@@ -765,5 +848,8 @@ boiler_dialog = Dialog(
     task_waiting_window,
     upload_file_window,
 
-    boiler_choose_profile
+    boiler_choose_profile,
+    boiler_choose_profile_for_change,
+    boiler_profile_create_new_individual_name,
+    boiler_profile_create_new_individual_phone
 )
