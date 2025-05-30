@@ -54,7 +54,7 @@ end_states_title = {'Подбор техники': BoilerDialog.boiler_accept_te
                     }
 
 previous_states_title = {'Подбор техники': BoilerDialog.boiler_accept_tech_cat_request,
-                    'Обучение бариста': BoilerDialog.boiler_barista_training_choose_count,
-                    'Аренда': BoilerDialog.boiler_rent_technical_type,
-                    'Вызов техника': BoilerDialog.boiler_repair_address
-                    }
+                         'Обучение бариста': BoilerDialog.boiler_barista_training_choose_count,
+                         'Аренда': BoilerDialog.boiler_rent_technical_type,
+                         'Вызов техника': BoilerDialog.boiler_repair_address
+                         }
