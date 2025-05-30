@@ -251,7 +251,7 @@ async def address_getter(
     dialog_manager.dialog_data['user_address'] = user_address
 
     await dialog_manager.switch_to(
-        BoilerDialog.boiler_repair_accept_request
+        BoilerDialog.boiler_profile_choose
     )
 
 
