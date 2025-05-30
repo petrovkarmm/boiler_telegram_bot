@@ -330,18 +330,31 @@ boiler_repair_address = Window(
     parse_mode=ParseMode.HTML
 )
 
+# TODO удалить геттер и заменить на dialog_manager
 boiler_repair_accept_request = Window(
     Format(
         text=(
-            '✅ <b>{user_name}</b>, пожалуйста, проверьте все данные перед отправкой заявки:\n\n'
+            '✅ <b>{dialog_data[user_name]}</b>, пожалуйста, проверьте все данные перед отправкой заявки:\n\n'
             '📌 <b>Тема проблемы:</b> <i>{dialog_data[technical_problem]}</i>\n\n'
             '📝 <b>Описание:</b> <i>{dialog_data[technical_problem_description]}</i>\n\n'
             '🏘 <b>Адрес:</b> <i>{dialog_data[user_address]}</i>\n\n'
-            '📞 <b>Телефон:</b> <i>{user_phone}</i>\n\n'
-            "🏢 <b>Юр. лицо:</b> {organization_name}\n\n"
-            "🧾 <b>ИНН:</b> {organization_itn}\n\n"
+            '📞 <b>Телефон:</b> <i>{dialog_manager[user_phone]}</i>\n\n'
+            "🏢 <b>Юр. лицо:</b> {dialog_manager[organization_name]}\n\n"
+            "🧾 <b>ИНН:</b> {dialog_manager[organization_itn]}\n\n"
             'Если всё верно — нажмите <b>«Отправить»</b>.'
-        )
+        ),
+        when=F['dialog_data']['firm_type'] == 'legal_entity'
+    ),
+    Format(
+        text=(
+            '✅ <b>{dialog_data[user_name]}</b>, пожалуйста, проверьте все данные перед отправкой заявки:\n\n'
+            '📌 <b>Тема проблемы:</b> <i>{dialog_data[technical_problem]}</i>\n\n'
+            '📝 <b>Описание:</b> <i>{dialog_data[technical_problem_description]}</i>\n\n'
+            '🏘 <b>Адрес:</b> <i>{dialog_data[user_address]}</i>\n\n'
+            '📞 <b>Телефон:</b> <i>{dialog_data[user_phone]}</i>\n\n'
+            'Если всё верно — нажмите <b>«Отправить»</b>.'
+        ),
+        when=F['dialog_data']['firm_type'] == 'individual'
     ),
     StaticMedia(path=Format("{dialog_data[tmp_file_path]}"), when=F['dialog_data']['tmp_file_path']),
     Button(
@@ -355,7 +368,6 @@ boiler_repair_accept_request = Window(
             id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
         )
     ),
-    getter=user_data_profile_getter,
     state=BoilerDialog.boiler_repair_accept_request,
     parse_mode=ParseMode.HTML,
 )
