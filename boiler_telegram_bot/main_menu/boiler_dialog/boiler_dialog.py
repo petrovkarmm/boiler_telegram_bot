@@ -330,7 +330,6 @@ boiler_repair_address = Window(
     parse_mode=ParseMode.HTML
 )
 
-# TODO удалить геттер и заменить на dialog_manager
 boiler_repair_accept_request = Window(
     Format(
         text=(

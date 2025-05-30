@@ -170,6 +170,7 @@ async def save_rent_and_switch(
 async def confirm_sending_call_technician(
         callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ):
+    # TODO изменить логику под фл/юр лиц.
     user_id = str(callback.from_user.id)
 
     user_data = User.get_user_by_telegram_id(
