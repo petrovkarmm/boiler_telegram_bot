@@ -1,5 +1,4 @@
 import re
-from pprint import pprint
 from typing import Dict
 
 from aiogram.enums import ParseMode
