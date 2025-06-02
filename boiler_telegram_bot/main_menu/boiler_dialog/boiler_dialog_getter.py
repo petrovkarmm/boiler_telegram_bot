@@ -60,6 +60,19 @@ async def video_or_photo_format_data(dialog_manager: DialogManager, **_kwargs):
     }
 
 
+async def profile_individual_data_getter(dialog_manager: DialogManager, **_kwargs):
+    profile_id = dialog_manager.dialog_data['profile_id']
+    firm_data = Firm.get_firm_info_by_id(profile_id)
+
+    user_name = firm_data['name']
+    user_phone = firm_data['phone']
+
+    return {
+        'user_name': user_name,
+        'user_phone': user_phone
+    }
+
+
 async def technical_problems_getter(**_kwargs):
     technical_problems = TechnicalProblem.get_all_unhidden_technical_problem()
 

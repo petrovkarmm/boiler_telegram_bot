@@ -41,6 +41,23 @@ async def go_to_previous_state_from_profile_choosing(
     )
 
 
+async def delete_profile(
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+):
+    profile_id = dialog_manager.dialog_data['profile_id']
+    success = Firm.delete_firm(firm_id=profile_id)
+
+    if not success:
+        await callback.answer(
+            text='У вас как минимум должен быть 1 профиль!'
+        )
+        return
+
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_profile_choose_for_change
+    )
+
+
 async def go_to_profile_rent_accepting_request(
         callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ):
@@ -71,9 +88,22 @@ async def on_profile_selected_edit_menu(
         dialog_manager: DialogManager,
         profile_id: int,
 ):
-    await callback.answer(
-        text=str(profile_id)
-    )
+    firm_data = Firm.get_firm_info_by_id(profile_id)
+
+    dialog_manager.dialog_data['profile_id'] = profile_id
+    dialog_manager.dialog_data['firm_type'] = firm_data['firm_type']
+
+    if firm_data:
+
+        if firm_data['firm_type'] == 'legal_entity':
+            await dialog_manager.switch_to(
+                BoilerDialog.boiler_profile_edit_legal_entity_menu
+            )
+
+        if firm_data['firm_type'] == 'individual':
+            await dialog_manager.switch_to(
+                BoilerDialog.boiler_profile_edit_individual_menu
+            )
 
 
 async def on_profile_selected(
@@ -293,8 +323,8 @@ async def confirm_sending_tech_catalog_request(
                             f"Тип кофемашины: {user_technical_type}\n\n")
 
         if firm_type == 'legal_entity':
-            organization_itn = user_data['organization_itn']
-            organization_name = user_data['organization_name']
+            organization_itn = dialog_manager.dialog_data['organization_itn']
+            organization_name = dialog_manager.dialog_data['organization_name']
             await send_form_task(
                 callback=callback,
                 user_name=user_name,
@@ -359,8 +389,8 @@ async def confirm_rent_request_sending(
                             f"Тип кофемашины: {user_technical_type}\n\n")
 
         if firm_type == 'legal_entity':
-            organization_itn = user_data['organization_itn']
-            organization_name = user_data['organization_name']
+            organization_itn = dialog_manager.dialog_data['organization_itn']
+            organization_name = dialog_manager.dialog_data['organization_name']
             await send_form_task(
                 callback=callback,
                 user_name=user_name,
@@ -414,8 +444,8 @@ async def confirm_sending_barista_training(
                             f"Количество человек на обучение: {barista_value}\n\n")
 
         if firm_type == 'legal_entity':
-            organization_itn = user_data['organization_itn']
-            organization_name = user_data['organization_name']
+            organization_itn = dialog_manager.dialog_data['organization_itn']
+            organization_name = dialog_manager.dialog_data['organization_name']
             await send_form_task(
                 callback=callback,
                 user_name=user_name,

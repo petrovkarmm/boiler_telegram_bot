@@ -17,6 +17,34 @@ class Firm:
             return cursor.lastrowid
 
     @staticmethod
+    def delete_firm(firm_id: int) -> bool | None:
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("PRAGMA foreign_keys = ON")
+
+            cursor.execute("SELECT user_id FROM firm WHERE id = ?", (firm_id,))
+            result = cursor.fetchone()
+            if result is None:
+                return None  # Фирма не найдена, нельзя удалить
+
+            user_id = result[0]
+
+            cursor.execute("SELECT COUNT(*) FROM firm WHERE user_id = ?", (user_id,))
+            firm_count = cursor.fetchone()[0]
+
+            if firm_count <= 1:
+                return None  # Нельзя удалить последнюю фирму
+
+            cursor.execute("DELETE FROM firm_info_legal_entity WHERE firm_id = ?", (firm_id,))
+            cursor.execute("DELETE FROM firm_info_individual WHERE firm_id = ?", (firm_id,))
+
+            cursor.execute("DELETE FROM firm WHERE id = ?", (firm_id,))
+
+            conn.commit()
+
+            return True
+
+    @staticmethod
     def get_firms_by_telegram_id(telegram_id: str) -> list[dict]:
         with get_connection() as conn:
             cursor = conn.cursor()

@@ -20,13 +20,13 @@ from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_on_click_function
     technical_catalog_radio_set, confirm_sending_tech_catalog_request, rent_radio_set, rent_catalog_radio_set, \
     confirm_rent_request_sending, save_repair_and_switch, on_profile_selected, \
     go_to_previous_state_from_profile_choosing, go_to_profile_rent_accepting_request, creating_new_individual, \
-    create_new_individual_profile, on_profile_selected_edit_menu
+    create_new_individual_profile, on_profile_selected_edit_menu, delete_profile
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_PROBLEM_KEY, PROFILE_KEY
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_getter import technical_problem_id_getter, \
     technical_problems_getter, \
     technical_catalog_getter, \
-    rent_type_getter, video_or_photo_format_data, profile_id_getter, profiles_getter
+    rent_type_getter, video_or_photo_format_data, profile_id_getter, profiles_getter, profile_individual_data_getter
 
 boiler_main_menu = Window(
     Format(
@@ -60,35 +60,43 @@ boiler_main_menu = Window(
     parse_mode=ParseMode.HTML
 )
 
-boiler_profile_edit_menu = Window(
+boiler_profile_edit_individual_menu = Window(
     Format(
-        text="Выберите, что отредактировать: \n\n"
-             "👤 <b>Имя пользователя:</b> {user_name}\n\n"
-             '📞 <b>Телефон:</b> {user_phone}\n\n'
-             "🏢 <b>Юр. лицо:</b> {organization_name}\n\n"
-             "🧾 <b>ИНН:</b> {organization_itn}\n\n"
-
-    ),
-    Row(
-        SwitchTo(
-            id='edit_name', text=Format('👤 Имя'), state=BoilerDialog.boiler_profile_edit_name
-        ),
-        SwitchTo(
-            id='edit_phone', text=Format('📞 Телефон'), state=BoilerDialog.boiler_profile_edit_phone
+        text=(
+            "🛠️ <b>Редактирование профиля</b>\n\n"
+            "👤 <b>Имя:</b> {user_name}\n"
+            "📞 <b>Телефон:</b> {user_phone}\n\n"
+            "Выберите, что хотите изменить:"
         )
     ),
     Row(
         SwitchTo(
-            id='edit_o_name', text=Format('🏢 Юр. лицо'), state=BoilerDialog.boiler_profile_edit_organization_name
+            id='edit_name',
+            text=Format('✏️ Изменить имя'),
+            state=BoilerDialog.boiler_profile_edit_individual_name
         ),
         SwitchTo(
-            id='edit_itn', text=Format('🧾 ИНН'), state=BoilerDialog.boiler_profile_edit_organization_itn
-        ),
+            id='edit_phone',
+            text=Format('📱 Изменить телефон'),
+            state=BoilerDialog.boiler_profile_edit_individual_phone
+        )
     ),
     SwitchTo(
-        id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+        id='delete_profile',
+        text=Format('🗑️ Удалить профиль'),
+        state=BoilerDialog.boiler_accept_individual_profile_deleting,
+        when=F['dialog_data']['firm_type'] == 'individual'
     ),
-    state=BoilerDialog.boiler_profile_edit_menu,
+    Row(
+        SwitchTo(
+            id='back_choose_menu', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_choose_for_change
+        ),
+        SwitchTo(
+            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+        ),
+    ),
+    getter=profile_individual_data_getter,
+    state=BoilerDialog.boiler_profile_edit_individual_menu,
     parse_mode=ParseMode.HTML
 )
 
@@ -101,7 +109,7 @@ boiler_profile_edit_itn = Window(
     ),
     Row(
         SwitchTo(
-            id='back_to_feedback', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_edit_menu
+            id='back_to_feedback', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_edit_legal_entity_menu
         ),
         SwitchTo(
             id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
@@ -125,7 +133,7 @@ boiler_profile_edit_phone = Window(
     ),
     Row(
         SwitchTo(
-            id='back_to_feedback', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_edit_menu
+            id='back_to_feedback', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_edit_individual_menu
         ),
         SwitchTo(
             id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
@@ -134,7 +142,7 @@ boiler_profile_edit_phone = Window(
     MessageInput(
         new_phone_handler
     ),
-    state=BoilerDialog.boiler_profile_edit_phone,
+    state=BoilerDialog.boiler_profile_edit_individual_phone,
     parse_mode=ParseMode.HTML
 )
 
@@ -150,7 +158,7 @@ boiler_profile_edit_organization_name = Window(
     ),
     Row(
         SwitchTo(
-            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_edit_menu
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_edit_legal_entity_menu
         ),
         SwitchTo(
             id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
@@ -171,13 +179,13 @@ boiler_profile_edit_name = Window(
     ),
     Row(
         SwitchTo(
-            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_edit_menu
+            id='back_to_t_pr', text=Format('⬅️ Назад'), state=BoilerDialog.boiler_profile_edit_individual_menu
         ),
         SwitchTo(
             id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
         ),
     ),
-    state=BoilerDialog.boiler_profile_edit_name,
+    state=BoilerDialog.boiler_profile_edit_individual_name,
     parse_mode=ParseMode.HTML
 )
 
@@ -740,12 +748,12 @@ boiler_choose_profile_for_change = Window(
     Row(
         Button(
             id='create_new_ind',
-            text=Format('Новое физ. лицо'),
+            text=Format('👤 Новое физ. лицо'),
             on_click=creating_new_individual
         ),
         SwitchTo(
             id='create_new_l_e',
-            text=Format('Новое юр. лицо'),
+            text=Format('🏢 Новое юр. лицо'),
             state=None
         )
     ),
@@ -813,7 +821,44 @@ boiler_profile_accept_new_profile = Window(
     Button(
         id='accept_new_ind', text=Format('Создать'), on_click=create_new_individual_profile
     ),
+    Row(
+        SwitchTo(
+            id='back_to_profiles', text=Format('⬅️ Назад'),
+            state=BoilerDialog.boiler_profile_create_new_individual_phone
+        ),
+        SwitchTo(
+            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+        )
+    ),
     state=BoilerDialog.boiler_profile_accept_new_individual_profile,
+    parse_mode=ParseMode.HTML
+)
+
+boiler_accept_individual_profile_deleting = Window(
+    Format(
+        text=(
+            '❗ <b>Вы уверены, что хотите удалить этот профиль?</b>\n\n'
+            '👤 <b>Имя:</b> {user_name}\n'
+            '📞 <b>Телефон:</b> {user_phone}\n\n'
+            '🗑️ Профиль будет удалён без возможности восстановления.'
+        )
+    ),
+    Button(
+        id='delete_ind',
+        text=Format('🗑️ Удалить профиль'),
+        on_click=delete_profile
+    ),
+    Row(
+        SwitchTo(
+            id='back_to_profile', text=Format('⬅️ Назад'),
+            state=BoilerDialog.boiler_profile_edit_individual_menu
+        ),
+        SwitchTo(
+            id='back_to_menu', text=Format('🏠 В меню'), state=BoilerDialog.boiler_main_menu
+        )
+    ),
+    getter=profile_individual_data_getter,
+    state=BoilerDialog.boiler_accept_individual_profile_deleting,
     parse_mode=ParseMode.HTML
 )
 
@@ -844,7 +889,8 @@ boiler_dialog = Dialog(
     boiler_rent_technical_type,
     boiler_rent_accept_request,
 
-    boiler_profile_edit_menu,
+    boiler_profile_edit_individual_menu,
+
     boiler_profile_edit_itn,
     boiler_profile_edit_name,
     boiler_profile_edit_phone,
@@ -870,8 +916,6 @@ boiler_dialog = Dialog(
     boiler_profile_create_new_name,
     boiler_profile_create_new_phone,
 
-    boiler_profile_create_new_name,
-    boiler_profile_create_new_phone,
-
-    boiler_profile_accept_new_profile
+    boiler_profile_accept_new_profile,
+    boiler_accept_individual_profile_deleting
 )

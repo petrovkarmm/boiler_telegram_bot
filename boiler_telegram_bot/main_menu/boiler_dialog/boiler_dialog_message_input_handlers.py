@@ -12,7 +12,8 @@ from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import Boi
 from boiler_telegram_bot.db_configuration.models.user import User
 from boiler_telegram_bot.main_menu.boiler_dialog.utils import normalize_phone_number, download_file
 from boiler_telegram_bot.main_menu.boiler_registration_dialog.utils import is_valid_inn
-from main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_CATALOG
+from boiler_telegram_bot.db_configuration.models.firm_info_individual import FirmInfoIndividual
+from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_CATALOG
 
 
 async def feedback_handler(
@@ -138,19 +139,18 @@ async def new_organization_name_handler(
 async def new_name_handler(
         message: Message,
         message_input: MessageInput,
-        dialog_manager: DialogManager,
-):
-    telegram_id = str(message.from_user.id)
+        dialog_manager: DialogManager):
+    firm_id = dialog_manager.dialog_data['profile_id']
     new_name = message.text
 
-    User.update_user_field(
-        telegram_id=telegram_id,
-        key='name',
-        new_value=new_name
+    FirmInfoIndividual.update_field(
+        firm_id=firm_id,
+        new_value=new_name,
+        field='name'
     )
 
     await dialog_manager.switch_to(
-        BoilerDialog.boiler_profile_edit_menu
+        BoilerDialog.boiler_profile_edit_individual_menu
     )
 
 
@@ -166,15 +166,16 @@ async def new_phone_handler(
     )
 
     if validate_user_phone:
+        firm_id = dialog_manager.dialog_data['profile_id']
 
-        telegram_id = str(message.from_user.id)
-
-        User.update_user_field(
-            telegram_id=telegram_id, key='phone', new_value=user_phone
+        FirmInfoIndividual.update_field(
+            firm_id=firm_id,
+            new_value=user_phone,
+            field='phone'
         )
 
         await dialog_manager.switch_to(
-            BoilerDialog.boiler_profile_edit_menu
+            BoilerDialog.boiler_profile_edit_individual_menu
         )
 
     else:

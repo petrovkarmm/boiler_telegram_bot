@@ -4,9 +4,9 @@ from aiogram.fsm.state import StatesGroup, State
 class BoilerDialog(StatesGroup):
     boiler_main_menu = State()
 
-    boiler_profile_edit_menu = State()
-    boiler_profile_edit_name = State()
-    boiler_profile_edit_phone = State()
+    boiler_profile_edit_individual_name = State()
+    boiler_profile_edit_individual_phone = State()
+
     boiler_profile_edit_organization_itn = State()
     boiler_profile_edit_organization_name = State()
 
@@ -41,3 +41,8 @@ class BoilerDialog(StatesGroup):
 
     boiler_profile_choose = State()
     boiler_profile_choose_for_change = State()
+
+    boiler_profile_edit_individual_menu = State()
+    boiler_profile_edit_legal_entity_menu = State()
+
+    boiler_accept_individual_profile_deleting = State()
