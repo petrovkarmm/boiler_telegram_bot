@@ -14,6 +14,7 @@ from boiler_telegram_bot.main_menu.boiler_registration_dialog.boiler_registratio
 from boiler_telegram_bot.pyrus_api.pyrus_utils import send_form_task
 from boiler_telegram_bot.main_menu.boiler_dialog.utils import end_states_title, previous_states_title
 from boiler_telegram_bot.db_configuration.models.firm import Firm
+from boiler_telegram_bot.db_configuration.models.firm_info_individual import FirmInfoIndividual
 
 
 async def get_barista_count_and_switch(
@@ -64,6 +65,17 @@ async def go_to_profile_rent_accepting_request(
     )
 
 
+async def on_profile_selected_edit_menu(
+        callback: CallbackQuery,
+        widget: Any,
+        dialog_manager: DialogManager,
+        profile_id: int,
+):
+    await callback.answer(
+        text=str(profile_id)
+    )
+
+
 async def on_profile_selected(
         callback: CallbackQuery,
         widget: Any,
@@ -109,6 +121,44 @@ async def technical_catalog_radio_set(
 
 ):
     dialog_manager.dialog_data['technical_catalog_radio_get_set'] = True
+
+
+async def create_new_individual_profile(
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+):
+    telegram_id = str(callback.from_user.id)
+    user_name = dialog_manager.dialog_data['new_profile_user_name']
+    user_phone = dialog_manager.dialog_data['new_profile_user_phone']
+    firm_type = 'individual'
+
+    user_row = User.get_user_by_telegram_id(telegram_id=telegram_id)
+
+    if user_row:
+        user_id = user_row['id']
+        firm_id = Firm.add_firm(user_id=user_id, firm_type=firm_type)
+
+        FirmInfoIndividual.add_info(
+            firm_id=firm_id,
+            name=user_name,
+            phone=user_phone
+        )
+
+        await callback.message.answer(text='🎉 Профиль успешно создан! 🚀')
+        dialog_manager.show_mode = ShowMode.DELETE_AND_SEND
+        await dialog_manager.start(BoilerDialog.boiler_profile_choose_for_change)
+
+    else:
+        await dialog_manager.start(BoilerRegistrationDialog.boiler_registration_user_name)
+
+
+async def creating_new_individual(
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+):
+    dialog_manager.dialog_data['new_profile'] = 'individual'
+
+    await dialog_manager.switch_to(
+        BoilerDialog.boiler_profile_create_new_individual_name
+    )
 
 
 async def rent_radio_set(
