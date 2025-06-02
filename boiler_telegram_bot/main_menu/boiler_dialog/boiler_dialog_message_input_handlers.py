@@ -280,13 +280,18 @@ async def new_profile_individual_phone_getter(
         user_phone
     )
 
-    # TODO window for accept new_individual_profile
-
     if validate_user_phone:
-        dialog_manager.dialog_data['user_phone'] = validate_user_phone
-        await dialog_manager.switch_to(
-            BoilerDialog.boiler_profile_accept_new_individual_profile
-        )
+        dialog_manager.dialog_data['new_profile_user_phone'] = validate_user_phone
+
+        if dialog_manager.dialog_data['new_profile'] == 'individual':
+
+            await dialog_manager.switch_to(
+                BoilerDialog.boiler_profile_accept_new_individual_profile
+            )
+
+        else:
+
+            pass
 
     else:
         await message.answer(
