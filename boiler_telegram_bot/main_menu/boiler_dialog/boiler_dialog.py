@@ -19,7 +19,8 @@ from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_on_click_function
     confirm_sending_barista_training, save_rent_and_switch, save_tech_cat_and_switch, save_barista_training_and_switch, \
     technical_catalog_radio_set, confirm_sending_tech_catalog_request, rent_radio_set, rent_catalog_radio_set, \
     confirm_rent_request_sending, save_repair_and_switch, on_profile_selected, \
-    go_to_previous_state_from_profile_choosing, go_to_profile_rent_accepting_request
+    go_to_previous_state_from_profile_choosing, go_to_profile_rent_accepting_request, creating_new_individual, \
+    create_new_individual_profile, on_profile_selected_edit_menu
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_states import BoilerDialog
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_dataclasses import TECHNICAL_PROBLEM_KEY, PROFILE_KEY
 from boiler_telegram_bot.main_menu.boiler_dialog.boiler_dialog_getter import technical_problem_id_getter, \
@@ -728,7 +729,7 @@ boiler_choose_profile_for_change = Window(
                 id="profile_selected",
                 items=PROFILE_KEY,
                 item_id_getter=profile_id_getter,
-                on_click=on_profile_selected,
+                on_click=on_profile_selected_edit_menu,
             ),
         ),
         width=1,
@@ -737,10 +738,10 @@ boiler_choose_profile_for_change = Window(
         hide_on_single_page=True,
     ),
     Row(
-        SwitchTo(
+        Button(
             id='create_new_ind',
             text=Format('Новое физ. лицо'),
-            state=BoilerDialog.boiler_profile_create_new_individual_name
+            on_click=creating_new_individual
         ),
         SwitchTo(
             id='create_new_l_e',
@@ -758,7 +759,7 @@ boiler_choose_profile_for_change = Window(
     parse_mode=ParseMode.HTML
 )
 
-boiler_profile_create_new_individual_name = Window(
+boiler_profile_create_new_name = Window(
     Format(
         text='🙋‍♂️ Пожалуйста, напишите, как к вам можно обращаться (ваше имя):'
     ),
@@ -777,7 +778,7 @@ boiler_profile_create_new_individual_name = Window(
     parse_mode=ParseMode.HTML
 )
 
-boiler_profile_create_new_individual_phone = Window(
+boiler_profile_create_new_phone = Window(
     Format(
         text=(
             "📞 <b>Номер телефона</b>\n\n"
@@ -797,6 +798,22 @@ boiler_profile_create_new_individual_phone = Window(
         )
     ),
     state=BoilerDialog.boiler_profile_create_new_individual_phone,
+    parse_mode=ParseMode.HTML
+)
+
+boiler_profile_accept_new_profile = Window(
+    Format(
+        text=(
+            "✅ <b>Проверьте введённые данные физ. лица:</b>\n\n"
+            "👤 <b>Имя:</b> {dialog_data[new_profile_user_name]}\n"
+            "📞 <b>Телефон:</b> {dialog_data[new_profile_user_phone]}\n"
+        ),
+        when=F['dialog_data']['new_profile'] == 'individual'
+    ),
+    Button(
+        id='accept_new_ind', text=Format('Создать'), on_click=create_new_individual_profile
+    ),
+    state=BoilerDialog.boiler_profile_accept_new_individual_profile,
     parse_mode=ParseMode.HTML
 )
 
@@ -850,6 +867,11 @@ boiler_dialog = Dialog(
 
     boiler_choose_profile,
     boiler_choose_profile_for_change,
-    boiler_profile_create_new_individual_name,
-    boiler_profile_create_new_individual_phone
+    boiler_profile_create_new_name,
+    boiler_profile_create_new_phone,
+
+    boiler_profile_create_new_name,
+    boiler_profile_create_new_phone,
+
+    boiler_profile_accept_new_profile
 )
