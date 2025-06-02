@@ -845,7 +845,7 @@ boiler_accept_individual_profile_deleting = Window(
     ),
     Button(
         id='delete_ind',
-        text=Format('🗑️ Удалить профиль'),
+        text=Format('🗑️ Да, удалить профиль'),
         on_click=delete_profile
     ),
     Row(
