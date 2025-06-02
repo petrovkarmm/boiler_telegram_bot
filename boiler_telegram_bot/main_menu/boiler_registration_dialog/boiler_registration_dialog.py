@@ -131,8 +131,8 @@ boiler_registration_accepting = Window(
     Format(
         text=(
             "✅ <b>Проверьте введённые данные юр. лица:</b>\n\n"
-            "📞 <b>Телефон:</b> {dialog_data[user_phone]}\n"
             "👤 <b>Имя:</b> {dialog_data[user_name]}\n"
+            "📞 <b>Телефон:</b> {dialog_data[user_phone]}\n"
             "🏢 <b>Юр. лицо:</b> {dialog_data[organization_name]}\n"
             "🧾 <b>ИНН:</b> {dialog_data[organization_itn]}"
         ),
@@ -141,8 +141,8 @@ boiler_registration_accepting = Window(
     Format(
         text=(
             "✅ <b>Проверьте введённые данные физ. лица:</b>\n\n"
-            "📞 <b>Телефон:</b> {dialog_data[user_phone]}\n"
             "👤 <b>Имя:</b> {dialog_data[user_name]}\n"
+            "📞 <b>Телефон:</b> {dialog_data[user_phone]}\n"
         ),
         when=F['dialog_data']['firm_type'] == 'individual'
     ),
