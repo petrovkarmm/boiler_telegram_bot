@@ -1,7 +1,4 @@
-Заказ для https://boiler-serv.ru/.
-
-
-# boiler_telegram_bot
+# boiler_telegram_bot Заказ для https://boiler-serv.ru/.
 
 env:
 
